@@ -13,6 +13,57 @@ AI coding assistants can:
 
 ---
 
+## Choosing the Right Approach
+
+### When NOT to Use Evolution/Genetic Algorithms
+
+You're right to question this! **Evolution is often overkill** because:
+
+- **Finite permutations**: Only ~1,750 configuration combinations (providers × models × strategies × chunking)
+- **Static data**: If your corpus doesn't change, just test once and done
+- **Simple needs**: Grid search or A/B testing is faster and clearer
+- **Limited budget**: Evolution requires many evaluations ($$$)
+
+**Use simple A/B testing when:**
+- You have < 1,000 queries
+- Corpus is stable
+- You want results in hours, not days
+- Budget is limited
+
+### When Evolution Makes Sense
+
+**Evolution IS useful for:**
+- **Continuous improvement**: Weekly re-optimization as data changes
+- **Multi-objective optimization**: Balance quality + cost + speed simultaneously
+- **Learning over time**: Build knowledge of what works for YOUR specific data
+- **Complex tradeoffs**: When you can't afford the "best" model, find optimal cost/quality balance
+
+**Think of it as:**
+- Simple A/B = "Test A vs B, pick winner" ✓ Fast, clear
+- Grid search = "Test all combinations" ✓ Thorough, expensive
+- Evolution = "Learn what works over time" ✓ Adaptive, continuous
+
+### Recommended: Start Simple
+
+```
+Phase 1 (Week 1): Simple A/B Test
+└─ Test 3-5 strategies on your data
+└─ Pick winner manually
+
+Phase 2 (Month 1-3): Smart Selection
+└─ Use rule-based selection from Phase 1 learnings
+└─ Test only promising candidates
+
+Phase 3 (Ongoing): Evolution (if needed)
+└─ Only if data changes frequently
+└─ Only if you need continuous optimization
+└─ Only after you understand your data
+```
+
+**Most users never need Phase 3!** Simple A/B testing with smart selection covers 90% of use cases.
+
+---
+
 ## Claude Code Integration
 
 ### Setup
@@ -214,6 +265,69 @@ Strategy: hybrid-bm25 with semantic-chunks
 ---
 
 ## Self-Improvement Automation
+
+### Simple Grid Search (Recommended First)
+
+Before complex evolution, try **simple grid search** - test all combinations systematically:
+
+```bash
+#!/bin/bash
+# simple-grid-search.sh - Test all strategy combinations
+
+STRATEGIES=("baseline" "semantic-chunks" "hybrid-bm25" "mmr-diversity")
+PROVIDERS=("ollama:nomic-embed-text" "openai:text-embedding-3-small")
+
+BEST_SCORE=0
+BEST_CONFIG=""
+
+for strategy in "${STRATEGIES[@]}"; do
+  for provider in "${PROVIDERS[@]}"; do
+    echo "Testing: $provider + $strategy"
+    
+    # Create temp config
+    cat > /tmp/test.yaml << EOF
+test:
+  name: "Grid Search Test"
+variants:
+  - id: test
+    provider: { type: ${provider%%:*}, model: ${provider#*:} }
+    strategy: $strategy
+dataset: ./data/queries.jsonl
+corpus: ./data/corpus.jsonl
+metrics: [ndcg@10]
+EOF
+    
+    # Run evaluation
+    embedeval ab-test --config /tmp/test.yaml --output /tmp/results
+    
+    # Get score
+    SCORE=$(jq -r '.metrics.ndcg' /tmp/results/metrics.json)
+    echo "  Score: $SCORE"
+    
+    # Track best
+    if (( $(echo "$SCORE > $BEST_SCORE" | bc -l) )); then
+      BEST_SCORE=$SCORE
+      BEST_CONFIG="$provider + $strategy"
+    fi
+  done
+done
+
+echo ""
+echo "🏆 Winner: $BEST_CONFIG"
+echo "   Score: $BEST_SCORE"
+echo ""
+echo "Total evaluations: $((${#STRATEGIES[@]} * ${#PROVIDERS[@]}))"
+```
+
+**When to use:**
+- ✓ Small number of combinations (< 50)
+- ✓ Want guaranteed optimal solution
+- ✓ Have time/budget for exhaustive testing
+- ✓ Data is stable
+
+**Cost estimate:** 20 strategies × $0.0001/query × 100 queries = $0.20
+
+---
 
 ### Continuous Evaluation Mode
 
