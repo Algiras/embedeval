@@ -1,0 +1,180 @@
+{
+  "topConfigs": [
+    {
+      "id": "8203e547-a7db-433c-8595-ab073b234141",
+      "model": {
+        "provider": "ollama",
+        "model": "mxbai-embed-large"
+      },
+      "query": "none",
+      "retrieval": "cosine",
+      "reranking": "cross_encoder_small",
+      "chunking": "parent_child",
+      "multiStage": "two_stage",
+      "metrics": {
+        "quality": 0.8338299615831162,
+        "cost": 0,
+        "latency": 250,
+        "boost": 0.38971660263852714
+      },
+      "meetsConstraints": true
+    },
+    {
+      "id": "1ddd7363-e268-4726-ac44-4a34863d7938",
+      "model": {
+        "provider": "ollama",
+        "model": "mxbai-embed-large"
+      },
+      "query": "none",
+      "retrieval": "cosine",
+      "reranking": "cross_encoder_large",
+      "chunking": "parent_child",
+      "multiStage": "two_stage",
+      "metrics": {
+        "quality": 0.84,
+        "cost": 0,
+        "latency": 350,
+        "boost": 0.4
+      },
+      "meetsConstraints": true
+    },
+    {
+      "id": "af9f4cb5-82ba-4c33-a49f-474d79a2e9d3",
+      "model": {
+        "provider": "ollama",
+        "model": "mxbai-embed-large"
+      },
+      "query": "none",
+      "retrieval": "hybrid_rrf",
+      "reranking": "mmr",
+      "chunking": "parent_child",
+      "multiStage": "two_stage",
+      "metrics": {
+        "quality": 0.84,
+        "cost": 0,
+        "latency": 165,
+        "boost": 0.4
+      },
+      "meetsConstraints": true
+    },
+    {
+      "id": "2795739a-d055-4f7a-a260-8bb48fb05d16",
+      "model": {
+        "provider": "ollama",
+        "model": "mxbai-embed-large"
+      },
+      "query": "none",
+      "retrieval": "hybrid_rrf",
+      "reranking": "cross_encoder_small",
+      "chunking": "none",
+      "multiStage": "two_stage",
+      "metrics": {
+        "quality": 0.839277428093379,
+        "cost": 0,
+        "latency": 245,
+        "boost": 0.398795713488965
+      },
+      "meetsConstraints": true
+    },
+    {
+      "id": "c762a068-05f4-4b4b-a450-59724c650828",
+      "model": {
+        "provider": "ollama",
+        "model": "mxbai-embed-large"
+      },
+      "query": "none",
+      "retrieval": "hybrid_rrf",
+      "reranking": "cross_encoder_small",
+      "chunking": "fixed_512",
+      "multiStage": "two_stage",
+      "metrics": {
+        "quality": 0.84,
+        "cost": 0,
+        "latency": 245,
+        "boost": 0.4
+      },
+      "meetsConstraints": true
+    }
+  ],
+  "bestFor": {
+    "quality": {
+      "id": "1ddd7363-e268-4726-ac44-4a34863d7938",
+      "model": {
+        "provider": "ollama",
+        "model": "mxbai-embed-large"
+      },
+      "query": "none",
+      "retrieval": "cosine",
+      "reranking": "cross_encoder_large",
+      "chunking": "parent_child",
+      "multiStage": "two_stage",
+      "metrics": {
+        "quality": 0.84,
+        "cost": 0,
+        "latency": 350,
+        "boost": 0.4
+      },
+      "meetsConstraints": true
+    },
+    "speed": {
+      "id": "37b9d8a0-8d88-4375-9221-23745fa3bff1",
+      "model": {
+        "provider": "ollama",
+        "model": "nomic-embed-text"
+      },
+      "query": "none",
+      "retrieval": "cosine",
+      "reranking": "none",
+      "chunking": "fixed_512",
+      "multiStage": "none",
+      "metrics": {
+        "quality": 0.609,
+        "cost": 0,
+        "latency": 60,
+        "boost": 0.05
+      },
+      "meetsConstraints": true
+    },
+    "cost": {
+      "id": "1ddd7363-e268-4726-ac44-4a34863d7938",
+      "model": {
+        "provider": "ollama",
+        "model": "mxbai-embed-large"
+      },
+      "query": "none",
+      "retrieval": "cosine",
+      "reranking": "cross_encoder_large",
+      "chunking": "parent_child",
+      "multiStage": "two_stage",
+      "metrics": {
+        "quality": 0.84,
+        "cost": 0,
+        "latency": 350,
+        "boost": 0.4
+      },
+      "meetsConstraints": true
+    },
+    "balanced": {
+      "id": "af9f4cb5-82ba-4c33-a49f-474d79a2e9d3",
+      "model": {
+        "provider": "ollama",
+        "model": "mxbai-embed-large"
+      },
+      "query": "none",
+      "retrieval": "hybrid_rrf",
+      "reranking": "mmr",
+      "chunking": "parent_child",
+      "multiStage": "two_stage",
+      "metrics": {
+        "quality": 0.84,
+        "cost": 0,
+        "latency": 165,
+        "boost": 0.4
+      },
+      "meetsConstraints": true
+    }
+  },
+  "totalTested": 500,
+  "validCount": 232,
+  "invalidCount": 268
+}

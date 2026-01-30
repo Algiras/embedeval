@@ -17,11 +17,47 @@ import {
   StrategyGenome,
   AgentResponse,
 } from '../../core/types';
-import { EvolutionEngine, runEvolution } from '../../evolution/evolution-engine';
-import { EvolutionScheduler, startEvolutionScheduler } from '../../evolution/scheduler';
+import { runEvolution } from '../../evolution/evolution-engine';
+import { startEvolutionScheduler } from '../../evolution/scheduler';
 import { genomeToStrategy } from '../../evolution/strategy-genome';
-import { loadConfig } from '../../utils/config';
-import { logger } from '../../utils/logger';
+
+/** CLI Options interface */
+interface EvolveRunOptions {
+  queries: string;
+  corpus: string;
+  population?: string;
+  generations?: string;
+  mutation?: string;
+  provider?: string;
+  model?: string;
+  baseline?: string;
+  deployThreshold?: string;
+  output?: string;
+  outputFormat?: string;
+}
+
+interface ScheduleOptions {
+  queries: string;
+  corpus: string;
+  interval: string;
+  continuous?: boolean;
+  stopOnPlateau?: string;
+  output?: string;
+}
+
+interface ShowOptions {
+  output?: string;
+  limit?: string;
+}
+
+interface CompareOptions {
+  output?: string;
+}
+
+interface ExportOptions {
+  output?: string;
+  format?: string;
+}
 
 /**
  * Register evolution commands
@@ -50,7 +86,7 @@ export function registerEvolveCommand(program: Command): void {
     .option('--deploy-threshold <threshold>', 'Minimum fitness to deploy', '0.8')
     .option('--output <path>', 'Output path for results', '.embedeval/evolution')
     .option('--output-format <format>', 'Output format (json, summary)', 'summary')
-    .action(async (options) => {
+    .action(async (options: EvolveRunOptions) => {
       const spinner = ora('Starting evolution...').start();
       const startTime = Date.now();
 
@@ -138,8 +174,8 @@ export function registerEvolveCommand(program: Command): void {
           const genes = result.bestGenome.genes;
           console.log('  Chunking:', genes.chunkingMethod, genes.chunkSize ? `(${genes.chunkSize})` : '');
           console.log('  Retrieval:', genes.retrievalMethod, `(k=${genes.retrievalK})`);
-          if (genes.hybridWeights) {
-            console.log('  Hybrid weights:', genes.hybridWeights.map(w => w.toFixed(2)).join(', '));
+          if (genes.hybridAlpha !== undefined) {
+            console.log('  Hybrid alpha:', genes.hybridAlpha.toFixed(2));
           }
           console.log('  Reranking:', genes.rerankingMethod);
           
@@ -200,18 +236,18 @@ export function registerEvolveCommand(program: Command): void {
     .option('--run-now', 'Run immediately before scheduling', false)
     .option('--auto-deploy', 'Auto-deploy improvements', false)
     .option('--output <path>', 'Output path', '.embedeval/evolution')
-    .action(async (options) => {
+    .action(async (options: ScheduleOptions & { provider?: string; model?: string; cron?: string; runNow?: boolean; autoDeploy?: boolean }) => {
       console.log(chalk.bold('Starting Evolution Scheduler...\n'));
 
       try {
         const providerConfig = {
-          type: options.provider,
-          model: options.model,
+          type: options.provider || 'ollama',
+          model: options.model || 'nomic-embed-text',
           baseUrl: options.provider === 'ollama' ? 'http://localhost:11434' : undefined,
           apiKey: options.provider === 'openai' ? process.env.OPENAI_API_KEY :
                   options.provider === 'google' ? process.env.GEMINI_API_KEY :
                   undefined,
-        } as any;
+        };
 
         const scheduler = await startEvolutionScheduler({
           corpusPath: options.corpus,
@@ -257,9 +293,9 @@ export function registerEvolveCommand(program: Command): void {
     .option('--deployed', 'Show currently deployed strategy')
     .option('--history', 'Show evolution history')
     .option('--path <path>', 'Evolution data path', '.embedeval/evolution')
-    .action(async (options) => {
+    .action(async (options: { latest?: boolean; id?: string; deployed?: boolean; history?: boolean; path?: string }) => {
       try {
-        const basePath = path.resolve(options.path);
+        const basePath = path.resolve(options.path || '.embedeval/evolution');
 
         if (options.deployed) {
           const deploymentPath = path.join(basePath, 'current-deployment.json');
@@ -299,8 +335,8 @@ export function registerEvolveCommand(program: Command): void {
 
         // Show latest or specific result
         const evolutionFiles = await fs.readdir(basePath)
-          .catch(() => [])
-          .then(files => files.filter(f => f.startsWith('evolution-') && f.endsWith('.json')));
+          .catch(() => [] as string[])
+          .then((files: string[]) => files.filter((f: string) => f.startsWith('evolution-') && f.endsWith('.json')));
 
         if (evolutionFiles.length === 0) {
           console.log(chalk.yellow('No evolution results found'));
@@ -352,14 +388,14 @@ export function registerEvolveCommand(program: Command): void {
     .option('--id <id>', 'Evolution ID to export')
     .option('--path <path>', 'Evolution data path', '.embedeval/evolution')
     .option('--output <file>', 'Output YAML file', 'evolved-strategy.yaml')
-    .action(async (options) => {
+    .action(async (options: { id?: string; path?: string; output?: string }) => {
       try {
-        const basePath = path.resolve(options.path);
+        const basePath = path.resolve(options.path || '.embedeval/evolution');
         
         // Find evolution result
         const evolutionFiles = await fs.readdir(basePath)
-          .catch(() => [])
-          .then(files => files.filter(f => f.startsWith('evolution-') && f.endsWith('.json')));
+          .catch(() => [] as string[])
+          .then((files: string[]) => files.filter((f: string) => f.startsWith('evolution-') && f.endsWith('.json')));
 
         const targetFile = options.id
           ? `evolution-${options.id}.json`
@@ -417,9 +453,9 @@ export function registerEvolveCommand(program: Command): void {
     .command('rollback')
     .description('Rollback to previously deployed strategy')
     .option('--path <path>', 'Evolution data path', '.embedeval/evolution')
-    .action(async (options) => {
+    .action(async (options: { path?: string }) => {
       try {
-        const basePath = path.resolve(options.path);
+        const basePath = path.resolve(options.path || '.embedeval/evolution');
         const deploymentPath = path.join(basePath, 'current-deployment.json');
         
         if (!await fs.pathExists(deploymentPath)) {
@@ -436,23 +472,18 @@ export function registerEvolveCommand(program: Command): void {
 
         console.log(chalk.yellow(`Rolling back from ${deployment.genome.name}...`));
         
-        const scheduler = new EvolutionScheduler({
-          corpusPath: '',
-          queriesPath: '',
-          provider: { type: 'ollama', baseUrl: '', model: '' } as any,
-          basePath: options.path,
+        // Write previous genome as current
+        await fs.writeJson(deploymentPath, {
+          genome: deployment.previousGenome,
+          previousGenome: null,
+          deployedAt: new Date().toISOString(),
+          rolledBackFrom: deployment.genome.name,
         });
-
-        const success = await scheduler.rollback();
         
-        if (success) {
-          console.log(chalk.green(`✓ Rolled back to: ${deployment.previousGenome.name}`));
-        } else {
-          console.log(chalk.red('Rollback failed'));
-        }
+        console.log(chalk.green(`✓ Rolled back to: ${deployment.previousGenome.name}`));
 
       } catch (error) {
-        logger.error('Rollback failed:', error);
+        console.error('Rollback failed:', error);
         process.exit(1);
       }
     });

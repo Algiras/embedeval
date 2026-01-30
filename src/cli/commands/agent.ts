@@ -19,8 +19,41 @@ import {
 import { KnowledgeBase } from '../../evolution/knowledge-base';
 import { HypothesisEngine } from '../../research/hypothesis-engine';
 import { SyntheticQueryGenerator } from '../../research/synthetic-data';
-import { loadConfig } from '../../utils/config';
-import { logger } from '../../utils/logger';
+
+/** Options interfaces for agent commands */
+interface AgentQueryOptions {
+  dataset?: string;
+  provider?: string;
+  model?: string;
+  k?: string;
+  strategy?: string;
+  explain?: boolean;
+}
+
+interface AgentAnalyzeOptions {
+  path: string;
+  depth?: string;
+  suggestions?: boolean;
+}
+
+interface AgentHypothesizeOptions {
+  context?: string;
+  count?: string;
+  focus?: string;
+}
+
+interface AgentTestOptions {
+  hypothesisId: string;
+  dataset?: string;
+  runs?: string;
+}
+
+interface AgentGenerateOptions {
+  corpusPath?: string;
+  count?: string;
+  types?: string;
+  difficulty?: string;
+}
 
 /**
  * Format response for agent consumption
@@ -70,20 +103,20 @@ export function registerAgentCommand(program: Command): void {
     .option('--model <name>', 'Model name', 'nomic-embed-text')
     .option('--strategy <name>', 'Strategy name', 'baseline')
     .option('--output-format <format>', 'Output format (json, summary)', 'json')
-    .action(async (options) => {
+    .action(async (options: AgentQueryOptions & { corpus: string; queries: string; outputFormat?: string }) => {
       const startTime = Date.now();
       
       try {
         // Build config
         const config = {
           providers: [{
-            type: options.provider,
-            model: options.model,
+            type: options.provider || 'ollama',
+            model: options.model || 'nomic-embed-text',
             baseUrl: options.provider === 'ollama' ? 'http://localhost:11434' : undefined,
           }],
           dataset: options.queries,
           corpus: options.corpus,
-          strategies: [{ name: options.strategy, pipeline: ['embed', 'retrieve'] }],
+          strategies: [{ name: options.strategy || 'baseline', pipeline: ['embed', 'retrieve'] }],
           metrics: ['ndcg@5', 'ndcg@10', 'recall@5', 'recall@10', 'mrr@10'],
         };
 
@@ -102,9 +135,9 @@ export function registerAgentCommand(program: Command): void {
           name: 'Agent Evaluation',
           variants: [{
             id: 'v1',
-            name: `${options.provider}:${options.model}`,
+            name: `${options.provider || 'ollama'}:${options.model || 'nomic-embed-text'}`,
             provider: config.providers[0] as any,
-            strategy: options.strategy,
+            strategy: options.strategy || 'baseline',
           }],
           dataset: options.queries,
           corpus: options.corpus,
@@ -173,7 +206,7 @@ export function registerAgentCommand(program: Command): void {
     .option('--model <name>', 'Current model', 'unknown')
     .option('--max <n>', 'Maximum hypotheses to generate', '5')
     .option('--output-format <format>', 'Output format (json, summary)', 'json')
-    .action(async (options) => {
+    .action(async (options: { strategy?: string; model?: string; max?: string; outputFormat?: string }) => {
       const startTime = Date.now();
       
       try {
@@ -183,9 +216,9 @@ export function registerAgentCommand(program: Command): void {
         const engine = new HypothesisEngine(kb);
         
         const hypotheses = await engine.generateHypotheses({
-          currentStrategy: options.strategy,
-          currentModel: options.model,
-          maxHypotheses: parseInt(options.max),
+          currentStrategy: options.strategy || 'baseline',
+          currentModel: options.model || 'unknown',
+          maxHypotheses: parseInt(options.max || '5'),
         });
         
         await kb.close();
@@ -251,31 +284,33 @@ export function registerAgentCommand(program: Command): void {
     .option('--num-queries <n>', 'Number of queries to generate', '50')
     .option('--difficulty <level>', 'Difficulty (easy, medium, hard, mixed)', 'mixed')
     .option('--output-format <format>', 'Output format (json, summary)', 'json')
-    .action(async (options) => {
+    .action(async (options: { corpus: string; output: string; provider?: string; model?: string; numQueries?: string; difficulty?: string; outputFormat?: string }) => {
       const startTime = Date.now();
+      const provider = options.provider || 'openai';
+      const model = options.model || 'gpt-4';
       
       try {
         // Check for API key
-        const apiKey = options.provider === 'openai' 
+        const apiKey = provider === 'openai' 
           ? process.env.OPENAI_API_KEY 
           : process.env.GEMINI_API_KEY;
         
         if (!apiKey) {
-          throw new Error(`${options.provider.toUpperCase()}_API_KEY environment variable not set`);
+          throw new Error(`${provider.toUpperCase()}_API_KEY environment variable not set`);
         }
 
         const generator = new SyntheticQueryGenerator({
           corpusPath: options.corpus,
           outputPath: options.output,
           provider: {
-            type: options.provider,
+            type: provider,
             apiKey,
-            model: options.model,
+            model: model,
           } as any,
-          llmModel: options.model,
-          numQueries: parseInt(options.numQueries),
+          llmModel: model,
+          numQueries: parseInt(options.numQueries || '50'),
           queryTypes: ['factual', 'conceptual', 'comparison'],
-          difficulty: options.difficulty as any,
+          difficulty: (options.difficulty || 'mixed') as any,
           includeNegatives: false,
         });
 
@@ -339,14 +374,14 @@ export function registerAgentCommand(program: Command): void {
     .option('--insights', 'Get generated insights')
     .option('--stats', 'Get knowledge base statistics')
     .option('--output-format <format>', 'Output format (json, summary)', 'json')
-    .action(async (options) => {
+    .action(async (options: { query?: string; bestModels?: boolean; bestStrategies?: boolean; failures?: boolean; insights?: boolean; stats?: boolean; outputFormat?: string }) => {
       const startTime = Date.now();
       
       try {
         const kb = new KnowledgeBase();
         await kb.initialize();
 
-        let data: any = {};
+        let data: Record<string, unknown> = {};
         let summary = '';
 
         if (options.bestModels) {
@@ -439,11 +474,11 @@ export function registerAgentCommand(program: Command): void {
     .command('init')
     .description('Initialize EmbedEval for agent use')
     .option('--path <path>', 'Base path for EmbedEval data', '.embedeval')
-    .action(async (options) => {
+    .action(async (options: { path?: string }) => {
       const startTime = Date.now();
       
       try {
-        const basePath = path.resolve(options.path);
+        const basePath = path.resolve(options.path || '.embedeval');
         
         // Create directories
         await fs.ensureDir(path.join(basePath, 'knowledge'));

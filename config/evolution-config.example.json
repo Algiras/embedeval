@@ -1,0 +1,61 @@
+{
+  "_comment": "EmbedEval Evolution Configuration - Copy this to evolution-config.json and customize",
+  
+  "models": {
+    "ollama": {
+      "enabled": true,
+      "models": ["nomic-embed-text", "mxbai-embed-large", "all-minilm"]
+    },
+    "openai": {
+      "enabled": false,
+      "models": ["text-embedding-3-small", "text-embedding-3-large"]
+    },
+    "gemini": {
+      "enabled": false,
+      "models": ["text-embedding-004"]
+    },
+    "cohere": {
+      "enabled": false,
+      "models": ["embed-english-v3.0"]
+    },
+    "huggingface": {
+      "enabled": false,
+      "models": ["BAAI/bge-small-en-v1.5"]
+    }
+  },
+  
+  "enhancements": {
+    "query": ["none", "lowercase", "hyde", "multi_query"],
+    "retrieval": ["cosine", "hybrid_rrf", "hybrid_linear"],
+    "reranking": ["none", "mmr", "cross_encoder_small", "cross_encoder_large"],
+    "chunking": ["none", "fixed_512", "parent_child", "semantic"],
+    "multi_stage": ["none", "two_stage"]
+  },
+  
+  "constraints": {
+    "max_cost_per_query": 0,
+    "max_latency_ms": 1000,
+    "local_only": true,
+    "min_accuracy": 0
+  },
+  
+  "evolution": {
+    "generations": 10,
+    "population_size": 20,
+    "elite_count": 3,
+    "mutation_rate": 0.25,
+    "exhaustive_first": true,
+    "max_combinations": 500
+  },
+  
+  "output": {
+    "dir": "./results",
+    "html_report": true,
+    "save_all_configs": true,
+    "recommendations": {
+      "top_k": 5,
+      "show_tradeoffs": true,
+      "explain_why": true
+    }
+  }
+}

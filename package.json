@@ -7,6 +7,10 @@
     "embedeval": "dist/cli/index.js"
   },
   "scripts": {
+    "config:init": "cp config/evolution-config.example.yaml config/evolution-config.yaml && echo 'Created config/evolution-config.yaml - edit this file to customize'",
+    "find-best": "node scripts/run-with-config.mjs",
+    "find-best:config": "node scripts/run-with-config.mjs config/evolution-config.yaml",
+    "local-vs-paid": "node scripts/local-vs-paid-evolution.mjs",
     "build": "tsc",
     "dev": "ts-node src/cli/index.ts",
     "start": "node dist/cli/index.js",
