@@ -3,19 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EmbedEval - Evaluation Strategy Evolution</title>
+  <title>EmbedEval - HuggingFace Dataset Evolution</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root {
-      --primary: #6366f1; --secondary: #8b5cf6; --success: #22c55e;
-      --warning: #f59e0b; --error: #ef4444; --bg: #0f172a;
-      --bg-card: #1e293b; --text: #e2e8f0; --text-muted: #94a3b8; --border: #334155;
-    }
+    :root { --primary: #6366f1; --secondary: #8b5cf6; --success: #22c55e; --bg: #0f172a; --bg-card: #1e293b; --text: #e2e8f0; --text-muted: #94a3b8; --border: #334155; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 2rem; }
     .container { max-width: 1400px; margin: 0 auto; }
     header { text-align: center; margin-bottom: 2rem; }
-    header nav { margin-bottom: 1rem; display: flex; gap: 1rem; justify-content: center; }
+    header nav { margin-bottom: 1rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
     header nav a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
     h1 { font-size: 2.5rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .subtitle { color: var(--text-muted); }
@@ -23,10 +19,9 @@
     .card { background: var(--bg-card); border-radius: 12px; padding: 1.5rem; border: 1px solid var(--border); }
     .card h2 { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 1rem; }
     .metric { font-size: 2rem; font-weight: 700; color: var(--primary); }
-    .metric-label { color: var(--text-muted); font-size: 0.85rem; }
-    .best-strategy { background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1)); border-color: var(--primary); }
-    .strategy-name { font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem; line-height: 1.4; }
-    .component { display: inline-block; background: var(--bg); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; margin: 0.2rem; }
+    .best { background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1)); border-color: var(--primary); }
+    .strategy-name { font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem; }
+    .gene { display: inline-block; background: var(--bg); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; margin: 0.2rem; }
     .chart-container { height: 300px; }
     table { width: 100%; border-collapse: collapse; }
     th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border); }
@@ -34,6 +29,7 @@
     .rank-1 { color: #fbbf24; } .rank-2 { color: #9ca3af; } .rank-3 { color: #b45309; }
     .bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
     .bar-fill { height: 100%; background: var(--primary); }
+    .info { background: rgba(99, 102, 241, 0.1); border-left: 4px solid var(--primary); padding: 1rem; margin: 1rem 0; border-radius: 0 8px 8px 0; }
     footer { text-align: center; padding: 2rem; color: var(--text-muted); border-top: 1px solid var(--border); margin-top: 2rem; }
     footer a { color: var(--primary); text-decoration: none; }
   </style>
@@ -46,48 +42,56 @@
         <a href="index.html">📊 Meta-Evaluation</a>
         <a href="https://github.com/Algiras/embedeval">📂 GitHub</a>
       </nav>
-      <h1>🧬 Evaluation Strategy Evolution</h1>
-      <p class="subtitle">Testing Different Retrieval Approaches</p>
+      <h1>🧬 HuggingFace Evolution Results</h1>
+      <p class="subtitle">Real Embedding Evaluation with MTEB Datasets</p>
       <p class="subtitle" style="margin-top: 0.5rem; font-size: 0.9rem;">
-        10 generations | 16 strategies evaluated
+        6 generations | 3 embedding models | Combined Benchmark dataset
       </p>
     </header>
 
+    <div class="info">
+      <strong>📊 Dataset:</strong> Combined Benchmark | 
+      <strong>🔢 Queries:</strong> 39 | 
+      <strong>📄 Documents:</strong> 45 |
+      <strong>🤖 Models:</strong> ollama/nomic-embed-text, gemini/embedding-001, gemini/text-embedding-004
+    </div>
+
     <div class="grid">
-      <div class="card best-strategy">
+      <div class="card best">
         <h2>🏆 Best Strategy</h2>
-        <div class="strategy-name">Synonym Expansion | OpenAI Large | Hybrid (Learned) | Paragraph-level | → MMR</div>
+        <div class="strategy-name">Gemini Text Embedding 004 | Hybrid Linear | k10</div>
         <div style="margin: 1rem 0;">
-          <span class="metric">81.2%</span>
-          <span class="metric-label">fitness</span>
+          <span class="metric">98.1%</span>
+          <span style="color: var(--text-muted);">fitness</span>
         </div>
         <div>
-          <span class="component">📊 HYBRID_LEARNED</span>
-          <span class="component">🔍 EXPANDED_SYNONYMS</span>
-          <span class="component">📄 PARAGRAPH</span>
-          <span class="component">🎯 MMR</span>
+          <span class="gene">🤖 gemini/text-embedding-004</span>
+          <span class="gene">🔍 HYBRID_LINEAR</span>
+          <span class="gene">📝 RAW</span>
+          <span class="gene">🎯 NONE</span>
         </div>
         <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
-          NDCG: 85.7% |
-          Recall: 83.9% |
-          Latency: 45ms
+          NDCG@10: 96.5% |
+          Recall@10: 100.0% |
+          MRR: 96.2% |
+          Latency: 0ms
         </div>
       </div>
       
       <div class="card">
-        <h2>Performance by Query Type</h2>
-        <div class="chart-container"><canvas id="queryTypeChart"></canvas></div>
+        <h2>Evolution Progress</h2>
+        <div class="chart-container"><canvas id="evolutionChart"></canvas></div>
       </div>
     </div>
 
     <div class="grid">
       <div class="card">
-        <h2>Evolution Progress</h2>
-        <div class="chart-container"><canvas id="evolutionChart"></canvas></div>
+        <h2>Model Performance Comparison</h2>
+        <div class="chart-container"><canvas id="modelChart"></canvas></div>
       </div>
       <div class="card">
-        <h2>Performance by Difficulty</h2>
-        <div class="chart-container"><canvas id="difficultyChart"></canvas></div>
+        <h2>Retrieval Method Comparison</h2>
+        <div class="chart-container"><canvas id="methodChart"></canvas></div>
       </div>
     </div>
 
@@ -98,194 +102,134 @@
           <tr>
             <th>#</th>
             <th>Strategy</th>
+            <th>Model</th>
             <th>Fitness</th>
             <th>NDCG@10</th>
             <th>Recall@10</th>
             <th>Latency</th>
-            <th>Cost</th>
           </tr>
         </thead>
         <tbody>
           
           <tr>
             <td class="rank-1">#1</td>
-            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | OpenAI Large | Hybrid (Learned) | Paragraph-level | → MMR</td>
+            <td style="font-size: 0.85rem;">HYBRID_LINEAR | RAW | NONE</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">text-embedding-004</td>
             <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 81.16615906251134%;"></div></div>
-              81.2%
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 98.11275070720592%;"></div></div>
+              98.1%
             </td>
-            <td>85.7%</td>
-            <td>83.9%</td>
-            <td>45ms</td>
-            <td>$0.0001</td>
+            <td>96.5%</td>
+            <td>100.0%</td>
+            <td>0ms</td>
           </tr>
           <tr>
             <td class="rank-2">#2</td>
-            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | OpenAI Large | Hybrid (Learned) | Paragraph-level | → MMR | + Diversity Filter</td>
+            <td style="font-size: 0.85rem;">HYBRID_LINEAR | RAW | NONE</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">text-embedding-004</td>
             <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 80.81126482927907%;"></div></div>
-              80.8%
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 98.11275070720592%;"></div></div>
+              98.1%
             </td>
-            <td>85.1%</td>
-            <td>83.8%</td>
-            <td>45ms</td>
-            <td>$0.0001</td>
+            <td>96.5%</td>
+            <td>100.0%</td>
+            <td>0ms</td>
           </tr>
           <tr>
             <td class="rank-3">#3</td>
-            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | OpenAI Large | Hybrid (Learned) | → MMR | + Context Expansion</td>
+            <td style="font-size: 0.85rem;">HYBRID_LINEAR | RAW | NONE</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">text-embedding-004</td>
             <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 80.68071107282906%;"></div></div>
-              80.7%
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 98.11275070720592%;"></div></div>
+              98.1%
             </td>
-            <td>82.2%</td>
-            <td>82.6%</td>
-            <td>35ms</td>
-            <td>$0.0001</td>
+            <td>96.5%</td>
+            <td>100.0%</td>
+            <td>0ms</td>
           </tr>
           <tr>
             <td class="">#4</td>
-            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | OpenAI Large | Hybrid (Learned) | → MMR | + Context Expansion</td>
+            <td style="font-size: 0.85rem;">HYBRID_RRF | RAW | NONE</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">text-embedding-004</td>
             <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 80.63220909140507%;"></div></div>
-              80.6%
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 98.10763431586234%;"></div></div>
+              98.1%
             </td>
-            <td>82.2%</td>
-            <td>82.3%</td>
-            <td>35ms</td>
-            <td>$0.0001</td>
+            <td>96.5%</td>
+            <td>100.0%</td>
+            <td>0ms</td>
           </tr>
           <tr>
             <td class="">#5</td>
-            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | OpenAI Large | Hybrid (Learned) | Semantic Chunking | → MMR | + Context Expansion</td>
+            <td style="font-size: 0.85rem;">HYBRID_LINEAR | EXPANDED | NONE</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">text-embedding-004</td>
             <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 79.3814187140142%;"></div></div>
-              79.4%
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 98.05843324086872%;"></div></div>
+              98.1%
             </td>
-            <td>89.3%</td>
-            <td>86.3%</td>
-            <td>85ms</td>
-            <td>$0.0001</td>
+            <td>96.3%</td>
+            <td>100.0%</td>
+            <td>0ms</td>
           </tr>
           <tr>
             <td class="">#6</td>
-            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | OpenAI Large | Hybrid (Learned) | Semantic Chunking | → MMR | + Context Expansion</td>
+            <td style="font-size: 0.85rem;">HYBRID_LINEAR | RAW | NONE</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">text-embedding-004</td>
             <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 79.08302783441522%;"></div></div>
-              79.1%
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 97.65376061155465%;"></div></div>
+              97.7%
             </td>
-            <td>88.9%</td>
-            <td>86.3%</td>
-            <td>85ms</td>
-            <td>$0.0001</td>
+            <td>95.9%</td>
+            <td>98.7%</td>
+            <td>0ms</td>
           </tr>
           <tr>
             <td class="">#7</td>
-            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | Nomic Embed | Hybrid (Learned) | Semantic Chunking | → MMR | + Context Expansion</td>
+            <td style="font-size: 0.85rem;">VECTOR_COSINE | LOWERCASE | NONE</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">text-embedding-004</td>
             <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 76.1540703944121%;"></div></div>
-              76.2%
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 97.51868787947421%;"></div></div>
+              97.5%
             </td>
-            <td>81.3%</td>
-            <td>77.9%</td>
-            <td>85ms</td>
-            <td>$0.0000</td>
+            <td>95.3%</td>
+            <td>100.0%</td>
+            <td>0ms</td>
           </tr>
           <tr>
             <td class="">#8</td>
-            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | Nomic Embed | Hybrid (Learned) | Fixed 256 tokens | → MMR</td>
+            <td style="font-size: 0.85rem;">HYBRID_LINEAR | LOWERCASE | NONE</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">embedding-001</td>
             <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 75.57693974513175%;"></div></div>
-              75.6%
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 97.36832056006686%;"></div></div>
+              97.4%
             </td>
-            <td>78.0%</td>
-            <td>68.2%</td>
-            <td>55ms</td>
-            <td>$0.0000</td>
+            <td>95.7%</td>
+            <td>97.4%</td>
+            <td>0ms</td>
           </tr>
           <tr>
             <td class="">#9</td>
-            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | OpenAI Small | Vector (Dot Product) | Fixed 512 tokens | → Lost-in-Middle Fix | + Context Expansion</td>
+            <td style="font-size: 0.85rem;">HYBRID_LINEAR | RAW | NONE</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">text-embedding-004</td>
             <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 72.60072520631289%;"></div></div>
-              72.6%
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 96.06386916800952%;"></div></div>
+              96.1%
             </td>
-            <td>70.0%</td>
-            <td>65.0%</td>
-            <td>45ms</td>
-            <td>$0.0000</td>
+            <td>93.2%</td>
+            <td>98.7%</td>
+            <td>0ms</td>
           </tr>
           <tr>
             <td class="">#10</td>
-            <td style="font-size: 0.85rem; max-width: 400px;">LLM Rewrite | OpenAI Large | Hybrid (Learned) | Sentence-level | → MMR</td>
+            <td style="font-size: 0.85rem;">VECTOR_COSINE | LOWERCASE | NONE</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">embedding-001</td>
             <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 65.27964907539256%;"></div></div>
-              65.3%
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 96.04655890922419%;"></div></div>
+              96.0%
             </td>
-            <td>91.0%</td>
-            <td>75.9%</td>
-            <td>260ms</td>
-            <td>$0.0011</td>
-          </tr>
-          <tr>
-            <td class="">#11</td>
-            <td style="font-size: 0.85rem; max-width: 400px;">OpenAI Large | Vector (Euclidean) | Semantic Chunking | → Cross-Encoder (Large) | + Context Expansion</td>
-            <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 64.05948219794146%;"></div></div>
-              64.1%
-            </td>
-            <td>75.3%</td>
-            <td>72.0%</td>
-            <td>270ms</td>
-            <td>$0.0001</td>
-          </tr>
-          <tr>
-            <td class="">#12</td>
-            <td style="font-size: 0.85rem; max-width: 400px;">Step-Back Prompting | OpenAI Large | Hybrid (Linear) | Semantic Chunking | → MMR | + Context Expansion</td>
-            <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 61.563681301471306%;"></div></div>
-              61.6%
-            </td>
-            <td>88.5%</td>
-            <td>85.4%</td>
-            <td>430ms</td>
-            <td>$0.0021</td>
-          </tr>
-          <tr>
-            <td class="">#13</td>
-            <td style="font-size: 0.85rem; max-width: 400px;">LLM Rewrite | MxBai Large | Hybrid (Learned) | Fixed 512 tokens | → Cohere Rerank | + Context Expansion</td>
-            <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 61.403850775499166%;"></div></div>
-              61.4%
-            </td>
-            <td>87.9%</td>
-            <td>82.8%</td>
-            <td>385ms</td>
-            <td>$0.0020</td>
-          </tr>
-          <tr>
-            <td class="">#14</td>
-            <td style="font-size: 0.85rem; max-width: 400px;">LLM Expansion | OpenAI Large | Vector (Cosine) | → Cohere Rerank | + Score Threshold</td>
-            <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 60.91600581891362%;"></div></div>
-              60.9%
-            </td>
-            <td>85.7%</td>
-            <td>85.3%</td>
-            <td>370ms</td>
-            <td>$0.0021</td>
-          </tr>
-          <tr>
-            <td class="">#15</td>
-            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | OpenAI Large | Vector (Cosine) | → LLM Listwise | + Context Expansion</td>
-            <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 54.60977337082495%;"></div></div>
-              54.6%
-            </td>
-            <td>86.3%</td>
-            <td>85.9%</td>
-            <td>825ms</td>
-            <td>$0.0201</td>
+            <td>93.3%</td>
+            <td>97.4%</td>
+            <td>0ms</td>
           </tr>
         </tbody>
       </table>
@@ -298,42 +242,39 @@
   </div>
 
   <script>
-    // Evolution chart
+    // Evolution progress
     new Chart(document.getElementById('evolutionChart'), {
       type: 'line',
       data: {
-        labels: ["Gen 1","Gen 2","Gen 3","Gen 4","Gen 5","Gen 6","Gen 7","Gen 8","Gen 9","Gen 10"],
+        labels: ["Gen 1","Gen 2","Gen 3","Gen 4","Gen 5","Gen 6"],
         datasets: [
-          { label: 'Best', data: [0.7549669137493981,0.76645308830642,0.7714790542018842,0.7793773063492797,0.8068071107282906,0.8068071107282906,0.8068071107282906,0.8116615906251134,0.8116615906251134,0.8116615906251134], borderColor: '#6366f1', fill: false },
-          { label: 'Average', data: [0.6293501610141267,0.6754003876405784,0.7107022412696697,0.7207170485717932,0.7326321078476847,0.6786418950297222,0.7001471869762549,0.7204091266893763,0.7444657271005413,0.7048641019201204], borderColor: '#8b5cf6', fill: false },
-          { label: 'Diversity', data: [1,1,0.9375,0.9375,0.8125,1,0.9375,0.9375,0.9375,0.8125], borderColor: '#22c55e', borderDash: [5,5], fill: false }
+          { label: 'Best', data: ["97.9","98.1","98.1","98.1","98.1","98.1"], borderColor: '#6366f1', fill: false, tension: 0.3 },
+          { label: 'Average', data: ["88.8","92.4","91.3","97.3","97.1","97.5"], borderColor: '#8b5cf6', fill: false, tension: 0.3 }
         ]
       },
-      options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: false } } }
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8' } } }, scales: { x: { ticks: { color: '#94a3b8' } }, y: { ticks: { color: '#94a3b8' }, title: { display: true, text: 'Fitness %', color: '#94a3b8' } } } }
     });
 
-    // Query type chart
-    const queryTypes = ["factual","procedural","best_practice","educational","technical","keyword","comparison","specific","abbreviation"];
-    const queryNdcg = [100,88.30245038301567,81.26964554743849,96.10275739217204,79.63110675449121,89.43826122164434,86.60820067746216,88.67221569070855,92.11148158989833];
-    new Chart(document.getElementById('queryTypeChart'), {
+    // Model comparison
+    const modelData = {"text-embedding-004":0.9771757966717339,"embedding-001":0.9670743973464553};
+    new Chart(document.getElementById('modelChart'), {
       type: 'bar',
       data: {
-        labels: queryTypes,
-        datasets: [{ label: 'NDCG@10', data: queryNdcg, backgroundColor: '#6366f1' }]
+        labels: Object.keys(modelData),
+        datasets: [{ label: 'Avg Fitness %', data: Object.values(modelData).map(v => (v * 100).toFixed(1)), backgroundColor: '#6366f1' }]
       },
-      options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
+      options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { labels: { color: '#94a3b8' } } }, scales: { x: { ticks: { color: '#94a3b8' }, max: 100 }, y: { ticks: { color: '#94a3b8' } } } }
     });
 
-    // Difficulty chart
-    const difficulties = ["easy","medium","hard"];
-    const diffNdcg = [98.70091913072402,90.79607689335101,76.94535625511143];
-    new Chart(document.getElementById('difficultyChart'), {
+    // Method comparison
+    const methodData = {"HYBRID_LINEAR":0.9764037652887392,"HYBRID_RRF":0.9810763431586234,"VECTOR_COSINE":0.967826233943492};
+    new Chart(document.getElementById('methodChart'), {
       type: 'bar',
       data: {
-        labels: difficulties,
-        datasets: [{ label: 'NDCG@10', data: diffNdcg, backgroundColor: '#8b5cf6' }]
+        labels: Object.keys(methodData),
+        datasets: [{ label: 'Avg Fitness %', data: Object.values(methodData).map(v => (v * 100).toFixed(1)), backgroundColor: '#8b5cf6' }]
       },
-      options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8' } } }, scales: { x: { ticks: { color: '#94a3b8' } }, y: { ticks: { color: '#94a3b8' }, max: 100 } } }
     });
   </script>
 </body>

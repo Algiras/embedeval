@@ -1,0 +1,25 @@
+{"id":"q-ml-1","query":"How does gradient descent work in machine learning?","relevantDocs":["ml-3"],"type":"technical"}
+{"id":"q-ml-2","query":"What is transfer learning and why use pre-trained models?","relevantDocs":["ml-5"],"type":"technical"}
+{"id":"q-ml-3","query":"How to prevent overfitting in neural networks?","relevantDocs":["ml-4"],"type":"technical"}
+{"id":"q-ml-4","query":"deep learning neural network layers","relevantDocs":["ml-2"],"type":"keyword"}
+{"id":"q-nlp-1","query":"How do word embeddings capture semantic meaning?","relevantDocs":["nlp-1"],"type":"technical"}
+{"id":"q-nlp-2","query":"What is the transformer architecture in NLP?","relevantDocs":["nlp-2"],"type":"technical"}
+{"id":"q-nlp-3","query":"BERT masked language model bidirectional","relevantDocs":["nlp-3"],"type":"keyword"}
+{"id":"q-nlp-4","query":"How to identify names and organizations in text?","relevantDocs":["nlp-4"],"type":"technical"}
+{"id":"q-db-1","query":"Difference between SQL and NoSQL databases","relevantDocs":["db-1","db-2"],"type":"comparison"}
+{"id":"q-db-2","query":"How do vector databases enable similarity search?","relevantDocs":["db-4"],"type":"technical"}
+{"id":"q-db-3","query":"database indexing B-tree performance","relevantDocs":["db-3"],"type":"keyword"}
+{"id":"q-db-4","query":"How to scale a database with sharding?","relevantDocs":["db-5"],"type":"technical"}
+{"id":"q-web-1","query":"REST API design HTTP methods","relevantDocs":["web-1"],"type":"technical"}
+{"id":"q-web-2","query":"How is GraphQL different from REST?","relevantDocs":["web-2"],"type":"comparison"}
+{"id":"q-web-3","query":"React components virtual DOM hooks","relevantDocs":["web-3"],"type":"keyword"}
+{"id":"q-web-4","query":"How to protect web applications from attacks?","relevantDocs":["web-5"],"type":"technical"}
+{"id":"q-devops-1","query":"What are Docker containers and how do they work?","relevantDocs":["devops-1"],"type":"technical"}
+{"id":"q-devops-2","query":"Kubernetes pod deployment service","relevantDocs":["devops-2"],"type":"keyword"}
+{"id":"q-devops-3","query":"How to set up automated CI/CD pipelines?","relevantDocs":["devops-3"],"type":"technical"}
+{"id":"q-devops-4","query":"Infrastructure as Code Terraform vs Pulumi","relevantDocs":["devops-4"],"type":"comparison"}
+{"id":"q-cross-1","query":"How to store machine learning embeddings efficiently?","relevantDocs":["db-4","nlp-1"],"type":"cross"}
+{"id":"q-cross-2","query":"Deploy ML model containers to Kubernetes","relevantDocs":["devops-1","devops-2"],"type":"cross"}
+{"id":"q-cross-3","query":"Build API for NLP text classification","relevantDocs":["web-1","nlp-5"],"type":"cross"}
+{"id":"q-trick-1","query":"How to train a machine learning model?","relevantDocs":["ml-1","ml-3"],"type":"technical"}
+{"id":"q-trick-2","query":"What is the best architecture for NLP?","relevantDocs":["nlp-2","nlp-3"],"type":"technical"}

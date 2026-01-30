@@ -1,0 +1,16 @@
+{"id":"py-1","content":"Python is an interpreted, high-level programming language known for readability. It uses indentation for code blocks and supports multiple paradigms including procedural and object-oriented programming."}
+{"id":"js-1","content":"JavaScript is a scripting language originally designed for web browsers. It uses curly braces for code blocks and supports event-driven, functional, and object-oriented programming styles."}
+{"id":"sup-1","content":"Supervised learning trains models using labeled data where correct outputs are known. The algorithm learns to map inputs to outputs by minimizing prediction error on training examples."}
+{"id":"unsup-1","content":"Unsupervised learning finds patterns in data without labeled examples. Common tasks include clustering similar items together and dimensionality reduction for visualization."}
+{"id":"docker-1","content":"Docker containers share the host operating system kernel, making them lightweight and fast to start. They package applications with dependencies but do not include a full OS."}
+{"id":"vm-1","content":"Virtual machines emulate complete hardware including their own operating system. They provide strong isolation but require more resources than containers due to the full OS overhead."}
+{"id":"rest-1","content":"REST APIs expose resources at different URLs with standard HTTP methods. Each endpoint returns a fixed data structure, and clients may need multiple requests to gather related data."}
+{"id":"graphql-1","content":"GraphQL APIs expose a single endpoint where clients specify exactly what data they need in a query. The server returns only requested fields, reducing over-fetching and under-fetching."}
+{"id":"sql-1","content":"Relational databases store data in tables with predefined schemas and relationships. They ensure ACID properties and use SQL for complex queries with joins across tables."}
+{"id":"nosql-1","content":"Document databases store data in flexible JSON-like documents without fixed schemas. They scale horizontally easily but may sacrifice some consistency guarantees for availability."}
+{"id":"cnn-1","content":"Convolutional neural networks excel at processing grid-like data such as images. They use convolution layers to detect local patterns and pooling to reduce spatial dimensions."}
+{"id":"rnn-1","content":"Recurrent neural networks process sequential data by maintaining hidden state across time steps. They are suited for text and time series where order matters."}
+{"id":"bert-1","content":"BERT is a bidirectional transformer encoder pretrained on masked language modeling. It creates contextual embeddings useful for classification, NER, and question answering."}
+{"id":"gpt-1","content":"GPT is a unidirectional transformer decoder pretrained on next token prediction. It excels at text generation, completion, and can be prompted for various tasks."}
+{"id":"precision-1","content":"Precision measures what fraction of predicted positives are actually positive. High precision means few false positives, important when false alarms are costly."}
+{"id":"recall-1","content":"Recall measures what fraction of actual positives were correctly predicted. High recall means few false negatives, important when missing cases is costly."}

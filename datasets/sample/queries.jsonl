@@ -1,0 +1,10 @@
+{"id":"q1","query":"What is machine learning?","relevantDocs":["d1","d2"],"tags":["technical"]}
+{"id":"q2","query":"How to make sourdough bread?","relevantDocs":["d3"],"tags":["cooking"]}
+{"id":"q3","query":"Best Python web frameworks","relevantDocs":["d4","d5"],"tags":["programming"]}
+{"id":"q4","query":"Climate change effects on ecosystems","relevantDocs":["d6"],"tags":["science"]}
+{"id":"q5","query":"Introduction to quantum computing basics","relevantDocs":["d7","d8"],"tags":["technical"]}
+{"id":"q6","query":"neural network architecture","relevantDocs":["d1","d2"],"tags":["technical"]}
+{"id":"q7","query":"fermentation process for bread","relevantDocs":["d3"],"tags":["cooking"]}
+{"id":"q8","query":"Django vs Flask comparison","relevantDocs":["d4","d5"],"tags":["programming"]}
+{"id":"q9","query":"global warming impacts","relevantDocs":["d6"],"tags":["science"]}
+{"id":"q10","query":"qubits and superposition","relevantDocs":["d7","d8"],"tags":["technical"]}

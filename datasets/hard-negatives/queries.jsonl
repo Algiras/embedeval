@@ -1,0 +1,14 @@
+{"id":"hard-1","query":"Which programming language uses indentation for blocks?","relevantDocs":["py-1"],"difficulty":"hard"}
+{"id":"hard-2","query":"What language was designed for browsers?","relevantDocs":["js-1"],"difficulty":"hard"}
+{"id":"hard-3","query":"Learning from labeled examples with known outputs","relevantDocs":["sup-1"],"difficulty":"hard"}
+{"id":"hard-4","query":"Finding patterns without labeled data","relevantDocs":["unsup-1"],"difficulty":"hard"}
+{"id":"hard-5","query":"Lightweight isolation that shares host kernel","relevantDocs":["docker-1"],"difficulty":"hard"}
+{"id":"hard-6","query":"Complete OS emulation with strong isolation","relevantDocs":["vm-1"],"difficulty":"hard"}
+{"id":"hard-7","query":"API style with multiple endpoints and fixed responses","relevantDocs":["rest-1"],"difficulty":"hard"}
+{"id":"hard-8","query":"Single endpoint API where clients specify fields","relevantDocs":["graphql-1"],"difficulty":"hard"}
+{"id":"hard-9","query":"Neural networks for image and spatial data","relevantDocs":["cnn-1"],"difficulty":"hard"}
+{"id":"hard-10","query":"Neural networks for sequences with memory","relevantDocs":["rnn-1"],"difficulty":"hard"}
+{"id":"hard-11","query":"Bidirectional transformer with masked language modeling","relevantDocs":["bert-1"],"difficulty":"hard"}
+{"id":"hard-12","query":"Autoregressive transformer for text generation","relevantDocs":["gpt-1"],"difficulty":"hard"}
+{"id":"hard-13","query":"Metric for avoiding false positives","relevantDocs":["precision-1"],"difficulty":"hard"}
+{"id":"hard-14","query":"Metric for avoiding missed positives","relevantDocs":["recall-1"],"difficulty":"hard"}

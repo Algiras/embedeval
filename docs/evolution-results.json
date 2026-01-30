@@ -1,1707 +1,342 @@
 {
-  "timestamp": "2026-01-30T19:58:52.590Z",
+  "timestamp": "2026-01-30T20:07:14.584Z",
+  "dataset": "Combined Benchmark",
+  "modelsUsed": [
+    "ollama/nomic-embed-text",
+    "gemini/embedding-001",
+    "gemini/text-embedding-004"
+  ],
   "best": {
-    "id": "2436eeb6-9f90-493d-bc09-2b244d3f3f41",
-    "generation": 10,
-    "createdAt": "2026-01-30T19:58:52.588Z",
+    "id": "c4836423-2de5-4243-b506-eb2501bdba9f",
+    "generation": 4,
     "parentIds": [
-      "a7f5b4dc-f6b2-45a1-a008-4fd1316dec87"
+      "6b1b715f-8b69-4301-a1df-384466ad0dfa"
     ],
-    "components": {
-      "embeddingModel": "OPENAI_LARGE",
-      "retrievalMethod": "HYBRID_LEARNED",
-      "chunkingStrategy": "PARAGRAPH",
-      "queryProcessor": "EXPANDED_SYNONYMS",
-      "reranker": "MMR",
-      "postProcessor": "NONE",
-      "topK": 50,
-      "rerankTopK": 50,
-      "hybridAlpha": 0.7,
-      "mmrLambda": 0.5,
+    "genes": {
+      "embeddingModel": "gemini/text-embedding-004",
+      "retrievalMethod": "HYBRID_LINEAR",
+      "queryProcessor": "RAW",
+      "reranker": "NONE",
+      "topK": 10,
+      "hybridAlpha": 0.8380727092759395,
       "scoreThreshold": 0
     },
     "fitness": {
-      "byQueryType": {
-        "factual": {
-          "ndcg": 1,
-          "recall": 0.9573724889787394,
-          "mrr": 0.9182600117666533
-        },
-        "procedural": {
-          "ndcg": 0.8830245038301567,
-          "recall": 0.8585803322066046,
-          "mrr": 0.8332707508865759
-        },
-        "best_practice": {
-          "ndcg": 0.8126964554743848,
-          "recall": 0.7992817449931731,
-          "mrr": 0.7663133619657434
-        },
-        "educational": {
-          "ndcg": 0.9610275739217204,
-          "recall": 0.9640168907299758,
-          "mrr": 0.9282637471091795
-        },
-        "technical": {
-          "ndcg": 0.7963110675449121,
-          "recall": 0.7774061935090347,
-          "mrr": 0.7590068630885677
-        },
-        "keyword": {
-          "ndcg": 0.8943826122164434,
-          "recall": 0.8804741284950791,
-          "mrr": 0.8620239756121305
-        },
-        "comparison": {
-          "ndcg": 0.8660820067746217,
-          "recall": 0.8567347915375088,
-          "mrr": 0.8399851641504075
-        },
-        "specific": {
-          "ndcg": 0.8867221569070856,
-          "recall": 0.8701264469757637,
-          "mrr": 0.8789319684335636
-        },
-        "abbreviation": {
-          "ndcg": 0.9211148158989834,
-          "recall": 0.8840723655361299,
-          "mrr": 0.8571305563731707
-        }
-      },
-      "byDifficulty": {
-        "easy": {
-          "ndcg": 0.9870091913072402,
-          "recall": 0.9647246818652745,
-          "mrr": 0.9290510427748192
-        },
-        "medium": {
-          "ndcg": 0.9079607689335101,
-          "recall": 0.8887611068611085,
-          "mrr": 0.8761228255813852
-        },
-        "hard": {
-          "ndcg": 0.7694535625511143,
-          "recall": 0.7537538632509968,
-          "mrr": 0.7294121192409829
-        }
-      },
-      "overall": {
-        "ndcg10": 0.8574897894174915,
-        "recall10": 0.8394023834871829,
-        "mrr10": 0.8180422403072194,
-        "avgLatencyMs": 45,
-        "costPerQuery": 0.00012999999999999996
-      },
-      "fitness": 0.8116615906251134
+      "ndcg10": 0.9648775414267502,
+      "recall10": 1,
+      "mrr10": 0.9615384615384616,
+      "hitRate": 1,
+      "latencyMs": 0.10256410256410256,
+      "fitness": 0.9811275070720592,
+      "costPerQuery": 0.00001
     }
   },
   "history": [
     {
       "generation": 1,
-      "best": 0.7549669137493981,
-      "avg": 0.6293501610141267,
-      "diversity": 1,
-      "bestStrategy": "expanded_synonyms-nomic-embed-hybrid-rrf-fixed-512-mmr-k10"
+      "best": 0.9792970589928173,
+      "avg": 0.8883445902126139,
+      "bestStrategy": "embedding-001-hybrid_linear-score_threshold-k20"
     },
     {
       "generation": 2,
-      "best": 0.76645308830642,
-      "avg": 0.6754003876405784,
-      "diversity": 1,
-      "bestStrategy": "expanded_synonyms-nomic-embed-hybrid-rrf-paragraph-mmr-k10"
+      "best": 0.980910927668422,
+      "avg": 0.9242756058364107,
+      "bestStrategy": "text-embedding-004-vector_cosine-score_threshold-k10"
     },
     {
       "generation": 3,
-      "best": 0.7714790542018842,
-      "avg": 0.7107022412696697,
-      "diversity": 0.9375,
-      "bestStrategy": "expanded_synonyms-nomic-embed-hybrid-learned-hierarchical-mmr-k10"
+      "best": 0.9811275070720592,
+      "avg": 0.9130249202420135,
+      "bestStrategy": "text-embedding-004-hybrid_linear-k10"
     },
     {
       "generation": 4,
-      "best": 0.7793773063492797,
-      "avg": 0.7207170485717932,
-      "diversity": 0.9375,
-      "bestStrategy": "expanded_synonyms-openai-small-hybrid-linear-paragraph-mmr-k10"
+      "best": 0.9811275070720592,
+      "avg": 0.9728683090296487,
+      "bestStrategy": "text-embedding-004-hybrid_linear-k10"
     },
     {
       "generation": 5,
-      "best": 0.8068071107282906,
-      "avg": 0.7326321078476847,
-      "diversity": 0.8125,
-      "bestStrategy": "expanded_synonyms-openai-large-hybrid-learned-mmr-k10"
+      "best": 0.9811275070720592,
+      "avg": 0.9708628104957194,
+      "bestStrategy": "text-embedding-004-hybrid_linear-k10"
     },
     {
       "generation": 6,
-      "best": 0.8068071107282906,
-      "avg": 0.6786418950297222,
-      "diversity": 1,
-      "bestStrategy": "expanded_synonyms-openai-large-hybrid-learned-mmr-k10"
-    },
-    {
-      "generation": 7,
-      "best": 0.8068071107282906,
-      "avg": 0.7001471869762549,
-      "diversity": 0.9375,
-      "bestStrategy": "expanded_synonyms-openai-large-hybrid-learned-mmr-k10"
-    },
-    {
-      "generation": 8,
-      "best": 0.8116615906251134,
-      "avg": 0.7204091266893763,
-      "diversity": 0.9375,
-      "bestStrategy": "expanded_synonyms-openai-large-hybrid-learned-paragraph-mmr-k50"
-    },
-    {
-      "generation": 9,
-      "best": 0.8116615906251134,
-      "avg": 0.7444657271005413,
-      "diversity": 0.9375,
-      "bestStrategy": "expanded_synonyms-openai-large-hybrid-learned-paragraph-mmr-k50"
-    },
-    {
-      "generation": 10,
-      "best": 0.8116615906251134,
-      "avg": 0.7048641019201204,
-      "diversity": 0.8125,
-      "bestStrategy": "expanded_synonyms-openai-large-hybrid-learned-paragraph-mmr-k50"
+      "best": 0.9811275070720592,
+      "avg": 0.9751555168066783,
+      "bestStrategy": "text-embedding-004-hybrid_linear-k10"
     }
   ],
+  "modelComparison": {
+    "text-embedding-004": 0.9771757966717339,
+    "embedding-001": 0.9670743973464553
+  },
+  "methodComparison": {
+    "HYBRID_LINEAR": 0.9764037652887392,
+    "HYBRID_RRF": 0.9810763431586234,
+    "VECTOR_COSINE": 0.967826233943492
+  },
   "population": [
     {
-      "name": "Synonym Expansion | OpenAI Large | Hybrid (Learned) | Paragraph-level | → MMR",
-      "id": "c4e3670f-cecb-4917-a417-1ad59fa6fd68",
-      "generation": 10,
-      "createdAt": "2026-01-30T19:58:52.588Z",
+      "name": "Gemini Text Embedding 004 | Hybrid Linear | k10",
+      "id": "a0c1aef0-6e2c-4bdb-9914-dc2c7ff231c9",
+      "generation": 4,
       "parentIds": [
-        "1440c21b-f880-44b6-a916-4b0acb049396"
+        "ed616124-6843-43c4-84af-8c49ffbd4287"
       ],
-      "components": {
-        "embeddingModel": "OPENAI_LARGE",
-        "retrievalMethod": "HYBRID_LEARNED",
-        "chunkingStrategy": "PARAGRAPH",
-        "queryProcessor": "EXPANDED_SYNONYMS",
-        "reranker": "MMR",
-        "postProcessor": "NONE",
-        "topK": 50,
-        "rerankTopK": 50,
-        "hybridAlpha": 0.7,
-        "mmrLambda": 0.5,
-        "scoreThreshold": 0
-      },
-      "fitness": {
-        "byQueryType": {
-          "factual": {
-            "ndcg": 1,
-            "recall": 0.9573724889787394,
-            "mrr": 0.9182600117666533
-          },
-          "procedural": {
-            "ndcg": 0.8830245038301567,
-            "recall": 0.8585803322066046,
-            "mrr": 0.8332707508865759
-          },
-          "best_practice": {
-            "ndcg": 0.8126964554743848,
-            "recall": 0.7992817449931731,
-            "mrr": 0.7663133619657434
-          },
-          "educational": {
-            "ndcg": 0.9610275739217204,
-            "recall": 0.9640168907299758,
-            "mrr": 0.9282637471091795
-          },
-          "technical": {
-            "ndcg": 0.7963110675449121,
-            "recall": 0.7774061935090347,
-            "mrr": 0.7590068630885677
-          },
-          "keyword": {
-            "ndcg": 0.8943826122164434,
-            "recall": 0.8804741284950791,
-            "mrr": 0.8620239756121305
-          },
-          "comparison": {
-            "ndcg": 0.8660820067746217,
-            "recall": 0.8567347915375088,
-            "mrr": 0.8399851641504075
-          },
-          "specific": {
-            "ndcg": 0.8867221569070856,
-            "recall": 0.8701264469757637,
-            "mrr": 0.8789319684335636
-          },
-          "abbreviation": {
-            "ndcg": 0.9211148158989834,
-            "recall": 0.8840723655361299,
-            "mrr": 0.8571305563731707
-          }
-        },
-        "byDifficulty": {
-          "easy": {
-            "ndcg": 0.9870091913072402,
-            "recall": 0.9647246818652745,
-            "mrr": 0.9290510427748192
-          },
-          "medium": {
-            "ndcg": 0.9079607689335101,
-            "recall": 0.8887611068611085,
-            "mrr": 0.8761228255813852
-          },
-          "hard": {
-            "ndcg": 0.7694535625511143,
-            "recall": 0.7537538632509968,
-            "mrr": 0.7294121192409829
-          }
-        },
-        "overall": {
-          "ndcg10": 0.8574897894174915,
-          "recall10": 0.8394023834871829,
-          "mrr10": 0.8180422403072194,
-          "avgLatencyMs": 45,
-          "costPerQuery": 0.00012999999999999996
-        },
-        "fitness": 0.8116615906251134
-      }
-    },
-    {
-      "name": "Synonym Expansion | OpenAI Large | Hybrid (Learned) | Paragraph-level | → MMR | + Diversity Filter",
-      "id": "557610cf-02cb-4835-9883-f47cf73b604b",
-      "generation": 12,
-      "createdAt": "2026-01-30T19:58:52.589Z",
-      "parentIds": [
-        "9edb6f32-dffa-40f6-8a81-17f003c567ee"
-      ],
-      "components": {
-        "embeddingModel": "OPENAI_LARGE",
-        "retrievalMethod": "HYBRID_LEARNED",
-        "chunkingStrategy": "PARAGRAPH",
-        "queryProcessor": "EXPANDED_SYNONYMS",
-        "reranker": "MMR",
-        "postProcessor": "DIVERSITY",
-        "topK": 50,
-        "rerankTopK": 50,
-        "hybridAlpha": 0.7,
-        "mmrLambda": 0.5,
-        "scoreThreshold": 0
-      },
-      "fitness": {
-        "byQueryType": {
-          "factual": {
-            "ndcg": 0.9940115179996449,
-            "recall": 0.9938659527364255,
-            "mrr": 0.9007195573936632
-          },
-          "procedural": {
-            "ndcg": 0.8634218665467227,
-            "recall": 0.8508991117645938,
-            "mrr": 0.8331404306117682
-          },
-          "best_practice": {
-            "ndcg": 0.8518164767988368,
-            "recall": 0.8516516664396493,
-            "mrr": 0.7911976776707683
-          },
-          "educational": {
-            "ndcg": 0.963075068892677,
-            "recall": 0.9632710229909811,
-            "mrr": 0.9173486380645305
-          },
-          "technical": {
-            "ndcg": 0.7908636622817549,
-            "recall": 0.7778110083819962,
-            "mrr": 0.7500324855677929
-          },
-          "keyword": {
-            "ndcg": 0.9013841617583488,
-            "recall": 0.8841182543212508,
-            "mrr": 0.8483565046990754
-          },
-          "comparison": {
-            "ndcg": 0.8124231875981704,
-            "recall": 0.7835859549818494,
-            "mrr": 0.7925261965923107
-          },
-          "specific": {
-            "ndcg": 0.8645173411314078,
-            "recall": 0.8374261167598291,
-            "mrr": 0.8207882826810373
-          },
-          "abbreviation": {
-            "ndcg": 0.9038783929294256,
-            "recall": 0.8949867970151388,
-            "mrr": 0.8672418654650164
-          }
-        },
-        "byDifficulty": {
-          "easy": {
-            "ndcg": 0.9736517765841158,
-            "recall": 0.9646982150418518,
-            "mrr": 0.9236840476451244
-          },
-          "medium": {
-            "ndcg": 0.9050705033339742,
-            "recall": 0.8926933256805194,
-            "mrr": 0.8546566906252024
-          },
-          "hard": {
-            "ndcg": 0.7621649052959784,
-            "recall": 0.7470237696602863,
-            "mrr": 0.7252020220543026
-          }
-        },
-        "overall": {
-          "ndcg10": 0.8510501752043973,
-          "recall10": 0.8379427588756144,
-          "mrr10": 0.8067561933212859,
-          "avgLatencyMs": 45,
-          "costPerQuery": 0.00012999999999999996
-        },
-        "fitness": 0.8081126482927907
-      }
-    },
-    {
-      "name": "Synonym Expansion | OpenAI Large | Hybrid (Learned) | → MMR | + Context Expansion",
-      "id": "2ac11d53-87c4-4928-8b41-9b223756a38d",
-      "generation": 6,
-      "createdAt": "2026-01-30T19:58:52.586Z",
-      "parentIds": [
-        "15372c43-78be-4b26-95b6-74f9819233ae"
-      ],
-      "components": {
-        "embeddingModel": "OPENAI_LARGE",
-        "retrievalMethod": "HYBRID_LEARNED",
-        "chunkingStrategy": "FULL_DOC",
-        "queryProcessor": "EXPANDED_SYNONYMS",
-        "reranker": "MMR",
-        "postProcessor": "CONTEXT_EXPANSION",
-        "topK": 10,
-        "rerankTopK": 50,
-        "hybridAlpha": 0.7,
-        "mmrLambda": 0.708427548615832,
-        "scoreThreshold": 0
-      },
-      "fitness": {
-        "byQueryType": {
-          "factual": {
-            "ndcg": 1,
-            "recall": 1,
-            "mrr": 0.9712762212857532
-          },
-          "procedural": {
-            "ndcg": 0.82895950953058,
-            "recall": 0.8353710987053364,
-            "mrr": 0.8058209300626427
-          },
-          "best_practice": {
-            "ndcg": 0.7594729421827076,
-            "recall": 0.7462401863515951,
-            "mrr": 0.7160172347760575
-          },
-          "educational": {
-            "ndcg": 1,
-            "recall": 0.9970000260157084,
-            "mrr": 0.9806711358315032
-          },
-          "technical": {
-            "ndcg": 0.7453404531657695,
-            "recall": 0.746809018567229,
-            "mrr": 0.7074868714250947
-          },
-          "keyword": {
-            "ndcg": 0.8702432396011774,
-            "recall": 0.8863429923945824,
-            "mrr": 0.8316580564592392
-          },
-          "comparison": {
-            "ndcg": 0.8258017990783884,
-            "recall": 0.8321210716004867,
-            "mrr": 0.7584271582959689
-          },
-          "specific": {
-            "ndcg": 0.8668976410036026,
-            "recall": 0.875014976767346,
-            "mrr": 0.7862471232520216
-          },
-          "abbreviation": {
-            "ndcg": 0.9141019651507072,
-            "recall": 0.9344747462292681,
-            "mrr": 0.8587307049063025
-          }
-        },
-        "byDifficulty": {
-          "easy": {
-            "ndcg": 0.9847733010040906,
-            "recall": 0.9814658579801318,
-            "mrr": 0.9633116737430768
-          },
-          "medium": {
-            "ndcg": 0.8715844163372916,
-            "recall": 0.8843298937537946,
-            "mrr": 0.8240210516104105
-          },
-          "hard": {
-            "ndcg": 0.7233984183323308,
-            "recall": 0.7224010939456398,
-            "mrr": 0.6803038518650874
-          }
-        },
-        "overall": {
-          "ndcg10": 0.8218790499350789,
-          "recall10": 0.8260323284740757,
-          "mrr10": 0.780241905044915,
-          "avgLatencyMs": 35,
-          "costPerQuery": 0.00012999999999999996
-        },
-        "fitness": 0.8068071107282906
-      }
-    },
-    {
-      "name": "Synonym Expansion | OpenAI Large | Hybrid (Learned) | → MMR | + Context Expansion",
-      "id": "ae24db7b-50a1-4ec8-afc0-27824a016366",
-      "generation": 7,
-      "createdAt": "2026-01-30T19:58:52.586Z",
-      "parentIds": [
-        "617f0378-792a-4411-80be-b0792e4b4179"
-      ],
-      "components": {
-        "embeddingModel": "OPENAI_LARGE",
-        "retrievalMethod": "HYBRID_LEARNED",
-        "chunkingStrategy": "FULL_DOC",
-        "queryProcessor": "EXPANDED_SYNONYMS",
-        "reranker": "MMR",
-        "postProcessor": "CONTEXT_EXPANSION",
-        "topK": 10,
-        "rerankTopK": 50,
-        "hybridAlpha": 0.7,
-        "mmrLambda": 0.708427548615832,
-        "scoreThreshold": 0
-      },
-      "fitness": {
-        "byQueryType": {
-          "factual": {
-            "ndcg": 0.9806983460847981,
-            "recall": 0.9841014938472856,
-            "mrr": 0.9744480263676354
-          },
-          "procedural": {
-            "ndcg": 0.8807229617049861,
-            "recall": 0.8733700257514438,
-            "mrr": 0.8080562409526533
-          },
-          "best_practice": {
-            "ndcg": 0.7965398927530187,
-            "recall": 0.8082665509835216,
-            "mrr": 0.7176355510869686
-          },
-          "educational": {
-            "ndcg": 0.92349693762878,
-            "recall": 0.915512807722128,
-            "mrr": 0.9031817914624993
-          },
-          "technical": {
-            "ndcg": 0.7413567117830834,
-            "recall": 0.7404923933547892,
-            "mrr": 0.7030539445231223
-          },
-          "keyword": {
-            "ndcg": 0.8708691142240387,
-            "recall": 0.8680031764650346,
-            "mrr": 0.8177730998154166
-          },
-          "comparison": {
-            "ndcg": 0.7967683882119596,
-            "recall": 0.8030323813113678,
-            "mrr": 0.7749235821602907
-          },
-          "specific": {
-            "ndcg": 0.8899398342213958,
-            "recall": 0.9031832862133634,
-            "mrr": 0.8680355838733307
-          },
-          "abbreviation": {
-            "ndcg": 0.8964018449840302,
-            "recall": 0.896719021831349,
-            "mrr": 0.8911051085467644
-          }
-        },
-        "byDifficulty": {
-          "easy": {
-            "ndcg": 0.9680650945711927,
-            "recall": 0.9665381005231378,
-            "mrr": 0.9342292011683201
-          },
-          "medium": {
-            "ndcg": 0.882744540656719,
-            "recall": 0.8823970783342878,
-            "mrr": 0.8423005786475544
-          },
-          "hard": {
-            "ndcg": 0.7193946849383669,
-            "recall": 0.7219466533713006,
-            "mrr": 0.674622881896974
-          }
-        },
-        "overall": {
-          "ndcg10": 0.8220351886706316,
-          "recall10": 0.8228155404292711,
-          "mrr10": 0.780634908487908,
-          "avgLatencyMs": 35,
-          "costPerQuery": 0.00012999999999999996
-        },
-        "fitness": 0.8063220909140507
-      }
-    },
-    {
-      "name": "Synonym Expansion | OpenAI Large | Hybrid (Learned) | Semantic Chunking | → MMR | + Context Expansion",
-      "id": "9a0760d4-afcc-41d1-85e4-a125e899d7cc",
-      "generation": 8,
-      "createdAt": "2026-01-30T19:58:52.587Z",
-      "parentIds": [
-        "4fd3c26f-c305-4687-af46-17597a5b9b14"
-      ],
-      "components": {
-        "embeddingModel": "OPENAI_LARGE",
-        "retrievalMethod": "HYBRID_LEARNED",
-        "chunkingStrategy": "SEMANTIC",
-        "queryProcessor": "EXPANDED_SYNONYMS",
-        "reranker": "MMR",
-        "postProcessor": "CONTEXT_EXPANSION",
-        "topK": 10,
-        "rerankTopK": 50,
-        "hybridAlpha": 0.7,
-        "mmrLambda": 0.5,
-        "scoreThreshold": 0
-      },
-      "fitness": {
-        "byQueryType": {
-          "factual": {
-            "ndcg": 1,
-            "recall": 0.954397493345319,
-            "mrr": 0.9562594522027162
-          },
-          "procedural": {
-            "ndcg": 0.8992915126212031,
-            "recall": 0.8625491956327793,
-            "mrr": 0.8462249887299471
-          },
-          "best_practice": {
-            "ndcg": 0.8552824811834114,
-            "recall": 0.8127894995936077,
-            "mrr": 0.8349064027306538
-          },
-          "educational": {
-            "ndcg": 1,
-            "recall": 0.9889614922582515,
-            "mrr": 0.9925244167125438
-          },
-          "technical": {
-            "ndcg": 0.8419336872934711,
-            "recall": 0.8177761909592514,
-            "mrr": 0.8158568456741024
-          },
-          "keyword": {
-            "ndcg": 0.9528326501894164,
-            "recall": 0.925668885974576,
-            "mrr": 0.8928531909617469
-          },
-          "comparison": {
-            "ndcg": 0.8611748097113014,
-            "recall": 0.8345276728009996,
-            "mrr": 0.8111545296872524
-          },
-          "specific": {
-            "ndcg": 0.9499844653544949,
-            "recall": 0.9091154200137459,
-            "mrr": 0.8768711198709978
-          },
-          "abbreviation": {
-            "ndcg": 0.9227421393139906,
-            "recall": 0.8954700007853461,
-            "mrr": 0.911843232887788
-          }
-        },
-        "byDifficulty": {
-          "easy": {
-            "ndcg": 1,
-            "recall": 0.963750793113855,
-            "mrr": 0.9525922574972746
-          },
-          "medium": {
-            "ndcg": 0.9462221749753016,
-            "recall": 0.9152134538260528,
-            "mrr": 0.8967746959023832
-          },
-          "hard": {
-            "ndcg": 0.8096089526133836,
-            "recall": 0.7840174585717707,
-            "mrr": 0.7866281352069803
-          }
-        },
-        "overall": {
-          "ndcg10": 0.8928128986661431,
-          "recall10": 0.8634558568547961,
-          "mrr10": 0.8555813778286854,
-          "avgLatencyMs": 85,
-          "costPerQuery": 0.00012999999999999996
-        },
-        "fitness": 0.793814187140142
-      }
-    },
-    {
-      "name": "Synonym Expansion | OpenAI Large | Hybrid (Learned) | Semantic Chunking | → MMR | + Context Expansion",
-      "id": "b29d2153-3994-4ece-abca-985680332030",
-      "generation": 12,
-      "createdAt": "2026-01-30T19:58:52.589Z",
-      "parentIds": [
-        "707bf0ff-b97a-49ca-90f4-28e7a8e581f6"
-      ],
-      "components": {
-        "embeddingModel": "OPENAI_LARGE",
-        "retrievalMethod": "HYBRID_LEARNED",
-        "chunkingStrategy": "SEMANTIC",
-        "queryProcessor": "EXPANDED_SYNONYMS",
-        "reranker": "MMR",
-        "postProcessor": "CONTEXT_EXPANSION",
-        "topK": 10,
-        "rerankTopK": 50,
-        "hybridAlpha": 0.7,
-        "mmrLambda": 0.5,
-        "scoreThreshold": 0
-      },
-      "fitness": {
-        "byQueryType": {
-          "factual": {
-            "ndcg": 1,
-            "recall": 0.9921866084576471,
-            "mrr": 0.9958064083705425
-          },
-          "procedural": {
-            "ndcg": 0.9014485167640269,
-            "recall": 0.855219084199444,
-            "mrr": 0.8252633369695515
-          },
-          "best_practice": {
-            "ndcg": 0.8153913271436888,
-            "recall": 0.7977949975939833,
-            "mrr": 0.7707155617195856
-          },
-          "educational": {
-            "ndcg": 1,
-            "recall": 0.9730677614840493,
-            "mrr": 0.9699747698196022
-          },
-          "technical": {
-            "ndcg": 0.8290690329078908,
-            "recall": 0.8054557457874305,
-            "mrr": 0.7970007746069231
-          },
-          "keyword": {
-            "ndcg": 0.9620912804545226,
-            "recall": 0.9367961207319176,
-            "mrr": 0.8838919672673202
-          },
-          "comparison": {
-            "ndcg": 0.9003853241003252,
-            "recall": 0.8627818962587297,
-            "mrr": 0.8610491725548441
-          },
-          "specific": {
-            "ndcg": 0.911613794766309,
-            "recall": 0.8967664684053551,
-            "mrr": 0.8715447785733175
-          },
-          "abbreviation": {
-            "ndcg": 0.938911647214746,
-            "recall": 0.9098477374462156,
-            "mrr": 0.8616758433600883
-          }
-        },
-        "byDifficulty": {
-          "easy": {
-            "ndcg": 1,
-            "recall": 0.9756407685222497,
-            "mrr": 0.9603147921565575
-          },
-          "medium": {
-            "ndcg": 0.9424738916078448,
-            "recall": 0.9146992992093542,
-            "mrr": 0.8779216106753419
-          },
-          "hard": {
-            "ndcg": 0.8038824129836867,
-            "recall": 0.7786136017070849,
-            "mrr": 0.7710468894210586
-          }
-        },
-        "overall": {
-          "ndcg10": 0.888736642485797,
-          "recall10": 0.8626019557302674,
-          "mrr10": 0.8421869633330965,
-          "avgLatencyMs": 85,
-          "costPerQuery": 0.00012999999999999996
-        },
-        "fitness": 0.7908302783441522
-      }
-    },
-    {
-      "name": "Synonym Expansion | Nomic Embed | Hybrid (Learned) | Semantic Chunking | → MMR | + Context Expansion",
-      "id": "a6d7a24f-bc71-4c08-af7b-f2a316d25457",
-      "generation": 12,
-      "createdAt": "2026-01-30T19:58:52.589Z",
-      "parentIds": [
-        "2c291a96-00b3-43c9-8d16-210cee8df62e"
-      ],
-      "components": {
-        "embeddingModel": "NOMIC_EMBED",
-        "retrievalMethod": "HYBRID_LEARNED",
-        "chunkingStrategy": "SEMANTIC",
-        "queryProcessor": "EXPANDED_SYNONYMS",
-        "reranker": "MMR",
-        "postProcessor": "CONTEXT_EXPANSION",
-        "topK": 10,
-        "rerankTopK": 50,
-        "hybridAlpha": 0.7,
-        "mmrLambda": 0.5,
-        "scoreThreshold": 0
-      },
-      "fitness": {
-        "byQueryType": {
-          "factual": {
-            "ndcg": 0.9939761352819585,
-            "recall": 0.9420462376945962,
-            "mrr": 0.9657035024084062
-          },
-          "procedural": {
-            "ndcg": 0.865512156419292,
-            "recall": 0.8236388228822484,
-            "mrr": 0.8261186927746198
-          },
-          "best_practice": {
-            "ndcg": 0.8095066248853839,
-            "recall": 0.761331033707447,
-            "mrr": 0.7836864750335653
-          },
-          "educational": {
-            "ndcg": 0.9413291027522526,
-            "recall": 0.8867411490640122,
-            "mrr": 0.8557879500502568
-          },
-          "technical": {
-            "ndcg": 0.7227024645800323,
-            "recall": 0.6936579397900698,
-            "mrr": 0.6908152859269759
-          },
-          "keyword": {
-            "ndcg": 0.8621079111834046,
-            "recall": 0.8434099338556303,
-            "mrr": 0.8008594801920991
-          },
-          "comparison": {
-            "ndcg": 0.8186031489193177,
-            "recall": 0.7932744310676676,
-            "mrr": 0.7459333541393796
-          },
-          "specific": {
-            "ndcg": 0.8684973524453378,
-            "recall": 0.8397718553747924,
-            "mrr": 0.8659276328186408
-          },
-          "abbreviation": {
-            "ndcg": 0.8187777365867354,
-            "recall": 0.7674208829678576,
-            "mrr": 0.7586275100115804
-          }
-        },
-        "byDifficulty": {
-          "easy": {
-            "ndcg": 0.9662769073581566,
-            "recall": 0.9135128190266583,
-            "mrr": 0.919116736338994
-          },
-          "medium": {
-            "ndcg": 0.861329688865249,
-            "recall": 0.8347765570405562,
-            "mrr": 0.808699348338542
-          },
-          "hard": {
-            "ndcg": 0.71839966001425,
-            "recall": 0.6843947963454378,
-            "mrr": 0.6854293428359806
-          }
-        },
-        "overall": {
-          "ndcg10": 0.8127532586562356,
-          "recall10": 0.7789152040256684,
-          "mrr10": 0.7697904540624569,
-          "avgLatencyMs": 85,
-          "costPerQuery": 0
-        },
-        "fitness": 0.761540703944121
-      }
-    },
-    {
-      "name": "Synonym Expansion | Nomic Embed | Hybrid (Learned) | Fixed 256 tokens | → MMR",
-      "id": "a3f640ba-dc02-4f57-8a15-d415c7f26d1c",
-      "generation": 17,
-      "createdAt": "2026-01-30T19:58:52.589Z",
-      "parentIds": [
-        "51b0e2f8-ecd9-49f0-b035-b824516aa8f8"
-      ],
-      "components": {
-        "embeddingModel": "NOMIC_EMBED",
-        "retrievalMethod": "HYBRID_LEARNED",
-        "chunkingStrategy": "FIXED_256",
-        "queryProcessor": "EXPANDED_SYNONYMS",
-        "reranker": "MMR",
-        "postProcessor": "NONE",
-        "topK": 5,
-        "rerankTopK": 50,
-        "hybridAlpha": 0.7,
-        "mmrLambda": 0.5,
-        "scoreThreshold": 0
-      },
-      "fitness": {
-        "byQueryType": {
-          "factual": {
-            "ndcg": 0.9673988330630862,
-            "recall": 0.8901534402684025,
-            "mrr": 0.9408349539431587
-          },
-          "procedural": {
-            "ndcg": 0.7949152783769265,
-            "recall": 0.6987743899926986,
-            "mrr": 0.7276545539129411
-          },
-          "best_practice": {
-            "ndcg": 0.8025884595360694,
-            "recall": 0.7050746270181358,
-            "mrr": 0.7581200138710401
-          },
-          "educational": {
-            "ndcg": 0.8826347243204875,
-            "recall": 0.7731660497628764,
-            "mrr": 0.8519456295062905
-          },
-          "technical": {
-            "ndcg": 0.6912065220662352,
-            "recall": 0.602597715239129,
-            "mrr": 0.6470408521109345
-          },
-          "keyword": {
-            "ndcg": 0.8255547957148086,
-            "recall": 0.7215559348060018,
-            "mrr": 0.7890688364504985
-          },
-          "comparison": {
-            "ndcg": 0.7696684973433099,
-            "recall": 0.6491714576751615,
-            "mrr": 0.7023019529611427
-          },
-          "specific": {
-            "ndcg": 0.8531839819175464,
-            "recall": 0.7544589859702248,
-            "mrr": 0.8057591817928682
-          },
-          "abbreviation": {
-            "ndcg": 0.8386770496123486,
-            "recall": 0.7307456134971513,
-            "mrr": 0.7741625033889172
-          }
-        },
-        "byDifficulty": {
-          "easy": {
-            "ndcg": 0.9138870782623602,
-            "recall": 0.818242044971473,
-            "mrr": 0.8662643082951131
-          },
-          "medium": {
-            "ndcg": 0.8397023461390598,
-            "recall": 0.7338098484815134,
-            "mrr": 0.788002444451825
-          },
-          "hard": {
-            "ndcg": 0.6813410107927327,
-            "recall": 0.5902457696884477,
-            "mrr": 0.6380594781943978
-          }
-        },
-        "overall": {
-          "ndcg10": 0.7795674550517078,
-          "recall10": 0.6818708424981276,
-          "mrr10": 0.732267389212476,
-          "avgLatencyMs": 55,
-          "costPerQuery": 0
-        },
-        "fitness": 0.7557693974513175
-      }
-    },
-    {
-      "name": "Synonym Expansion | OpenAI Small | Vector (Dot Product) | Fixed 512 tokens | → Lost-in-Middle Fix | + Context Expansion",
-      "id": "3948b79c-ff92-460b-9315-1892fc1fa059",
-      "generation": 13,
-      "createdAt": "2026-01-30T19:58:52.589Z",
-      "parentIds": [
-        "8a749baa-fab8-43d4-9f16-d7ff11d5d695"
-      ],
-      "components": {
-        "embeddingModel": "OPENAI_SMALL",
-        "retrievalMethod": "VECTOR_DOT",
-        "chunkingStrategy": "FIXED_512",
-        "queryProcessor": "EXPANDED_SYNONYMS",
-        "reranker": "LOST_IN_MIDDLE",
-        "postProcessor": "CONTEXT_EXPANSION",
-        "topK": 10,
-        "rerankTopK": 50,
-        "hybridAlpha": 0.8470586698772098,
-        "mmrLambda": 0.5343636013054711,
-        "scoreThreshold": 0
-      },
-      "fitness": {
-        "byQueryType": {
-          "factual": {
-            "ndcg": 0.8416812120353157,
-            "recall": 0.8088758240967702,
-            "mrr": 0.8065829322298367
-          },
-          "procedural": {
-            "ndcg": 0.7413202214341774,
-            "recall": 0.6944436371178537,
-            "mrr": 0.6754192861113612
-          },
-          "best_practice": {
-            "ndcg": 0.7168894022100345,
-            "recall": 0.6813326954432106,
-            "mrr": 0.6708095944587598
-          },
-          "educational": {
-            "ndcg": 0.8465587177276404,
-            "recall": 0.8159446514879505,
-            "mrr": 0.8456734637955147
-          },
-          "technical": {
-            "ndcg": 0.6979369317870693,
-            "recall": 0.6470695829192764,
-            "mrr": 0.6626013875850774
-          },
-          "keyword": {
-            "ndcg": 0.559469487834381,
-            "recall": 0.5075803163760618,
-            "mrr": 0.537777950702926
-          },
-          "comparison": {
-            "ndcg": 0.7195735392262572,
-            "recall": 0.6578434475595121,
-            "mrr": 0.680150853511016
-          },
-          "specific": {
-            "ndcg": 0.7835476159290724,
-            "recall": 0.724011837179264,
-            "mrr": 0.7530252781174976
-          },
-          "abbreviation": {
-            "ndcg": 0.5991882419140128,
-            "recall": 0.5413046769831632,
-            "mrr": 0.5555082464758803
-          }
-        },
-        "byDifficulty": {
-          "easy": {
-            "ndcg": 0.8379069457967874,
-            "recall": 0.7946841908205572,
-            "mrr": 0.8007102482050631
-          },
-          "medium": {
-            "ndcg": 0.6789415603171818,
-            "recall": 0.6236435733661423,
-            "mrr": 0.6487547228674335
-          },
-          "hard": {
-            "ndcg": 0.6716950866035323,
-            "recall": 0.6262670466845123,
-            "mrr": 0.6303249362700739
-          }
-        },
-        "overall": {
-          "ndcg10": 0.6995254549679804,
-          "recall10": 0.6504802289775711,
-          "mrr10": 0.6632546476992661,
-          "avgLatencyMs": 45,
-          "costPerQuery": 0.00002
-        },
-        "fitness": 0.7260072520631289
-      }
-    },
-    {
-      "name": "LLM Rewrite | OpenAI Large | Hybrid (Learned) | Sentence-level | → MMR",
-      "id": "4db8b43a-2256-449c-9578-65ea653095d7",
-      "generation": 12,
-      "createdAt": "2026-01-30T19:58:52.589Z",
-      "parentIds": [
-        "88c9e217-b5c8-47e3-8d9c-c872c0769ef5"
-      ],
-      "components": {
-        "embeddingModel": "OPENAI_LARGE",
-        "retrievalMethod": "HYBRID_LEARNED",
-        "chunkingStrategy": "SENTENCE",
-        "queryProcessor": "REWRITTEN_LLM",
-        "reranker": "MMR",
-        "postProcessor": "NONE",
-        "topK": 50,
-        "rerankTopK": 50,
-        "hybridAlpha": 0.7,
-        "mmrLambda": 0.5,
-        "scoreThreshold": 0
-      },
-      "fitness": {
-        "byQueryType": {
-          "factual": {
-            "ndcg": 1,
-            "recall": 0.8316459484045448,
-            "mrr": 0.908443926821816
-          },
-          "procedural": {
-            "ndcg": 0.9239509429279672,
-            "recall": 0.7643908775727164,
-            "mrr": 0.865436068569465
-          },
-          "best_practice": {
-            "ndcg": 0.9270324093687758,
-            "recall": 0.7928398727188855,
-            "mrr": 0.8642088794510192
-          },
-          "educational": {
-            "ndcg": 1,
-            "recall": 0.8633473678511775,
-            "mrr": 0.9287744139406285
-          },
-          "technical": {
-            "ndcg": 0.8371520618010629,
-            "recall": 0.6762146349344483,
-            "mrr": 0.8057146500424027
-          },
-          "keyword": {
-            "ndcg": 0.9563568639591759,
-            "recall": 0.8103703438330566,
-            "mrr": 0.902962458505456
-          },
-          "comparison": {
-            "ndcg": 0.9268435912702984,
-            "recall": 0.7875571147419905,
-            "mrr": 0.8899554708488367
-          },
-          "specific": {
-            "ndcg": 0.9601084044795596,
-            "recall": 0.8276363482296052,
-            "mrr": 0.9302116789804276
-          },
-          "abbreviation": {
-            "ndcg": 0.9521531135420788,
-            "recall": 0.8047945495034512,
-            "mrr": 0.8676848621614228
-          }
-        },
-        "byDifficulty": {
-          "easy": {
-            "ndcg": 1,
-            "recall": 0.8470736131192408,
-            "mrr": 0.9179115854065926
-          },
-          "medium": {
-            "ndcg": 0.9726665137373957,
-            "recall": 0.8301043770894757,
-            "mrr": 0.9156472774011487
-          },
-          "hard": {
-            "ndcg": 0.8239687021935027,
-            "recall": 0.6666175071136381,
-            "mrr": 0.793810296669684
-          }
-        },
-        "overall": {
-          "ndcg10": 0.9098525214820343,
-          "recall10": 0.7590806710048137,
-          "mrr10": 0.8611602822728062,
-          "avgLatencyMs": 260,
-          "costPerQuery": 0.0011299999999999995
-        },
-        "fitness": 0.6527964907539255
-      }
-    },
-    {
-      "name": "OpenAI Large | Vector (Euclidean) | Semantic Chunking | → Cross-Encoder (Large) | + Context Expansion",
-      "id": "ba5fb357-4033-426a-ad69-107ff712602a",
-      "generation": 10,
-      "createdAt": "2026-01-30T19:58:52.589Z",
-      "parentIds": [
-        "69452a69-dae9-404d-a9ba-717f44afa9be"
-      ],
-      "components": {
-        "embeddingModel": "OPENAI_LARGE",
-        "retrievalMethod": "VECTOR_EUCLIDEAN",
-        "chunkingStrategy": "SEMANTIC",
-        "queryProcessor": "RAW",
-        "reranker": "CROSS_ENCODER_LARGE",
-        "postProcessor": "CONTEXT_EXPANSION",
-        "topK": 10,
-        "rerankTopK": 50,
-        "hybridAlpha": 0.7,
-        "mmrLambda": 0.5,
-        "scoreThreshold": 0
-      },
-      "fitness": {
-        "byQueryType": {
-          "factual": {
-            "ndcg": 0.8990143449092179,
-            "recall": 0.8479722492111215,
-            "mrr": 0.8317125769160743
-          },
-          "procedural": {
-            "ndcg": 0.7802003426126187,
-            "recall": 0.7391916221265817,
-            "mrr": 0.7344937929567584
-          },
-          "best_practice": {
-            "ndcg": 0.7812935616170478,
-            "recall": 0.7474296029641139,
-            "mrr": 0.7042774531271125
-          },
-          "educational": {
-            "ndcg": 0.9357747511315654,
-            "recall": 0.8953709090490432,
-            "mrr": 0.927686130293981
-          },
-          "technical": {
-            "ndcg": 0.7347107344241286,
-            "recall": 0.7129262394096711,
-            "mrr": 0.7019402961976128
-          },
-          "keyword": {
-            "ndcg": 0.6401491099681773,
-            "recall": 0.614892492093516,
-            "mrr": 0.5919655167882175
-          },
-          "comparison": {
-            "ndcg": 0.7994090568378178,
-            "recall": 0.7480014241400472,
-            "mrr": 0.7689432376201037
-          },
-          "specific": {
-            "ndcg": 0.7984854201093006,
-            "recall": 0.7604830192415114,
-            "mrr": 0.722105412796152
-          },
-          "abbreviation": {
-            "ndcg": 0.6327083249456655,
-            "recall": 0.5877344244719265,
-            "mrr": 0.5722582213673005
-          }
-        },
-        "byDifficulty": {
-          "easy": {
-            "ndcg": 0.9063769272328773,
-            "recall": 0.8603869430740986,
-            "mrr": 0.8733081630753827
-          },
-          "medium": {
-            "ndcg": 0.740332849209473,
-            "recall": 0.7048480680210666,
-            "mrr": 0.6940953867378249
-          },
-          "hard": {
-            "ndcg": 0.712157517636637,
-            "recall": 0.6862246310213894,
-            "mrr": 0.6651091499334059
-          }
-        },
-        "overall": {
-          "ndcg10": 0.7525605617052074,
-          "recall10": 0.7197983526291669,
-          "mrr10": 0.7079334966264701,
-          "avgLatencyMs": 270,
-          "costPerQuery": 0.00012999999999999996
-        },
-        "fitness": 0.6405948219794146
-      }
-    },
-    {
-      "name": "Step-Back Prompting | OpenAI Large | Hybrid (Linear) | Semantic Chunking | → MMR | + Context Expansion",
-      "id": "4b43ac99-7db2-476c-9f82-30e5da453781",
-      "generation": 9,
-      "createdAt": "2026-01-30T19:58:52.587Z",
-      "parentIds": [
-        "3ea9992a-142c-4de3-aad3-000f0fa0cd9e"
-      ],
-      "components": {
-        "embeddingModel": "OPENAI_LARGE",
+      "genes": {
+        "embeddingModel": "gemini/text-embedding-004",
         "retrievalMethod": "HYBRID_LINEAR",
-        "chunkingStrategy": "SEMANTIC",
-        "queryProcessor": "STEP_BACK",
-        "reranker": "MMR",
-        "postProcessor": "CONTEXT_EXPANSION",
+        "queryProcessor": "RAW",
+        "reranker": "NONE",
         "topK": 10,
-        "rerankTopK": 50,
-        "hybridAlpha": 0.7,
-        "mmrLambda": 0.5,
+        "hybridAlpha": 0.8380727092759395,
         "scoreThreshold": 0
       },
       "fitness": {
-        "byQueryType": {
-          "factual": {
-            "ndcg": 1,
-            "recall": 0.9898283413239277,
-            "mrr": 0.9562708204085196
-          },
-          "procedural": {
-            "ndcg": 0.9165624963429995,
-            "recall": 0.9057323937008119,
-            "mrr": 0.8820564322107918
-          },
-          "best_practice": {
-            "ndcg": 0.8747507552696827,
-            "recall": 0.8330191992412157,
-            "mrr": 0.8093833154292749
-          },
-          "educational": {
-            "ndcg": 1,
-            "recall": 0.9475924796315457,
-            "mrr": 0.9206470407390358
-          },
-          "technical": {
-            "ndcg": 0.810012346998033,
-            "recall": 0.7794333261817508,
-            "mrr": 0.7669965798474659
-          },
-          "keyword": {
-            "ndcg": 0.9550612757020206,
-            "recall": 0.9203167076254736,
-            "mrr": 0.9327869042298743
-          },
-          "comparison": {
-            "ndcg": 0.859942972211668,
-            "recall": 0.8178989673625932,
-            "mrr": 0.8006656168315098
-          },
-          "specific": {
-            "ndcg": 0.9241227222147865,
-            "recall": 0.9119414572121188,
-            "mrr": 0.8948962009527364
-          },
-          "abbreviation": {
-            "ndcg": 0.9459931270393068,
-            "recall": 0.9052686599592147,
-            "mrr": 0.9367986925619388
-          }
-        },
-        "byDifficulty": {
-          "easy": {
-            "ndcg": 1,
-            "recall": 0.9746332950209257,
-            "mrr": 0.9583367591035706
-          },
-          "medium": {
-            "ndcg": 0.9444878264525517,
-            "recall": 0.9077960751406623,
-            "mrr": 0.912289433599017
-          },
-          "hard": {
-            "ndcg": 0.7946662157082971,
-            "recall": 0.7665163309662942,
-            "mrr": 0.7429816121249355
-          }
-        },
-        "overall": {
-          "ndcg10": 0.8853949276497544,
-          "recall10": 0.8542457732442361,
-          "mrr10": 0.8430080127613634,
-          "avgLatencyMs": 430,
-          "costPerQuery": 0.00213
-        },
-        "fitness": 0.6156368130147131
+        "ndcg10": 0.9648775414267502,
+        "recall10": 1,
+        "mrr10": 0.9615384615384616,
+        "hitRate": 1,
+        "latencyMs": 0.10256410256410256,
+        "fitness": 0.9811275070720592,
+        "costPerQuery": 0.00001
       }
     },
     {
-      "name": "LLM Rewrite | MxBai Large | Hybrid (Learned) | Fixed 512 tokens | → Cohere Rerank | + Context Expansion",
-      "id": "6580bf27-4345-4cf3-8c87-f0dc905320d1",
-      "generation": 13,
-      "createdAt": "2026-01-30T19:58:52.589Z",
+      "name": "Gemini Text Embedding 004 | Hybrid Linear | k10",
+      "id": "05fd812d-33a3-425d-94ae-be0b804a0f28",
+      "generation": 5,
       "parentIds": [
-        "d9384185-e2e4-4d5f-b39f-ec8d13f47e0e"
+        "8fa7ec14-f072-4727-94e4-e648f895b10f"
       ],
-      "components": {
-        "embeddingModel": "MXBAI_LARGE",
-        "retrievalMethod": "HYBRID_LEARNED",
-        "chunkingStrategy": "FIXED_512",
-        "queryProcessor": "REWRITTEN_LLM",
-        "reranker": "COHERE",
-        "postProcessor": "CONTEXT_EXPANSION",
+      "genes": {
+        "embeddingModel": "gemini/text-embedding-004",
+        "retrievalMethod": "HYBRID_LINEAR",
+        "queryProcessor": "RAW",
+        "reranker": "NONE",
         "topK": 10,
-        "rerankTopK": 50,
-        "hybridAlpha": 0.7,
-        "mmrLambda": 0.5,
+        "hybridAlpha": 0.8380727092759395,
         "scoreThreshold": 0
       },
       "fitness": {
-        "byQueryType": {
-          "factual": {
-            "ndcg": 1,
-            "recall": 0.9579763880567967,
-            "mrr": 0.9559623238391518
-          },
-          "procedural": {
-            "ndcg": 0.8975794256512672,
-            "recall": 0.8351643891149194,
-            "mrr": 0.8676891900540424
-          },
-          "best_practice": {
-            "ndcg": 0.8720114374054615,
-            "recall": 0.8345036297583368,
-            "mrr": 0.8099633787895879
-          },
-          "educational": {
-            "ndcg": 1,
-            "recall": 0.9304418642228245,
-            "mrr": 0.9207368147204491
-          },
-          "technical": {
-            "ndcg": 0.8158730791386274,
-            "recall": 0.7593374591929177,
-            "mrr": 0.7702619667122105
-          },
-          "keyword": {
-            "ndcg": 0.9357250226606674,
-            "recall": 0.8943429952803665,
-            "mrr": 0.874097373964755
-          },
-          "comparison": {
-            "ndcg": 0.8366592216789199,
-            "recall": 0.7786324876071717,
-            "mrr": 0.8061247394966805
-          },
-          "specific": {
-            "ndcg": 0.9047694220431618,
-            "recall": 0.8728613513883329,
-            "mrr": 0.8695823023907246
-          },
-          "abbreviation": {
-            "ndcg": 0.9394252982890952,
-            "recall": 0.9085764367076755,
-            "mrr": 0.9026645608764964
-          }
-        },
-        "byDifficulty": {
-          "easy": {
-            "ndcg": 1,
-            "recall": 0.9450436098794294,
-            "mrr": 0.9544079955226437
-          },
-          "medium": {
-            "ndcg": 0.9383056000700858,
-            "recall": 0.8974910857982138,
-            "mrr": 0.8954606809779191
-          },
-          "hard": {
-            "ndcg": 0.7853929679105849,
-            "recall": 0.7277543041671123,
-            "mrr": 0.7337463414439885
-          }
-        },
-        "overall": {
-          "ndcg10": 0.8787490755877974,
-          "recall10": 0.8282424126764004,
-          "mrr10": 0.8315313253693593,
-          "avgLatencyMs": 385,
-          "costPerQuery": 0.002000000000000001
-        },
-        "fitness": 0.6140385077549917
+        "ndcg10": 0.9648775414267502,
+        "recall10": 1,
+        "mrr10": 0.9615384615384616,
+        "hitRate": 1,
+        "latencyMs": 0.10256410256410256,
+        "fitness": 0.9811275070720592,
+        "costPerQuery": 0.00001
       }
     },
     {
-      "name": "LLM Expansion | OpenAI Large | Vector (Cosine) | → Cohere Rerank | + Score Threshold",
-      "id": "df61e28c-8a60-4947-b0ff-8ea89b17d727",
-      "generation": 14,
-      "createdAt": "2026-01-30T19:58:52.589Z",
+      "name": "Gemini Text Embedding 004 | Hybrid Linear | k20",
+      "id": "13d210cd-f296-407d-b3ad-1a9f0f71b85a",
+      "generation": 6,
       "parentIds": [
-        "457ebf50-71a3-4141-96d9-062bbed41d3f"
+        "2da9af69-7f08-4922-b0d0-629109c856e0"
       ],
-      "components": {
-        "embeddingModel": "OPENAI_LARGE",
+      "genes": {
+        "embeddingModel": "gemini/text-embedding-004",
+        "retrievalMethod": "HYBRID_LINEAR",
+        "queryProcessor": "RAW",
+        "reranker": "NONE",
+        "topK": 20,
+        "hybridAlpha": 0.8380727092759395,
+        "scoreThreshold": 0
+      },
+      "fitness": {
+        "ndcg10": 0.9648775414267502,
+        "recall10": 1,
+        "mrr10": 0.9615384615384616,
+        "hitRate": 1,
+        "latencyMs": 0.10256410256410256,
+        "fitness": 0.9811275070720592,
+        "costPerQuery": 0.00001
+      }
+    },
+    {
+      "name": "Gemini Text Embedding 004 | Hybrid RRF | k10",
+      "id": "466fff9d-98a5-4d5c-98a6-c7c5662dcd72",
+      "generation": 6,
+      "parentIds": [
+        "7a10f57b-833d-40d3-87f6-1b7d7b7fce9b"
+      ],
+      "genes": {
+        "embeddingModel": "gemini/text-embedding-004",
+        "retrievalMethod": "HYBRID_RRF",
+        "queryProcessor": "RAW",
+        "reranker": "NONE",
+        "topK": 10,
+        "hybridAlpha": 0.8380727092759395,
+        "scoreThreshold": 0
+      },
+      "fitness": {
+        "ndcg10": 0.9648775414267502,
+        "recall10": 1,
+        "mrr10": 0.9615384615384616,
+        "hitRate": 1,
+        "latencyMs": 0.1282051282051282,
+        "fitness": 0.9810763431586234,
+        "costPerQuery": 0.00001
+      }
+    },
+    {
+      "name": "Gemini Text Embedding 004 | Query Expansion | Hybrid Linear | k10",
+      "id": "4d7cfc5b-5297-4002-99f6-c86f1900fc5e",
+      "generation": 8,
+      "parentIds": [
+        "d21dcb53-332d-41a3-8a22-ac52a5aaea5c"
+      ],
+      "genes": {
+        "embeddingModel": "gemini/text-embedding-004",
+        "retrievalMethod": "HYBRID_LINEAR",
+        "queryProcessor": "EXPANDED",
+        "reranker": "NONE",
+        "topK": 10,
+        "hybridAlpha": 0.8380727092759395,
+        "scoreThreshold": 0
+      },
+      "fitness": {
+        "ndcg10": 0.9633256138171162,
+        "recall10": 1,
+        "mrr10": 0.9615384615384616,
+        "hitRate": 1,
+        "latencyMs": 0.10256410256410256,
+        "fitness": 0.9805843324086873,
+        "costPerQuery": 0.00001
+      }
+    },
+    {
+      "name": "Gemini Text Embedding 004 | Hybrid Linear | k10",
+      "id": "88d9fd9c-c4db-42f2-8c5c-6832d180c485",
+      "generation": 10,
+      "parentIds": [
+        "5e0de065-453a-4823-9d17-3ecc09bee69f"
+      ],
+      "genes": {
+        "embeddingModel": "gemini/text-embedding-004",
+        "retrievalMethod": "HYBRID_LINEAR",
+        "queryProcessor": "RAW",
+        "reranker": "NONE",
+        "topK": 10,
+        "hybridAlpha": 0.7286811901969791,
+        "scoreThreshold": 0
+      },
+      "fitness": {
+        "ndcg10": 0.959455846386164,
+        "recall10": 0.9871794871794872,
+        "mrr10": 0.9615384615384616,
+        "hitRate": 1,
+        "latencyMs": 0.10256410256410256,
+        "fitness": 0.9765376061155465,
+        "costPerQuery": 0.00001
+      }
+    },
+    {
+      "name": "Gemini Text Embedding 004 | Lowercase | Vector Cosine | k10",
+      "id": "ca875e16-a430-491d-9dba-8cf05bf80a21",
+      "generation": 8,
+      "parentIds": [
+        "60613bd9-2dfa-40e9-af7b-400f9c4aa87d"
+      ],
+      "genes": {
+        "embeddingModel": "gemini/text-embedding-004",
         "retrievalMethod": "VECTOR_COSINE",
-        "chunkingStrategy": "FULL_DOC",
-        "queryProcessor": "EXPANDED_LLM",
-        "reranker": "COHERE",
-        "postProcessor": "THRESHOLD",
+        "queryProcessor": "LOWERCASE",
+        "reranker": "NONE",
         "topK": 10,
-        "rerankTopK": 50,
-        "hybridAlpha": 0.7,
-        "mmrLambda": 0.708427548615832,
+        "hybridAlpha": 0.8380727092759395,
         "scoreThreshold": 0
       },
       "fitness": {
-        "byQueryType": {
-          "factual": {
-            "ndcg": 1,
-            "recall": 0.9966356174825526,
-            "mrr": 0.9638234928093913
-          },
-          "procedural": {
-            "ndcg": 0.9112173010836421,
-            "recall": 0.9097279869541435,
-            "mrr": 0.8730495114855046
-          },
-          "best_practice": {
-            "ndcg": 0.9271834780143331,
-            "recall": 0.908176016077931,
-            "mrr": 0.8650188868915822
-          },
-          "educational": {
-            "ndcg": 1,
-            "recall": 1,
-            "mrr": 0.9417803462809751
-          },
-          "technical": {
-            "ndcg": 0.8199569881722645,
-            "recall": 0.8205341729686514,
-            "mrr": 0.7632827185768587
-          },
-          "keyword": {
-            "ndcg": 0.7517096617510478,
-            "recall": 0.7451784219219656,
-            "mrr": 0.7169085092865911
-          },
-          "comparison": {
-            "ndcg": 0.8894165675928852,
-            "recall": 0.8884678308572378,
-            "mrr": 0.8495256734318509
-          },
-          "specific": {
-            "ndcg": 0.94178031083994,
-            "recall": 0.9338514733515095,
-            "mrr": 0.9231070999724914
-          },
-          "abbreviation": {
-            "ndcg": 0.7504240256489911,
-            "recall": 0.7447446632426554,
-            "mrr": 0.7190618716160208
-          }
-        },
-        "byDifficulty": {
-          "easy": {
-            "ndcg": 1,
-            "recall": 0.9988785391608509,
-            "mrr": 0.9684525980695806
-          },
-          "medium": {
-            "ndcg": 0.8642749090078496,
-            "recall": 0.8577886936863355,
-            "mrr": 0.8152604221719518
-          },
-          "hard": {
-            "ndcg": 0.8031630733629834,
-            "recall": 0.800922747936507,
-            "mrr": 0.7543582600677978
-          }
-        },
-        "overall": {
-          "ndcg10": 0.8571333466164823,
-          "recall10": 0.8533624949200899,
-          "mrr10": 0.8108332756097267,
-          "avgLatencyMs": 370,
-          "costPerQuery": 0.00213
-        },
-        "fitness": 0.6091600581891362
+        "ndcg10": 0.9527399329047939,
+        "recall10": 1,
+        "mrr10": 0.9487179487179487,
+        "hitRate": 1,
+        "latencyMs": 0.05128205128205128,
+        "fitness": 0.9751868787947422,
+        "costPerQuery": 0.00001
       }
     },
     {
-      "name": "Synonym Expansion | OpenAI Large | Vector (Cosine) | → LLM Listwise | + Context Expansion",
-      "id": "0a456802-d559-45d7-b799-c8a79547f352",
+      "name": "Gemini Embedding | Lowercase | Hybrid Linear | k10",
+      "id": "ab265957-73b8-4d17-9c17-b9fe0efc7698",
+      "generation": 5,
+      "parentIds": [
+        "553a28b7-7e4b-41e6-98d9-737581758581"
+      ],
+      "genes": {
+        "embeddingModel": "gemini/embedding-001",
+        "retrievalMethod": "HYBRID_LINEAR",
+        "queryProcessor": "LOWERCASE",
+        "reranker": "NONE",
+        "topK": 10,
+        "hybridAlpha": 0.8380727092759395,
+        "scoreThreshold": 0
+      },
+      "fitness": {
+        "ndcg10": 0.9569414419846819,
+        "recall10": 0.9743589743589743,
+        "mrr10": 0.9666666666666668,
+        "hitRate": 1,
+        "latencyMs": 0.10256410256410256,
+        "fitness": 0.9736832056006687,
+        "costPerQuery": 0.00001
+      }
+    },
+    {
+      "name": "Gemini Text Embedding 004 | Hybrid Linear | k10",
+      "id": "bb1bb076-b1b4-4833-b48c-b36e2c8673ff",
       "generation": 7,
-      "createdAt": "2026-01-30T19:58:52.586Z",
       "parentIds": [
-        "31d0cb51-80e6-40cf-bcfc-620ee118cf6e"
+        "12d586c5-39a9-47c9-8373-0596d13de4d6"
       ],
-      "components": {
-        "embeddingModel": "OPENAI_LARGE",
-        "retrievalMethod": "VECTOR_COSINE",
-        "chunkingStrategy": "FULL_DOC",
-        "queryProcessor": "EXPANDED_SYNONYMS",
-        "reranker": "LLM_LISTWISE",
-        "postProcessor": "CONTEXT_EXPANSION",
+      "genes": {
+        "embeddingModel": "gemini/text-embedding-004",
+        "retrievalMethod": "HYBRID_LINEAR",
+        "queryProcessor": "RAW",
+        "reranker": "NONE",
         "topK": 10,
-        "rerankTopK": 50,
-        "hybridAlpha": 0.7,
-        "mmrLambda": 0.708427548615832,
+        "hybridAlpha": 0.6015858985450973,
         "scoreThreshold": 0
       },
       "fitness": {
-        "byQueryType": {
-          "factual": {
-            "ndcg": 1,
-            "recall": 1,
-            "mrr": 0.9806877454128334
-          },
-          "procedural": {
-            "ndcg": 0.8938545727307974,
-            "recall": 0.8812474667739832,
-            "mrr": 0.8188490968100808
-          },
-          "best_practice": {
-            "ndcg": 0.909850058849272,
-            "recall": 0.9095323104341073,
-            "mrr": 0.8821004399969841
-          },
-          "educational": {
-            "ndcg": 1,
-            "recall": 0.9986623402087628,
-            "mrr": 0.9877268877950651
-          },
-          "technical": {
-            "ndcg": 0.8524026568346315,
-            "recall": 0.8510447367760267,
-            "mrr": 0.8117895073560163
-          },
-          "keyword": {
-            "ndcg": 0.7536727757967201,
-            "recall": 0.7483154962890035,
-            "mrr": 0.7028485379694877
-          },
-          "comparison": {
-            "ndcg": 0.8860913328343876,
-            "recall": 0.8796009454308673,
-            "mrr": 0.8531074972761084
-          },
-          "specific": {
-            "ndcg": 0.9074599781239424,
-            "recall": 0.9206322681972215,
-            "mrr": 0.8285461540384447
-          },
-          "abbreviation": {
-            "ndcg": 0.7444596999031231,
-            "recall": 0.7242277687893944,
-            "mrr": 0.704298975970923
-          }
-        },
-        "byDifficulty": {
-          "easy": {
-            "ndcg": 1,
-            "recall": 0.9933870422795743,
-            "mrr": 0.9630500352781742
-          },
-          "medium": {
-            "ndcg": 0.8538717664175199,
-            "recall": 0.8527686455499021,
-            "mrr": 0.8046220840711402
-          },
-          "hard": {
-            "ndcg": 0.8253749334164888,
-            "recall": 0.8204703530593949,
-            "mrr": 0.7860354687089495
-          }
-        },
-        "overall": {
-          "ndcg10": 0.8629674266044279,
-          "recall10": 0.8593271734386247,
-          "mrr10": 0.8200222998392095,
-          "avgLatencyMs": 825,
-          "costPerQuery": 0.02013
-        },
-        "fitness": 0.5460977337082495
+        "ndcg10": 0.9324919150321272,
+        "recall10": 0.9871794871794872,
+        "mrr10": 0.9153846153846155,
+        "hitRate": 1,
+        "latencyMs": 0.10256410256410256,
+        "fitness": 0.9606386916800952,
+        "costPerQuery": 0.00001
       }
     },
     {
-      "name": "Synonym Expansion | OpenAI Small | Vector (Cosine) | Paragraph-level | → LLM Listwise | + Deduplication",
-      "id": "78f2b97c-206c-413c-959b-96c877f4bef9",
-      "generation": 7,
-      "createdAt": "2026-01-30T19:58:52.585Z",
+      "name": "Gemini Embedding | Lowercase | Vector Cosine | k10",
+      "id": "ca3c6400-d1e6-45cc-93ed-e7d3bfa3531c",
+      "generation": 10,
       "parentIds": [
-        "ef5cdd61-7ee2-434f-bd8e-a47b0de1a315"
+        "ad3d05c3-8ef2-4170-9bf1-9c5041b9861f"
       ],
-      "components": {
-        "embeddingModel": "OPENAI_SMALL",
+      "genes": {
+        "embeddingModel": "gemini/embedding-001",
         "retrievalMethod": "VECTOR_COSINE",
-        "chunkingStrategy": "PARAGRAPH",
-        "queryProcessor": "EXPANDED_SYNONYMS",
-        "reranker": "LLM_LISTWISE",
-        "postProcessor": "DEDUP",
+        "queryProcessor": "LOWERCASE",
+        "reranker": "NONE",
         "topK": 10,
-        "rerankTopK": 50,
-        "hybridAlpha": 0.7,
-        "mmrLambda": 0.5343636013054711,
+        "hybridAlpha": 0.8380727092759395,
         "scoreThreshold": 0
       },
       "fitness": {
-        "byQueryType": {
-          "factual": {
-            "ndcg": 1,
-            "recall": 0.9567831543225889,
-            "mrr": 0.9662419712056808
-          },
-          "procedural": {
-            "ndcg": 0.870545647111391,
-            "recall": 0.8626042372768744,
-            "mrr": 0.8486656317102763
-          },
-          "best_practice": {
-            "ndcg": 0.8888543301919434,
-            "recall": 0.8537080617161783,
-            "mrr": 0.8533614424591538
-          },
-          "educational": {
-            "ndcg": 1,
-            "recall": 0.9886531396902901,
-            "mrr": 0.9346418052212037
-          },
-          "technical": {
-            "ndcg": 0.8326214556593623,
-            "recall": 0.8085889417911496,
-            "mrr": 0.8038063957111433
-          },
-          "keyword": {
-            "ndcg": 0.7697924813448469,
-            "recall": 0.7454354903044179,
-            "mrr": 0.7272083373865227
-          },
-          "comparison": {
-            "ndcg": 0.8753392891434345,
-            "recall": 0.8510691288202192,
-            "mrr": 0.8444606484517507
-          },
-          "specific": {
-            "ndcg": 0.8978739061425449,
-            "recall": 0.9020710888686396,
-            "mrr": 0.8217790716176334
-          },
-          "abbreviation": {
-            "ndcg": 0.7889544689004266,
-            "recall": 0.7892380736780049,
-            "mrr": 0.7660856754136846
-          }
-        },
-        "byDifficulty": {
-          "easy": {
-            "ndcg": 1,
-            "recall": 0.9818120980042929,
-            "mrr": 0.9652470090664312
-          },
-          "medium": {
-            "ndcg": 0.8590846516714197,
-            "recall": 0.8362903140611976,
-            "mrr": 0.8159631585846794
-          },
-          "hard": {
-            "ndcg": 0.8023730364683588,
-            "recall": 0.7813531743483232,
-            "mrr": 0.7740608283290452
-          }
-        },
-        "overall": {
-          "ndcg10": 0.854701727079329,
-          "recall10": 0.8333968687818685,
-          "mrr10": 0.8194996875419067,
-          "avgLatencyMs": 835,
-          "costPerQuery": 0.020019999999999996
-        },
-        "fitness": 0.5386359458183887
+        "ndcg10": 0.9329013274055867,
+        "recall10": 0.9743589743589743,
+        "mrr10": 0.9316239316239315,
+        "hitRate": 1,
+        "latencyMs": 0.05128205128205128,
+        "fitness": 0.9604655890922419,
+        "costPerQuery": 0.00001
       }
     }
   ]
