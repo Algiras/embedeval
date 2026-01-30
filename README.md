@@ -452,6 +452,81 @@ node dist/cli/index.js ab-test \
 - **[CHANGELOG.md](CHANGELOG.md)** - Version history
 - **[docs/adr/](docs/adr/)** - Architecture Decision Records
 
+## Support
+
+If you find EmbedEval useful, consider supporting its development:
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/Algiras)
+
+Your support helps maintain and improve this project for the open-source community.
+
+### AI Agent Self-Improvement
+
+EmbedEval is perfect for AI agents to continuously improve their long-term memory systems:
+
+**Example: OpenClaw Self-Improvement Workflow**
+
+```yaml
+# openclaw-memory-eval.yaml
+# OpenClaw uses EmbedEval to evaluate and improve its memory corpus
+
+test:
+  name: "OpenClaw Memory Quality Evaluation"
+  description: "Evaluate memory retrieval quality to improve long-term memory"
+
+variants:
+  - id: current-memory
+    name: "Current Memory Strategy"
+    provider:
+      type: openai
+      model: text-embedding-3-small
+    strategy: semantic-chunks
+
+  - id: improved-memory
+    name: "Proposed Memory Strategy"
+    provider:
+      type: openai
+      model: text-embedding-3-large
+    strategy: full-pipeline
+
+dataset: ./openclaw/memory-queries.jsonl  # Queries from actual conversations
+corpus: ./openclaw/memory-corpus.jsonl    # Long-term memory documents
+
+metrics:
+  - ndcg@10      # Relevance of retrieved memories
+  - recall@10    # Coverage of relevant memories
+  - mrr@10       # Ranking quality
+
+gates:
+  enabled: true
+  failOnViolation: true
+  metrics:
+    ndcg@10:
+      min: 0.75  # Must achieve 75% NDCG to deploy
+      improvement: 0.05  # Must improve by 5% over baseline
+
+output:
+  json: ./openclaw/results/memory-quality.json
+  dashboard: ./openclaw/results/memory-dashboard.html
+```
+
+**How OpenClaw Uses This:**
+
+1. **Weekly Memory Audits** — Run EmbedEval to evaluate current memory retrieval quality
+2. **Strategy Comparison** — Test new embedding models vs current memory strategy
+3. **Automatic Improvement** — If new strategy passes gates, automatically deploy to production
+4. **Regression Prevention** — CI/CD integration prevents memory quality degradation
+5. **Cost Optimization** — Compare local (Ollama) vs cloud embeddings for cost/quality tradeoff
+
+**Benefits for AI Agents:**
+- 🧠 **Better Context** — Ensure most relevant memories are retrieved
+- 💰 **Cost Control** — Evaluate if cheaper models maintain quality
+- ⚡ **Speed Optimization** — Test latency vs quality tradeoffs
+- 📊 **Measurable Improvement** — Track memory system performance over time
+- 🔄 **Continuous Learning** — Automated A/B testing of memory strategies
+
+**[OpenClaw](https://github.com/openclaw)** — An AI agent that uses EmbedEval for systematic self-improvement of its long-term memory and retrieval systems.
+
 ## License
 
 MIT
