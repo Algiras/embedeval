@@ -1,0 +1,94 @@
+# Real-World Example 4: Full Permutation Matrix
+# All combinations: Provider × Strategy × Chunking
+
+test:
+  name: "Real-World: Full Pipeline Permutations"
+  description: "Testing all combinations of providers, strategies, and chunking"
+
+variants:
+  # ========== GEMINI VARIANTS ==========
+  
+  - id: gemini-baseline
+    name: "Gemini + Baseline"
+    provider:
+      type: google
+      apiKey: ${GEMINI_API_KEY}
+      model: text-embedding-004
+    strategy: baseline
+
+  - id: gemini-chunks
+    name: "Gemini + Fixed Chunks"
+    provider:
+      type: google
+      apiKey: ${GEMINI_API_KEY}
+      model: text-embedding-004
+    strategy: fixed-chunks
+
+  - id: gemini-hybrid
+    name: "Gemini + Hybrid BM25"
+    provider:
+      type: google
+      apiKey: ${GEMINI_API_KEY}
+      model: text-embedding-004
+    strategy: hybrid-bm25
+
+  # ========== OLLAMA VARIANTS ==========
+  
+  - id: ollama-baseline
+    name: "Ollama + Baseline"
+    provider:
+      type: ollama
+      baseUrl: ${OLLAMA_HOST:-http://localhost:11434}
+      model: nomic-embed-text
+    strategy: baseline
+
+  - id: ollama-chunks
+    name: "Ollama + Fixed Chunks"
+    provider:
+      type: ollama
+      baseUrl: ${OLLAMA_HOST:-http://localhost:11434}
+      model: nomic-embed-text
+    strategy: fixed-chunks
+
+  - id: ollama-semantic
+    name: "Ollama + Semantic Chunks"
+    provider:
+      type: ollama
+      baseUrl: ${OLLAMA_HOST:-http://localhost:11434}
+      model: nomic-embed-text
+    strategy: semantic-chunks
+
+  - id: ollama-hybrid
+    name: "Ollama + Hybrid BM25"
+    provider:
+      type: ollama
+      baseUrl: ${OLLAMA_HOST:-http://localhost:11434}
+      model: nomic-embed-text
+    strategy: hybrid-bm25
+
+  - id: ollama-full
+    name: "Ollama + Full Pipeline"
+    provider:
+      type: ollama
+      baseUrl: ${OLLAMA_HOST:-http://localhost:11434}
+      model: nomic-embed-text
+    strategy: full-pipeline
+
+dataset: ./examples/sample-queries.jsonl
+corpus: ./examples/sample-corpus.jsonl
+
+metrics:
+  - ndcg@5
+  - ndcg@10
+  - recall@5
+  - recall@10
+  - mrr@10
+  - map@10
+
+output:
+  json: ./real-results/ex4-permutations/metrics.json
+  dashboard: ./real-results/ex4-permutations/dashboard.html
+  csv: ./real-results/ex4-permutations/results.csv
+
+# Run with: embedeval ab-test --config ./examples/real-world/ex4-permutations.yaml
+# Note: This will take longer (9 variants × 5 queries = 45 evaluations)

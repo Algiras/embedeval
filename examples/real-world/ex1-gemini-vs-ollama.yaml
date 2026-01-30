@@ -1,0 +1,49 @@
+# Real-World Example 1: Gemini vs Ollama
+# Compare Google Gemini embeddings with local Ollama
+
+test:
+  name: "Real-World: Gemini vs Ollama"
+  description: "Comparing cloud vs local embedding providers"
+
+variants:
+  - id: gemini-001
+    name: "Google Gemini (embedding-001)"
+    provider:
+      type: google
+      apiKey: ${GEMINI_API_KEY}
+      model: embedding-001
+    strategy: baseline
+
+  - id: gemini-004
+    name: "Google Gemini (text-embedding-004)"
+    provider:
+      type: google
+      apiKey: ${GEMINI_API_KEY}
+      model: text-embedding-004
+    strategy: baseline
+
+  - id: ollama-nomic
+    name: "Ollama (nomic-embed-text)"
+    provider:
+      type: ollama
+      baseUrl: ${OLLAMA_HOST:-http://localhost:11434}
+      model: nomic-embed-text
+    strategy: baseline
+
+dataset: ./examples/sample-queries.jsonl
+corpus: ./examples/sample-corpus.jsonl
+
+metrics:
+  - ndcg@5
+  - ndcg@10
+  - recall@5
+  - recall@10
+  - mrr@10
+  - map@10
+
+output:
+  json: ./real-results/ex1-gemini-vs-ollama/metrics.json
+  dashboard: ./real-results/ex1-gemini-vs-ollama/dashboard.html
+  csv: ./real-results/ex1-gemini-vs-ollama/results.csv
+
+# Run with: embedeval ab-test --config ./examples/real-world/ex1-gemini-vs-ollama.yaml

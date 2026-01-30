@@ -1,0 +1,69 @@
+# Real-World Example 5: Cost vs Performance
+# Analyzing cost-quality trade-offs
+
+test:
+  name: "Real-World: Cost vs Performance"
+  description: "Comparing different Gemini models for cost-efficiency"
+
+variants:
+  - id: gemini-001
+    name: "Gemini embedding-001 (Legacy, Cheaper)"
+    provider:
+      type: google
+      apiKey: ${GEMINI_API_KEY}
+      model: embedding-001
+    strategy: baseline
+
+  - id: gemini-004
+    name: "Gemini text-embedding-004 (Latest, Better)"
+    provider:
+      type: google
+      apiKey: ${GEMINI_API_KEY}
+      model: text-embedding-004
+    strategy: baseline
+
+  - id: gemini-004-hybrid
+    name: "Gemini-004 + Hybrid (Best Quality)"
+    provider:
+      type: google
+      apiKey: ${GEMINI_API_KEY}
+      model: text-embedding-004
+    strategy: hybrid-bm25
+
+  - id: ollama-nomic
+    name: "Ollama nomic-embed-text (Free, Local)"
+    provider:
+      type: ollama
+      baseUrl: ${OLLAMA_HOST:-http://localhost:11434}
+      model: nomic-embed-text
+    strategy: baseline
+
+  - id: ollama-chunks
+    name: "Ollama + Chunks (Free, Better)"
+    provider:
+      type: ollama
+      baseUrl: ${OLLAMA_HOST:-http://localhost:11434}
+      model: nomic-embed-text
+    strategy: fixed-chunks
+
+dataset: ./examples/sample-queries.jsonl
+corpus: ./examples/sample-corpus.jsonl
+
+metrics:
+  - ndcg@5
+  - ndcg@10
+  - recall@5
+  - recall@10
+  - mrr@10
+
+output:
+  json: ./real-results/ex5-cost-analysis/metrics.json
+  dashboard: ./real-results/ex5-cost-analysis/dashboard.html
+
+# Analysis:
+# - Compare latency (local vs cloud)
+# - Compare quality (NDCG@10)
+# - Compare cost (free vs paid)
+# - Find sweet spot for your use case
+
+# Run with: embedeval ab-test --config ./examples/real-world/ex5-cost-performance.yaml
