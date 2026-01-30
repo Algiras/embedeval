@@ -2,7 +2,6 @@
  * Fixed Size Chunking Strategy
  */
 
-import { Document } from '../../core/types';
 import { Chunk, StrategyContext, StrategyStage } from '../types';
 
 export interface FixedSizeChunkingConfig {

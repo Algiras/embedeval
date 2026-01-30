@@ -76,7 +76,7 @@ export class LLMRerankingStage implements StrategyStage {
   }
 
   private async scoreDocument(
-    provider: any,
+    _provider: any,
     query: string,
     doc: RetrievedDoc
   ): Promise<number> {
@@ -111,7 +111,7 @@ export class LLMRerankingStage implements StrategyStage {
         throw new Error(`LLM API error: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data = await response.json() as { choices?: Array<{ message?: { content?: string } }> };
       const content = data.choices?.[0]?.message?.content || '0';
       const score = parseFloat(content.match(/\d+\.?\d*/)?.[0] || '0');
       return Math.min(10, Math.max(0, score)) / 10; // Normalize to 0-1

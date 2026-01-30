@@ -60,12 +60,12 @@ export class OpenAIProvider implements EmbeddingProvider {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorData = await response.json().catch(() => ({})) as { error?: { message?: string } };
         const errorMessage = errorData.error?.message || `HTTP ${response.status}`;
         throw new Error(`OpenAI API error: ${errorMessage}`);
       }
 
-      const data = await response.json();
+      const data = await response.json() as { data?: Array<{ embedding?: number[] }> };
       const embedding = data.data?.[0]?.embedding;
 
       if (!embedding || !Array.isArray(embedding)) {
@@ -98,12 +98,12 @@ export class OpenAIProvider implements EmbeddingProvider {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorData = await response.json().catch(() => ({})) as { error?: { message?: string } };
         const errorMessage = errorData.error?.message || `HTTP ${response.status}`;
         throw new Error(`OpenAI API error: ${errorMessage}`);
       }
 
-      const data = await response.json();
+      const data = await response.json() as { data?: Array<{ embedding?: number[] }> };
       const embeddings = data.data?.map((item: any) => item.embedding);
 
       if (!embeddings || !Array.isArray(embeddings)) {

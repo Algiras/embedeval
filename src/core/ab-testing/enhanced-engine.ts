@@ -19,7 +19,6 @@ import {
 import { JobProcessor } from '../../jobs/processor';
 import { CheckpointManager } from '../../jobs/checkpoint-manager';
 import { createProvider } from '../../providers';
-import { EmbeddingCache } from '../../utils/cache';
 import { calculateMetricsAtMultipleK } from '../evaluation/metrics';
 import { calculatePercentile, calculateMean } from '../../utils/statistics';
 import { logger } from '../../utils/logger';
@@ -29,17 +28,15 @@ import { StrategyContext } from '../../strategies/types';
 export class EnhancedABTestingEngine {
   private testId: string;
   private processor: JobProcessor;
-  private _cache: EmbeddingCache;
   private checkpointManager: CheckpointManager;
   private strategyExecutor: StrategyExecutor;
 
   constructor(
     private config: ABTestConfig,
-    cacheDir?: string
+    _cacheDir?: string
   ) {
     this.testId = config.id || uuidv4();
     this.processor = new JobProcessor(this.testId);
-    this._cache = new EmbeddingCache(10, cacheDir);
     this.checkpointManager = new CheckpointManager(this.testId);
     this.strategyExecutor = new StrategyExecutor();
   }
