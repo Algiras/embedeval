@@ -16,7 +16,7 @@ interface StrategyOptions {
   query?: string;
 }
 
-export async function strategyCommand(options: StrategyOptions, command: Command): Promise<void> {
+export async function strategyCommand(options: StrategyOptions, _command: Command): Promise<void> {
   try {
     if (options.list) {
       console.log(chalk.bold('\n📋 Available Strategies:\n'));

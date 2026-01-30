@@ -4,8 +4,6 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import inquirer from 'inquirer';
-import ora from 'ora';
 import { loadDataset } from '../../utils/config';
 import { logger } from '../../utils/logger';
 
@@ -18,7 +16,7 @@ interface HumanEvalOptions {
   notes: boolean;
 }
 
-export async function humanEvalCommand(options: HumanEvalOptions, command: Command): Promise<void> {
+export async function humanEvalCommand(options: HumanEvalOptions, _command: Command): Promise<void> {
   console.log(chalk.blue('Starting Human Evaluation Wizard...\n'));
 
   try {

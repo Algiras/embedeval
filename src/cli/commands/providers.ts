@@ -4,7 +4,7 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { testProvider, createProvider } from '../../providers';
+import { testProvider } from '../../providers';
 import { logger } from '../../utils/logger';
 
 interface ProvidersOptions {
@@ -21,7 +21,7 @@ const AVAILABLE_PROVIDERS = [
   { type: 'huggingface', name: 'Hugging Face', description: 'Hugging Face Hub embedding models' },
 ];
 
-export async function providersCommand(options: ProvidersOptions, command: Command): Promise<void> {
+export async function providersCommand(options: ProvidersOptions, _command: Command): Promise<void> {
   try {
     if (options.list) {
       console.log(chalk.bold('\nAvailable Providers:\n'));
