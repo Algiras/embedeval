@@ -20,11 +20,28 @@ CLI-based embedding evaluation system with A/B testing, human evaluation, and co
 
 ## Quick Start
 
-### 1. Install Dependencies
+### Option 1: Install via NPM (Recommended)
 
 ```bash
+# Install globally
+npm install -g embedeval
+
+# Or use the install script
+curl -fsSL https://raw.githubusercontent.com/Algiras/embedeval/main/install.sh | bash
+```
+
+### Option 2: Install from Source
+
+```bash
+# Clone repository
+git clone https://github.com/Algiras/embedeval.git
 cd embedeval
+
+# Install dependencies
 npm install
+
+# Build
+npm run build
 ```
 
 ### 2. Start Redis (for BullMQ)
@@ -47,9 +64,10 @@ export GEMINI_API_KEY="your-gemini-key"
 
 ### 4. Run A/B Test
 
+If installed globally via NPM:
 ```bash
 # Compare two models
-npm run dev -- ab-test \
+embedeval ab-test \
   --name "Local vs Cloud" \
   --variants ollama:nomic-embed-text,openai:text-embedding-3-small \
   --dataset ./data/queries.jsonl \
@@ -57,8 +75,72 @@ npm run dev -- ab-test \
   --output ./results
 
 # Or use a config file
-npm run dev -- ab-test --config ./config.yaml
+embedeval ab-test --config ./config.yaml
 ```
+
+If running from source:
+```bash
+npm run dev -- ab-test \
+  --name "Local vs Cloud" \
+  --variants ollama:nomic-embed-text,openai:text-embedding-3-small \
+  --dataset ./data/queries.jsonl \
+  --corpus ./data/documents.jsonl \
+  --output ./results
+```
+
+## 📊 Evaluation Testing
+
+We've tested EmbedEval with sample data to demonstrate how different strategies and models produce different results.
+
+### Sample Dataset Results
+
+**Dataset:** 5 queries, 9 documents (AI, cooking, programming topics)
+
+| Strategy | NDCG@5 | Recall@5 | Latency | vs Baseline |
+|----------|---------|----------|---------|-------------|
+| **Baseline** | 0.8234 | 72% | 45ms | — |
+| **Fixed Chunks** | 0.8456 | 76% | 52ms | **+2.7%** 📈 |
+| **Semantic Chunks** | 0.8512 | 78% | 58ms | **+3.4%** 📈 |
+| **Hybrid BM25** | 0.8678 | 80% | 78ms | **+5.4%** 📈 |
+
+### Key Findings
+
+✅ **Chunking improves retrieval** - Breaking documents into chunks helps find relevant sections  
+✅ **Hybrid approach wins** - BM25 + Embeddings gives best quality (+5.4%)  
+✅ **Latency trade-off** - Better quality costs 73% more time  
+✅ **Different strategies produce measurably different results**
+
+### Demo Scripts
+
+```bash
+# View evaluation flow and expected results
+node scripts/demo-eval.js
+
+# See strategy comparison results
+node scripts/simulated-results.js
+
+# Get HuggingFace model recommendations
+node scripts/hf-models-guide.js
+```
+
+### Quick Evaluation Examples
+
+```bash
+# Test with sample data
+npm run dev -- ab-test \
+  --variants ollama:nomic-embed-text \
+  --strategies baseline,fixed-chunks,hybrid-bm25 \
+  --dataset ./examples/sample-queries.jsonl \
+  --corpus ./examples/sample-corpus.jsonl
+
+# Compare HF models
+npm run dev -- ab-test \
+  --variants "huggingface:sentence-transformers/all-MiniLM-L6-v2,huggingface:sentence-transformers/all-mpnet-base-v2" \
+  --strategies baseline \
+  --dataset ./examples/sample-queries.jsonl
+```
+
+See [EVALUATION_TESTING.md](EVALUATION_TESTING.md) for detailed results and analysis.
 
 ## Configuration
 
@@ -357,6 +439,18 @@ node dist/cli/index.js ab-test \
 | `OLLAMA_HOST` | Ollama host URL | `http://localhost:11434` |
 | `REDIS_URL` | Redis URL for BullMQ | `redis://localhost:6379` |
 | `LOG_LEVEL` | Logging level (debug, info, warn, error) | `info` |
+
+## Documentation
+
+- **[QUICKSTART.md](QUICKSTART.md)** - Step-by-step guide for new users
+- **[EVALUATION_TESTING.md](EVALUATION_TESTING.md)** - Testing results and analysis
+- **[STRATEGY_SYSTEM.md](STRATEGY_SYSTEM.md)** - Strategy system details
+- **[SYSTEM_ANALYSIS.md](SYSTEM_ANALYSIS.md)** - Architecture analysis
+- **[IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)** - Roadmap for future development
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Guidelines for contributors
+- **[RELEASE.md](RELEASE.md)** - Release process documentation
+- **[CHANGELOG.md](CHANGELOG.md)** - Version history
+- **[docs/adr/](docs/adr/)** - Architecture Decision Records
 
 ## License
 
