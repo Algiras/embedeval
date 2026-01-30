@@ -29,7 +29,7 @@ import { StrategyContext } from '../../strategies/types';
 export class EnhancedABTestingEngine {
   private testId: string;
   private processor: JobProcessor;
-  private cache: EmbeddingCache;
+  private _cache: EmbeddingCache;
   private checkpointManager: CheckpointManager;
   private strategyExecutor: StrategyExecutor;
 
@@ -39,7 +39,7 @@ export class EnhancedABTestingEngine {
   ) {
     this.testId = config.id || uuidv4();
     this.processor = new JobProcessor(this.testId);
-    this.cache = new EmbeddingCache(10, cacheDir);
+    this._cache = new EmbeddingCache(10, cacheDir);
     this.checkpointManager = new CheckpointManager(this.testId);
     this.strategyExecutor = new StrategyExecutor();
   }
