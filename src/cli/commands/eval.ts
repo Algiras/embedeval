@@ -8,10 +8,9 @@ import * as fs from 'fs-extra';
 import chalk from 'chalk';
 import ora from 'ora';
 import { v4 as uuidv4 } from 'uuid';
-import { EvalConfig, EvalResult, Trace, EvalOptions } from '../../core/types';
+import { EvalConfig, EvalResult } from '../../core/types';
 import { TraceStore } from '../../core/storage';
 import { EvalRegistry } from '../../evals/engine';
-import { logger } from '../../utils/logger';
 
 const EVALS_FILE = 'evals.json';
 
@@ -186,7 +185,7 @@ export async function runEvalCommand(options: RunEvalOptions): Promise<void> {
     console.log(chalk.blue('\n📊 Eval breakdown:'));
     const evalStats: Map<string, { passed: number; failed: number }> = new Map();
 
-    for (const [traceId, traceResults] of results) {
+    for (const [_traceId, traceResults] of results) {
       for (const result of traceResults) {
         const stats = evalStats.get(result.evalId) || { passed: 0, failed: 0 };
         if (result.passed) stats.passed++;

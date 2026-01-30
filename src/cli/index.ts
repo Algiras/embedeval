@@ -29,8 +29,8 @@ import { collectCommand } from './commands/collect';
 import { viewCommand } from './commands/view';
 import { annotateCommand } from './commands/annotate';
 import { taxonomyCommand } from './commands/taxonomy';
-import { evalCommand } from './commands/eval';
-import { generateCommand } from './commands/generate';
+import { addEvalCommand, listEvalsCommand, runEvalCommand, reportEvalCommand } from './commands/eval';
+import { initCommand, createCommand } from './commands/generate';
 import { exportCommand } from './commands/export';
 import { reportCommand } from './commands/report';
 
@@ -101,13 +101,13 @@ program
     new Command('add')
       .description('Interactive wizard to add new evaluator')
       .option('-f, --file <file>', 'Eval config file', 'evals.yaml')
-      .action(evalCommand.add)
+      .action(addEvalCommand)
   )
   .addCommand(
     new Command('list')
       .description('List all registered evaluators')
       .option('-f, --file <file>', 'Eval config file', 'evals.yaml')
-      .action(evalCommand.list)
+      .action(listEvalsCommand)
   )
   .addCommand(
     new Command('run <traces>')
@@ -115,7 +115,7 @@ program
       .requiredOption('-c, --config <file>', 'Eval config file')
       .option('-o, --output <file>', 'Results output', 'eval-results.jsonl')
       .option('--stop-on-fail', 'Stop on first failure (cheap evals only)')
-      .action(evalCommand.run)
+      .action(runEvalCommand)
   )
   .addCommand(
     new Command('report')
@@ -123,7 +123,7 @@ program
       .requiredOption('-r, --results <file>', 'Results file')
       .option('-f, --format <format>', 'Output format (markdown, html, json)', 'markdown')
       .option('-o, --output <file>', 'Output file')
-      .action(evalCommand.report)
+      .action(reportEvalCommand)
   );
 
 // Generate command - Synthetic data
@@ -134,7 +134,7 @@ program
     new Command('init')
       .description('Create dimensions.yaml template')
       .option('-o, --output <file>', 'Output file', 'dimensions.yaml')
-      .action(generateCommand.init)
+      .action(initCommand)
   )
   .addCommand(
     new Command('create')
@@ -143,7 +143,7 @@ program
       .requiredOption('-n, --count <n>', 'Number of traces to generate', parseInt)
       .option('-o, --output <file>', 'Output file', 'synthetic-traces.jsonl')
       .option('--run-through-system', 'Run queries through actual LLM system')
-      .action(generateCommand.create)
+      .action(createCommand)
   );
 
 // Export command - Export to notebooks

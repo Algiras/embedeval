@@ -4,7 +4,7 @@
  * All evals return binary PASS/FAIL results only (Hamel Husain principle)
  */
 
-import { Trace, EvalConfig, EvalResult, EvalTypeConfig } from '../core/types';
+import { Trace, EvalConfig, EvalResult } from '../core/types';
 import { logger } from '../utils/logger';
 
 export interface EvalRunner {

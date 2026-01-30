@@ -4,12 +4,11 @@
  * Implements Hamel Husain's "benevolent dictator" annotation model
  */
 
-import * as fs from 'fs-extra';
 import chalk from 'chalk';
 import { v4 as uuidv4 } from 'uuid';
 import { TraceStore, AnnotationStore } from '../../core/storage';
 import { TaxonomyStore } from '../../core/storage';
-import { Annotation, FailureTaxonomy } from '../../core/types';
+import { Annotation } from '../../core/types';
 
 interface AnnotateOptions {
   user: string;

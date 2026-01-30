@@ -3,7 +3,6 @@
  * Build, show, and update failure taxonomy
  */
 
-import * as fs from 'fs-extra';
 import chalk from 'chalk';
 import { TaxonomyEngine } from '../../core/taxonomy-engine';
 import { TaxonomyStore } from '../../core/storage';

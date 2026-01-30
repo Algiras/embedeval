@@ -8,7 +8,7 @@ import * as path from 'path';
 import chalk from 'chalk';
 import ora from 'ora';
 import { v4 as uuidv4 } from 'uuid';
-import { Trace, TraceMetadata } from '../../core/types';
+import { Trace } from '../../core/types';
 import { TraceStore } from '../../core/storage';
 
 interface CollectOptions {

@@ -3,8 +3,6 @@
  * Read-only trace viewer (terminal UI)
  */
 
-import * as fs from 'fs-extra';
-import * as path from 'path';
 import chalk from 'chalk';
 import { TraceStore, AnnotationStore } from '../../core/storage';
 import { Annotation } from '../../core/types';

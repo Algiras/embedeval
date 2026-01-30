@@ -4,7 +4,7 @@
  * Implements "Axial Coding" from Hamel Husain's error analysis methodology
  */
 
-import { Annotation, FailureTaxonomy, FailureCategory } from './types';
+import { FailureTaxonomy, FailureCategory } from './types';
 import { TaxonomyStore, AnnotationStore } from './storage';
 
 export class TaxonomyEngine {
