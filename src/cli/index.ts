@@ -4,6 +4,25 @@
  * EmbedEval CLI Entry Point
  */
 
+// Load environment variables from .env file
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+import * as fs from 'fs-extra';
+
+// Try to load .env from multiple locations (in order of priority)
+const envPaths = [
+  path.join(process.cwd(), '.env'),           // Current working directory
+  path.join(process.cwd(), '.env.local'),     // Local overrides
+  path.join(__dirname, '../../.env'),         // Project root
+];
+
+for (const envPath of envPaths) {
+  if (fs.existsSync(envPath)) {
+    dotenv.config({ path: envPath });
+    break;
+  }
+}
+
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { abTestCommand } from './commands/ab-test';

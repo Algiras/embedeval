@@ -147,6 +147,7 @@ export interface ABTestConfig {
   dataset: string;
   corpus?: string;
   metrics: string[];
+  gates?: GateConfig;
   output: {
     json?: string;
     dashboard?: string;
@@ -377,6 +378,30 @@ export interface GlobalManifest {
 }
 
 // ============================================================================
+// Gate/Threshold Types
+// ============================================================================
+
+export interface MetricGate {
+  min?: number;
+  max?: number;
+  improvement?: number;  // Minimum improvement vs baseline
+}
+
+export interface GateConfig {
+  enabled: boolean;
+  failOnViolation: boolean;
+  metrics: Record<string, MetricGate>;
+  latency?: {
+    maxMs?: number;
+    p95MaxMs?: number;
+  };
+  cost?: {
+    maxTotal?: number;
+    maxPerQuery?: number;
+  };
+}
+
+// ============================================================================
 // Configuration Types
 // ============================================================================
 
@@ -395,6 +420,7 @@ export interface EvalConfig {
     sideBySide?: string;
     csv?: string;
   };
+  gates?: GateConfig;
   humanEval?: {
     enabled: boolean;
     storagePath: string;

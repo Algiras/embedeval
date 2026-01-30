@@ -53,6 +53,7 @@ function validateConfig(config: any): EvalConfig {
     dataset: config.dataset,
     corpus: config.corpus,
     output: config.output || {},
+    gates: config.gates,
     humanEval: config.humanEval,
     cache: config.cache || {
       maxSizeGB: 10,
@@ -81,6 +82,7 @@ export function toABTestConfig(
     dataset: config.dataset,
     corpus: config.corpus,
     metrics: config.metrics,
+    gates: config.gates,
     output: config.output,
   };
 }
