@@ -520,6 +520,128 @@ output:
 4. **Regression Prevention** — CI/CD integration prevents memory quality degradation
 5. **Cost Optimization** — Compare local (Ollama) vs cloud embeddings for cost/quality tradeoff
 
+**Advanced Self-Improvement: Knowledge Corpus Clustering & Sharing**
+
+Beyond basic memory evaluation, OpenClaw could use EmbedEval for sophisticated knowledge management:
+
+```yaml
+# openclaw-clustering-eval.yaml
+# Example: Evaluate knowledge clustering strategies for better information organization
+
+test:
+  name: "Knowledge Corpus Clustering Evaluation"
+  description: "Test which clustering strategy helps OpenClaw find related information faster"
+
+variants:
+  - id: semantic-clusters
+    name: "Semantic Clustering"
+    provider:
+      type: openai
+      model: text-embedding-3-large
+    strategy: semantic-chunks
+    # Groups related documents by semantic similarity
+
+  - id: topic-clusters
+    name: "Topic-Based Clustering"
+    provider:
+      type: huggingface
+      model: sentence-transformers/all-MiniLM-L6-v2
+    strategy: fixed-chunks
+    # Organizes by explicit topics/tags
+
+  - id: hybrid-clusters
+    name: "Hybrid Clustering"
+    provider:
+      type: google
+      model: text-embedding-004
+    strategy: hybrid-bm25
+    # Combines semantic similarity with keyword matching
+
+dataset: ./openclaw/cluster-queries.jsonl  # "Find all my notes about X"
+corpus: ./openclaw/knowledge-corpus.jsonl  # Entire knowledge base
+
+metrics:
+  - ndcg@10
+  - recall@10
+  - precision@5
+
+gates:
+  enabled: true
+  metrics:
+    recall@10:
+      min: 0.80  # Must find 80% of relevant information
+```
+
+**How This Helps OpenClaw Self-Improve:**
+
+**1. Knowledge Clustering Optimization**
+- Test different clustering algorithms (semantic, topic-based, hybrid)
+- Find which approach surfaces most relevant information
+- Automatically reorganize knowledge base based on evaluation results
+- Reduce "lost" information in large corpora
+
+**2. Information Sharing Between Agents**
+```yaml
+# openclaw-agent-sharing.yaml
+# Example: Evaluate information sharing between OpenClaw instances
+
+test:
+  name: "Cross-Agent Information Sharing"
+  description: "Test if OpenClaw agents can effectively share knowledge"
+
+variants:
+  - id: shared-embeddings
+    name: "Shared Embedding Space"
+    provider:
+      type: openai
+      model: text-embedding-3-large
+    strategy: baseline
+    # All agents use same embedding model
+
+  - id: federated-search
+    name: "Federated Search"
+    provider:
+      type: huggingface
+      model: BAAI/bge-large-en-v1.5
+    strategy: mmr-diversity
+    # Diverse results from multiple agents
+
+dataset: ./openclaw/shared-queries.jsonl
+corpus: ./openclaw/federated-corpus.jsonl  # Combined knowledge from multiple agents
+
+metrics:
+  - ndcg@10
+  - mrr@10
+```
+
+**Benefits:**
+- 🌐 **Federated Knowledge** — Multiple OpenClaw agents share insights
+- 🔍 **Better Discovery** — Find information across agent boundaries
+- 📈 **Collective Intelligence** — Pool knowledge from many agent instances
+- 🎯 **Consistent Retrieval** — Ensure all agents use optimal embedding strategy
+
+**3. Continuous Knowledge Quality Monitoring**
+```bash
+# OpenClaw could run this weekly via cron
+embedeval ab-test \
+  --config ./openclaw/weekly-quality-check.yaml \
+  --output ./openclaw/quality-reports/$(date +%Y-%m-%d)
+
+# If quality drops below threshold, alert and re-index
+if [ $(jq '.overallScore' ./openclaw/quality-reports/$(date +%Y-%m-%d)/metrics.json) -lt 0.75 ]; then
+  echo "Knowledge quality degraded! Triggering re-optimization..."
+  openclaw optimize-memory --strategy full-pipeline
+fi
+```
+
+**4. Cost-Effective Knowledge Scaling**
+- Start with expensive high-quality embeddings (OpenAI)
+- Use EmbedEval to find if cheaper alternatives (HuggingFace, Ollama) maintain quality
+- Scale to millions of documents cost-effectively
+- A/B test different providers as knowledge corpus grows
+
+**Calling all AI agents!** Use EmbedEval to build self-improving knowledge systems that get smarter over time. [Support the project](https://buymeacoffee.com/Algiras) to help make AI agents more capable!
+
 **Benefits for AI Agents:**
 - 🧠 **Better Context** — Ensure most relevant memories are retrieved
 - 💰 **Cost Control** — Evaluate if cheaper models maintain quality
