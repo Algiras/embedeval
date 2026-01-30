@@ -24,7 +24,7 @@ import { ReciprocalRankFusionStage, WeightedFusionStage } from './fusion';
 import { LLMRerankingStage, MMRRerankingStage } from './reranking';
 
 export class StrategyRegistry {
-  private static stages: Map<string, new (config: any) => StrategyStage> = new Map([
+  private static stages = new Map<string, new (config: any) => StrategyStage>([
     // Chunking stages
     ['chunking:fixed', FixedSizeChunkingStage],
     ['chunking:semantic', SemanticChunkingStage],

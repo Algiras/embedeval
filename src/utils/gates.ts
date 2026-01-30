@@ -2,7 +2,7 @@
  * Gate evaluation utilities for pass/fail thresholds
  */
 
-import { GateConfig, ABTestResult, ABVariantResult, MetricComparison } from '../core/types';
+import { GateConfig, ABTestResult, MetricComparison } from '../core/types';
 import { logger } from './logger';
 
 export interface GateViolation {
