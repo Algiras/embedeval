@@ -1,5 +1,0 @@
-{"id": "q1", "query": "What is machine learning?", "relevantDocs": ["doc1", "doc2"], "tags": ["technical", "ai"]}
-{"id": "q2", "query": "How to bake sourdough bread?", "relevantDocs": ["doc3", "doc4"], "tags": ["cooking", "baking"]}
-{"id": "q3", "query": "Best practices for REST API design", "relevantDocs": ["doc5", "doc6"], "tags": ["technical", "programming"]}
-{"id": "q4", "query": "Introduction to TypeScript", "relevantDocs": ["doc7", "doc8"], "tags": ["technical", "programming"]}
-{"id": "q5", "query": "What are embeddings in NLP?", "relevantDocs": ["doc1", "doc9"], "tags": ["technical", "ai", "nlp"]}

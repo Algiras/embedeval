@@ -1,545 +1,320 @@
-# EmbedEval Agent Integration Guide
+# EmbedEval v2 - Agent & LLM Usage Guide
 
-> **Mission**: Transform EmbedEval into a self-evolving embedding researcher that AI agents can use to continuously improve their retrieval systems.
-
-## Overview
-
-EmbedEval is designed to be used by AI agents (like OpenClaw, Claude, or custom agents) to:
-1. **Evaluate** embedding and retrieval quality
-2. **Experiment** with different strategies
-3. **Evolve** configurations automatically
-4. **Deploy** improvements without human intervention
+> **Quick Reference**: Binary evals, trace-centric, error-analysis-first. Built on [Hamel Husain's principles](https://hamel.dev/blog/posts/evals-faq/).
 
 ---
 
-## Architecture for AI Agents
+## 🚀 For AI Agents (Claude, GPT, etc.)
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        AI AGENT (e.g., OpenClaw)                     │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                      │
-│  "I need to improve my memory retrieval"                            │
-│                    │                                                 │
-│                    ▼                                                 │
-│  ┌──────────────────────────────────────────────────────────────┐  │
-│  │                    EMBEDEVAL MCP SERVER                       │  │
-│  │  ┌─────────────┬─────────────┬─────────────┬──────────────┐  │  │
-│  │  │  evaluate   │  experiment │   evolve    │   discover   │  │  │
-│  │  │             │             │             │              │  │  │
-│  │  │ Run A/B     │ Test hypo-  │ Auto-      │ Find new     │  │  │
-│  │  │ tests       │ theses      │ optimize   │ models       │  │  │
-│  │  └─────────────┴─────────────┴─────────────┴──────────────┘  │  │
-│  └──────────────────────────────────────────────────────────────┘  │
-│                                                                      │
-└─────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Agent Capabilities
-
-### 1. Evaluation Capabilities
-
-Agents can request evaluations to understand their current retrieval quality:
-
-```yaml
-# Agent Request: "Evaluate my current memory retrieval"
-action: evaluate
-config:
-  corpus: ./agent-memory/corpus.jsonl
-  queries: ./agent-memory/recent-queries.jsonl
-  provider:
-    type: openai
-    model: text-embedding-3-small
-  strategy: baseline
-  metrics:
-    - ndcg@10
-    - recall@10
-    - mrr@10
-```
-
-**Response to Agent:**
-```json
-{
-  "status": "completed",
-  "summary": {
-    "ndcg@10": 0.72,
-    "recall@10": 0.65,
-    "mrr@10": 0.58
-  },
-  "interpretation": "Moderate retrieval quality. Consider hybrid BM25 for +5-8% improvement.",
-  "recommendations": [
-    "hybrid-bm25 strategy shows +5.4% NDCG improvement in similar corpora",
-    "semantic-chunks may help with your long documents (avg 2,400 tokens)"
-  ]
-}
-```
-
-### 2. Experimentation Capabilities
-
-Agents can propose and run experiments:
-
-```yaml
-# Agent Request: "Test if chunking improves my retrieval"
-action: experiment
-hypothesis: "Semantic chunking improves retrieval for long documents"
-variants:
-  - name: baseline
-    strategy: baseline
-  - name: semantic-chunks
-    strategy: semantic-chunks
-    config:
-      maxSize: 512
-      overlap: 50
-gates:
-  ndcg@10:
-    improvement: 0.05  # Must improve by 5%
-```
-
-**Response to Agent:**
-```json
-{
-  "status": "completed",
-  "hypothesis_confirmed": true,
-  "results": {
-    "baseline": { "ndcg@10": 0.72 },
-    "semantic-chunks": { "ndcg@10": 0.78 }
-  },
-  "improvement": 0.083,
-  "statistical_significance": {
-    "p_value": 0.023,
-    "significant": true
-  },
-  "recommendation": "DEPLOY semantic-chunks strategy"
-}
-```
-
-### 3. Evolution Capabilities
-
-Agents can trigger autonomous optimization:
-
-```yaml
-# Agent Request: "Optimize my retrieval configuration"
-action: evolve
-config:
-  population_size: 10
-  generations: 5
-  fitness_metric: ndcg@10
-  mutation_rate: 0.2
-  auto_deploy: true
-  auto_deploy_threshold: 0.80
-constraints:
-  max_latency_ms: 500
-  max_cost_per_query: 0.001
-```
-
-**Response to Agent:**
-```json
-{
-  "status": "completed",
-  "generations_run": 5,
-  "best_strategy": {
-    "name": "evolved-gen5-champion",
-    "genome": {
-      "chunking": "semantic",
-      "chunkSize": 384,
-      "retrieval": "hybrid",
-      "hybridWeights": [0.6, 0.4],
-      "reranking": "mmr",
-      "mmrLambda": 0.7
-    },
-    "fitness": 0.84
-  },
-  "improvement_over_baseline": 0.167,
-  "deployed": true
-}
-```
-
-### 4. Discovery Capabilities
-
-Agents can discover new models and strategies:
-
-```yaml
-# Agent Request: "Find better embedding models for my use case"
-action: discover
-context:
-  domain: "legal documents"
-  languages: ["en"]
-  document_length: "long"
-  current_model: "text-embedding-3-small"
-sources:
-  - huggingface
-  - mteb_leaderboard
-```
-
-**Response to Agent:**
-```json
-{
-  "status": "completed",
-  "recommendations": [
-    {
-      "model": "BAAI/bge-large-en-v1.5",
-      "source": "huggingface",
-      "mteb_score": 0.634,
-      "reason": "Top performer for retrieval tasks, good for long documents"
-    },
-    {
-      "model": "sentence-transformers/gtr-t5-xxl",
-      "source": "huggingface", 
-      "mteb_score": 0.621,
-      "reason": "Excellent for legal domain based on LegalBench"
-    }
-  ],
-  "suggested_experiment": {
-    "variants": ["current", "bge-large", "gtr-t5"],
-    "estimated_improvement": "5-15%"
-  }
-}
-```
-
----
-
-## Self-Evolution Loop
-
-The core innovation is the **autonomous evolution loop**:
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    EVOLUTION LOOP (runs weekly)                  │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│   1. OBSERVE                                                     │
-│      └─▶ Collect recent query logs                              │
-│      └─▶ Measure current retrieval quality                      │
-│      └─▶ Detect performance drift                               │
-│                                                                  │
-│   2. ANALYZE                                                     │
-│      └─▶ Identify failure patterns                              │
-│      └─▶ Cluster queries by performance                         │
-│      └─▶ Find optimization opportunities                        │
-│                                                                  │
-│   3. HYPOTHESIZE                                                 │
-│      └─▶ Generate experiment proposals                          │
-│      └─▶ Prioritize by expected impact                          │
-│      └─▶ Check knowledge base for past results                  │
-│                                                                  │
-│   4. EXPERIMENT                                                  │
-│      └─▶ Run A/B tests                                          │
-│      └─▶ Evaluate statistical significance                      │
-│      └─▶ Measure cost/latency tradeoffs                         │
-│                                                                  │
-│   5. LEARN                                                       │
-│      └─▶ Update knowledge base                                  │
-│      └─▶ Record what worked/failed                              │
-│      └─▶ Adjust hypothesis generator                            │
-│                                                                  │
-│   6. DEPLOY                                                      │
-│      └─▶ Auto-promote winning configurations                    │
-│      └─▶ Update production config                               │
-│      └─▶ Monitor for regressions                                │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Knowledge Base Schema
-
-The knowledge base stores learnings for continuous improvement:
-
-```typescript
-interface KnowledgeBase {
-  // Experiment history
-  experiments: Experiment[];
-  
-  // Model performance profiles
-  modelProfiles: Map<string, ModelProfile>;
-  
-  // Strategy performance by context
-  strategyPerformance: Map<string, StrategyPerformance>;
-  
-  // Failure patterns
-  failurePatterns: FailurePattern[];
-  
-  // Best practices (learned)
-  bestPractices: BestPractice[];
-  
-  // Evolution genealogy
-  strategyLineage: StrategyGenome[];
-}
-
-interface Experiment {
-  id: string;
-  hypothesis: string;
-  timestamp: Date;
-  variants: Variant[];
-  results: Results;
-  outcome: 'confirmed' | 'rejected' | 'inconclusive';
-  learnings: string[];
-}
-
-interface ModelProfile {
-  modelId: string;
-  provider: string;
-  dimensions: number;
-  avgLatency: number;
-  costPer1kTokens: number;
-  strengthDomains: string[];
-  weaknessDomains: string[];
-  performanceByTask: Map<string, number>;
-}
-
-interface StrategyPerformance {
-  strategyName: string;
-  avgNdcg: number;
-  avgLatency: number;
-  bestForContexts: string[];  // e.g., "long-docs", "short-queries"
-  worstForContexts: string[];
-}
-
-interface FailurePattern {
-  pattern: string;
-  frequency: number;
-  suggestedFix: string;
-  fixSuccessRate: number;
-}
-```
-
----
-
-## Integration Examples
-
-### Example 1: OpenClaw Memory Enhancement
-
-```yaml
-# openclaw-weekly-evolution.yaml
-# Run every Sunday at midnight
-
-schedule: "0 0 * * 0"
-
-evolution:
-  name: "OpenClaw Memory Evolution"
-  corpus: /openclaw/memory-corpus.jsonl
-  queries: /openclaw/query-logs/last-week.jsonl
-  
-  observe:
-    drift_detection: true
-    failure_analysis: true
-    
-  experiment:
-    max_variants: 5
-    statistical_confidence: 0.95
-    
-  deploy:
-    auto_deploy: true
-    threshold:
-      ndcg@10: 0.80
-      improvement: 0.03
-    rollback_on_regression: true
-    
-  notify:
-    on_improvement: webhook://openclaw/embedding-improved
-    on_regression: webhook://openclaw/embedding-regressed
-```
-
-### Example 2: RAG Pipeline Optimization
-
-```yaml
-# rag-optimizer.yaml
-# Continuous optimization for RAG application
-
-name: "RAG Pipeline Optimizer"
-
-targets:
-  - name: retrieval
-    current_strategy: baseline
-    optimization_goal: maximize ndcg@10
-    constraints:
-      latency_p95: 200ms
-      cost_per_query: $0.0005
-
-  - name: reranking
-    current_strategy: none
-    optimization_goal: maximize precision@5
-    constraints:
-      latency_p95: 500ms
-
-experiments:
-  - hypothesis: "Hybrid BM25 improves retrieval"
-    challenger: hybrid-bm25
-    
-  - hypothesis: "LLM reranking improves precision"
-    challenger: llm-reranked
-    only_if: retrieval.ndcg@10 > 0.75
-```
-
-### Example 3: Multi-Agent Knowledge Sharing
-
-```yaml
-# federated-learning.yaml
-# Share learnings across agent instances
-
-federation:
-  enabled: true
-  central_server: https://embedeval-hub.example.com
-  
-  share:
-    - model_profiles
-    - strategy_performance
-    - failure_patterns
-    
-  receive:
-    - best_practices
-    - new_model_recommendations
-    
-  privacy:
-    anonymize_queries: true
-    aggregate_only: true
-```
-
----
-
-## CLI Commands for Agents
+### Core Workflow (3 Steps)
 
 ```bash
-# Evaluate current configuration
-embedeval agent evaluate \
-  --corpus ./corpus.jsonl \
-  --queries ./queries.jsonl \
-  --output-format json
+# 1. COLLECT - Import your LLM traces
+embedeval collect ./agent-logs.jsonl --output traces.jsonl
 
-# Run experiment
-embedeval agent experiment \
-  --hypothesis "hybrid beats baseline" \
-  --baseline baseline \
-  --challenger hybrid-bm25 \
-  --confidence 0.95
+# 2. ANNOTATE - Manual error analysis (CRITICAL!)
+embedeval annotate traces.jsonl --user "agent@system.com"
 
-# Start evolution
-embedeval agent evolve \
-  --generations 10 \
-  --population 20 \
-  --auto-deploy
+# 3. TAXONOMY - Build failure taxonomy
+embedeval taxonomy build --annotations annotations.jsonl
+```
 
-# Query knowledge base
-embedeval agent knowledge \
-  --query "best strategy for legal documents"
+### Essential Commands
 
-# Discover new models
-embedeval agent discover \
-  --domain "scientific papers" \
-  --constraint "latency < 100ms"
+| Task | Command | Description |
+|------|---------|-------------|
+| **Collect** | `embedeval collect <source>` | Import traces from JSONL |
+| **Annotate** | `embedeval annotate <traces> -u <email>` | Binary pass/fail annotation |
+| **View** | `embedeval view <traces>` | Read-only trace viewer |
+| **Taxonomy** | `embedeval taxonomy build` | Categorize failures |
+| **Eval Add** | `embedeval eval add` | Add new evaluator |
+| **Eval Run** | `embedeval eval run <traces> -c <config>` | Run evals |
+| **Generate** | `embedeval generate create -d <dims> -n <count>` | Synthetic data |
+| **Export** | `embedeval export <traces> -f notebook` | Jupyter notebook |
+| **Report** | `embedeval report -t <traces> -a <annots>` | HTML dashboard |
+
+### Interactive Annotation Shortcuts
+
+When running `embedeval annotate`:
+- `p` = **PASS** ✓
+- `f` = **FAIL** ✗ (then select category)
+- `c` = Change category
+- `n` = Edit notes
+- `j` = Next trace
+- `k` = Previous trace
+- `s` = Save and quit
+
+---
+
+## 🎯 Hamel Husain Principles (Must Follow!)
+
+### 1. **Binary Only** ✓/✗
+```yaml
+# GOOD: Binary evals
+evals:
+  - name: is_accurate
+    type: llm-judge
+    binary: true  # ONLY PASS or FAIL
+
+# BAD: Likert scales (NEVER DO THIS)
+evals:
+  - name: quality_score
+    type: 1_to_5  # DON'T
+```
+
+### 2. **Error Analysis First** 👀
+```bash
+# Spend 60-80% of time here:
+embedeval annotate traces.jsonl --user "expert@company.com"
+
+# NOT here (automate only after understanding failures):
+# embedeval eval run ... # (do this AFTER annotation)
+```
+
+### 3. **Cheap Evals First** 💰
+```yaml
+evals:
+  # Run cheap evals first (fast, deterministic)
+  - name: has_content
+    type: assertion
+    check: "response.length > 100"
+    priority: cheap
+    
+  # Expensive evals only for complex cases
+  - name: factual_accuracy
+    type: llm-judge
+    priority: expensive
+```
+
+### 4. **Single Annotator** 👤
+```bash
+# One "benevolent dictator" owns quality
+embedeval annotate traces.jsonl --user "product-manager@company.com"
+
+# NOT multiple people voting (causes disagreement)
+```
+
+### 5. **Start with 50-100 Traces** 📊
+```bash
+# Minimum for meaningful taxonomy
+embedeval collect ./logs.jsonl --limit 100
+embedeval annotate traces.jsonl --user "pm@company.com"
 ```
 
 ---
 
-## MCP Server Tools
+## 🛠️ Common Agent Tasks
 
-When running as an MCP server, EmbedEval exposes these tools:
+### Task: Understand My Failures
+```bash
+# 1. Collect recent traces
+embedeval collect ./logs/recent.jsonl --limit 100
 
-| Tool | Description |
-|------|-------------|
-| `embedeval_evaluate` | Run evaluation on corpus/queries |
-| `embedeval_experiment` | Run A/B test between strategies |
-| `embedeval_evolve` | Start evolution optimization |
-| `embedeval_discover` | Find new models/strategies |
-| `embedeval_knowledge_query` | Query the knowledge base |
-| `embedeval_knowledge_store` | Store new learnings |
-| `embedeval_deploy` | Deploy a configuration |
-| `embedeval_rollback` | Rollback to previous config |
+# 2. Annotate them manually
+embedeval annotate traces.jsonl --user "agent@system.com"
+# (Interactive: review each trace, mark pass/fail, categorize failures)
+
+# 3. Build taxonomy to see patterns
+embedeval taxonomy build --user "agent@system.com"
+
+# Output shows:
+# - Pass rate: 73%
+# - Hallucination: 12 traces (44% of failures)
+# - Incomplete: 8 traces (30% of failures)
+```
+
+### Task: Add Evaluation for Common Failure
+```bash
+# After building taxonomy, add evals for top failure categories
+
+# For "hallucination" category:
+embedeval eval add
+# ? Eval name: no_hallucination
+# ? Type: llm-judge
+# ? Model: gemini-1.5-flash  (cheaper than main model)
+# ? Prompt: Does the response contain factual errors not in context? Answer PASS or FAIL.
+# ? Binary output: yes
+
+# Run the eval
+embedeval eval run traces.jsonl --config evals.yaml --output results.jsonl
+
+# Generate report
+embedeval eval report --results results.jsonl --format markdown
+```
+
+### Task: Generate Test Data
+```bash
+# 1. Create dimensions template
+embedeval generate init  # Creates dimensions.yaml
+
+# 2. Edit dimensions.yaml:
+# dimensions:
+#   query_complexity: [simple, multi_step, edge_case]
+#   domain: [billing, technical, general]
+
+# 3. Generate synthetic traces
+embedeval generate create \
+  --dimensions dimensions.yaml \
+  --count 50 \
+  --output synthetic-traces.jsonl
+
+# 4. Run your system on synthetic data to collect real traces
+# (Implementation depends on your system)
+
+# 5. Evaluate synthetic traces
+embedeval annotate synthetic-traces.jsonl --user "tester@system.com"
+```
+
+### Task: Export for Analysis
+```bash
+# Export to Jupyter notebook for deep analysis
+embedeval export traces.jsonl \
+  --format notebook \
+  --annotations annotations.jsonl \
+  --output analysis.ipynb
+
+# Notebook includes:
+# - Data loading
+# - Failure distribution charts
+# - Pass/fail vs latency analysis
+# - Trace inspection utilities
+```
 
 ---
 
-## Getting Started for Agent Developers
+## 📦 MCP Server Configuration
 
-### 1. Install EmbedEval
-
-```bash
-npm install -g embedeval
-```
-
-### 2. Initialize Knowledge Base
-
-```bash
-embedeval init --knowledge-base ./kb
-```
-
-### 3. Run First Evaluation
-
-```bash
-embedeval agent evaluate \
-  --corpus ./your-corpus.jsonl \
-  --queries ./your-queries.jsonl
-```
-
-### 4. Start Evolution Loop
-
-```bash
-embedeval agent evolve --auto-deploy
-```
-
-### 5. Connect to MCP (optional)
+For Claude Desktop, Cursor, or other MCP clients:
 
 ```json
 {
   "mcpServers": {
     "embedeval": {
-      "command": "embedeval",
-      "args": ["mcp-server"],
+      "command": "npx",
+      "args": ["embedeval", "mcp-server"],
       "env": {
-        "OPENAI_API_KEY": "your-key"
+        "GEMINI_API_KEY": "your-api-key"
       }
     }
   }
 }
 ```
 
----
+### MCP Tools Available
 
-## Best Practices for AI Agents
-
-1. **Start Simple**: Begin with baseline strategy, then evolve
-2. **Log Everything**: Save all queries for synthetic data generation
-3. **Set Gates**: Always define quality thresholds before deploying
-4. **Monitor Drift**: Run weekly evaluations to detect degradation
-5. **Trust but Verify**: Auto-deploy with rollback capability
-6. **Share Learnings**: Contribute to federated knowledge base
-
----
-
-## Roadmap
-
-### Phase 1: Core Agent Support (Current)
-- [x] A/B testing framework
-- [x] Strategy system
-- [x] Statistical significance testing
-- [ ] Agent CLI commands
-- [ ] MCP server implementation
-
-### Phase 2: Self-Evolution
-- [ ] Hypothesis generator
-- [ ] Evolution scheduler
-- [ ] Auto-deployment
-- [ ] Knowledge base
-
-### Phase 3: Intelligence
-- [ ] Failure analysis
-- [ ] Model discovery
-- [ ] Synthetic data generation
-- [ ] Embedding visualization
-
-### Phase 4: Federation
-- [ ] Multi-agent sharing
-- [ ] Centralized knowledge hub
-- [ ] Privacy-preserving aggregation
+| Tool | Input | Output |
+|------|-------|--------|
+| `collect_traces` | `source: string` | `traces_file: string` |
+| `annotate_traces` | `traces: string, user: string` | `annotations_file: string` |
+| `build_taxonomy` | `annotations: string` | `taxonomy: object` |
+| `add_eval` | `name: string, type: string, config: object` | `eval_id: string` |
+| `run_evals` | `traces: string, evals: string` | `results: object` |
+| `export_notebook` | `traces: string, format: string` | `notebook_path: string` |
 
 ---
 
-## Contributing
+## 🧠 Best Practices for LLMs
 
-See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines on contributing to the agent integration features.
+### DO:
+1. ✅ **Always annotate manually first** - Understand failures before automating
+2. ✅ **Use binary judgments** - Pass/fail is faster and clearer
+3. ✅ **Build taxonomy** - Let data guide your evals, not imagination
+4. ✅ **Start with 50-100 traces** - Minimum for meaningful patterns
+5. ✅ **One annotator** - Single domain expert as "benevolent dictator"
+6. ✅ **Cheap evals first** - Assertions, regex before LLM-as-judge
+7. ✅ **Export to notebooks** - Use Jupyter for statistical analysis
+8. ✅ **Version your traces** - Keep historical data for drift detection
+
+### DON'T:
+1. ❌ Skip manual annotation - You'll miss critical failure modes
+2. ❌ Use 1-5 scales - They create disagreement and slow annotation
+3. ❌ Build evals before taxonomy - You'll waste time on wrong metrics
+4. ❌ Use multiple annotators - Creates conflict, slows decisions
+5. ❌ Start with LLM-as-judge - It's expensive, use sparingly
+6. ❌ Generate synthetic data without dimensions - Creates repetitive tests
+7. ❌ Commit traces with PII - Sanitize data first
 
 ---
 
-*Built for AI agents that want to get smarter over time.* 🤖
+## 🔍 Data Format Reference
+
+### Trace (JSONL)
+```json
+{
+  "id": "trace-001",
+  "timestamp": "2026-01-30T10:00:00Z",
+  "query": "What's your refund policy?",
+  "response": "We offer full refunds within 30 days...",
+  "context": {
+    "retrievedDocs": [
+      {"id": "doc-1", "content": "...", "score": 0.94}
+    ]
+  },
+  "metadata": {
+    "provider": "google",
+    "model": "gemini-1.5-flash",
+    "latency": 180,
+    "cost": 0.0001
+  }
+}
+```
+
+### Annotation (JSONL)
+```json
+{
+  "id": "ann-001",
+  "traceId": "trace-001",
+  "annotator": "pm@company.com",
+  "timestamp": "2026-01-30T10:05:00Z",
+  "label": "fail",  // ONLY "pass" or "fail"
+  "failureCategory": "hallucination",
+  "notes": "Made up refund time limit",
+  "source": "manual"
+}
+```
+
+### Eval Config (YAML)
+```yaml
+evals:
+  - id: has_content
+    name: Has Content
+    type: assertion
+    priority: cheap
+    config:
+      check: "response.length > 50"
+  
+  - id: no_hallucination
+    name: No Hallucination
+    type: llm-judge
+    priority: expensive
+    config:
+      model: gemini-1.5-flash
+      prompt: "Does response contain factual errors? Answer PASS or FAIL."
+      binary: true
+```
+
+---
+
+## 🚨 Quick Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| "No traces found" | Check JSONL format, ensure one JSON object per line |
+| "Cannot find module" | Run `npm install` or `npm install -g embedeval` |
+| "Permission denied" | Use `sudo` for global install, or install locally |
+| "Taxonomy empty" | Need ≥1 failed annotation to build taxonomy |
+| "Eval failed" | Check eval config syntax, ensure trace has required fields |
+
+---
+
+## 📚 Resources
+
+- **Full Docs**: [README-v2.md](./README-v2.md)
+- **Quick Ref**: [QUICKREF-v2.md](./QUICKREF-v2.md)
+- **Hamel's FAQ**: https://hamel.dev/blog/posts/evals-faq/
+- **GitHub**: https://github.com/Algiras/embedeval
+- **NPM**: https://www.npmjs.com/package/embedeval
+
+---
+
+**Remember**: The goal is understanding failures, not perfect metrics. Spend time looking at traces! 👀
