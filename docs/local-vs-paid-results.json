@@ -1,0 +1,198 @@
+{
+  "timestamp": "2026-01-30T20:25:17.385Z",
+  "config": {
+    "generations": 15,
+    "populationSize": 20,
+    "mutationRate": 0.25,
+    "eliteCount": 3
+  },
+  "paidBaselines": {
+    "openai/text-embedding-3-large": {
+      "ndcg": 0.72,
+      "recall": 0.85,
+      "mrr": 0.78,
+      "overall": 0.78
+    },
+    "openai/text-embedding-3-small": {
+      "ndcg": 0.68,
+      "recall": 0.82,
+      "mrr": 0.74,
+      "overall": 0.74
+    },
+    "gemini/text-embedding-004": {
+      "ndcg": 0.7,
+      "recall": 0.84,
+      "mrr": 0.76,
+      "overall": 0.76
+    },
+    "cohere/embed-english-v3.0": {
+      "ndcg": 0.71,
+      "recall": 0.86,
+      "mrr": 0.77,
+      "overall": 0.78
+    }
+  },
+  "bestGenome": {
+    "id": "150d4ae2-945a-4cb9-aea2-d57357b98e88",
+    "name": "1 lowercase →cascade (2stg) k10",
+    "generation": 7,
+    "baseModel": {
+      "provider": "ollama",
+      "model": "1"
+    },
+    "queryEnhancement": "lowercase",
+    "retrievalMethod": "hybrid_rrf",
+    "reranking": "cascade",
+    "reranking2": "positional",
+    "chunking": "parent_child",
+    "contextEnhancement": "none",
+    "multiStage": "two_stage",
+    "ensemble": "full_ensemble",
+    "params": {
+      "retrievalK1": 30,
+      "retrievalK2": 10,
+      "hybridAlpha": 0.5192226520111645,
+      "mmrLambda": 0.4753922577681598,
+      "scoreThreshold": 0.18320622892776772,
+      "chunkOverlap": 0,
+      "contextWindow": 1,
+      "maxHops": 2
+    },
+    "fitness": 0.8510969908223229,
+    "fitnessDetails": {
+      "ndcg": 0.7924574567724316,
+      "recall": 0.9301201922307569,
+      "mrr": 0.8502598348137442,
+      "overall": 0.8510969908223229,
+      "latencyMs": 60,
+      "costPer1k": 0.004,
+      "enhancements": {
+        "queryEnhancement": "lowercase",
+        "reranking": "cascade",
+        "totalBoost": 0.35
+      }
+    },
+    "createdAt": "2026-01-30T20:25:17.381Z"
+  },
+  "history": [
+    {
+      "generation": 0,
+      "bestFitness": 0.8497582739150917,
+      "avgFitness": 0.8376803089651377,
+      "bestGenome": "0 expandllm →cascade (3stg) k5",
+      "gapToPaid": -0.0697582739150917
+    },
+    {
+      "generation": 1,
+      "bestFitness": 0.8497582739150917,
+      "avgFitness": 0.8426487745749294,
+      "bestGenome": "0 expandllm →cascade (3stg) k5",
+      "gapToPaid": -0.0697582739150917
+    },
+    {
+      "generation": 2,
+      "bestFitness": 0.8497582739150917,
+      "avgFitness": 0.8427851380885354,
+      "bestGenome": "0 expandllm →cascade (3stg) k5",
+      "gapToPaid": -0.0697582739150917
+    },
+    {
+      "generation": 3,
+      "bestFitness": 0.8497582739150917,
+      "avgFitness": 0.8430275497032094,
+      "bestGenome": "0 expandllm →cascade (3stg) k5",
+      "gapToPaid": -0.0697582739150917
+    },
+    {
+      "generation": 4,
+      "bestFitness": 0.8498113432139434,
+      "avgFitness": 0.844050161850649,
+      "bestGenome": "2 expandllm →jina (3stg) k20",
+      "gapToPaid": -0.06981134321394333
+    },
+    {
+      "generation": 5,
+      "bestFitness": 0.8498113432139434,
+      "avgFitness": 0.8432113443777853,
+      "bestGenome": "2 expandllm →jina (3stg) k20",
+      "gapToPaid": -0.06981134321394333
+    },
+    {
+      "generation": 6,
+      "bestFitness": 0.8510969908223229,
+      "avgFitness": 0.8439971077548659,
+      "bestGenome": "1 lowercase →cascade (2stg) k10",
+      "gapToPaid": -0.0710969908223229
+    },
+    {
+      "generation": 7,
+      "bestFitness": 0.8510969908223229,
+      "avgFitness": 0.8436848243521753,
+      "bestGenome": "1 lowercase →cascade (2stg) k10",
+      "gapToPaid": -0.0710969908223229
+    },
+    {
+      "generation": 8,
+      "bestFitness": 0.8510969908223229,
+      "avgFitness": 0.8440039191461697,
+      "bestGenome": "1 lowercase →cascade (2stg) k10",
+      "gapToPaid": -0.0710969908223229
+    },
+    {
+      "generation": 9,
+      "bestFitness": 0.8510969908223229,
+      "avgFitness": 0.8438202779714485,
+      "bestGenome": "1 lowercase →cascade (2stg) k10",
+      "gapToPaid": -0.0710969908223229
+    },
+    {
+      "generation": 10,
+      "bestFitness": 0.8510969908223229,
+      "avgFitness": 0.8428345095858625,
+      "bestGenome": "1 lowercase →cascade (2stg) k10",
+      "gapToPaid": -0.0710969908223229
+    },
+    {
+      "generation": 11,
+      "bestFitness": 0.8510969908223229,
+      "avgFitness": 0.8438066541581959,
+      "bestGenome": "1 lowercase →cascade (2stg) k10",
+      "gapToPaid": -0.0710969908223229
+    },
+    {
+      "generation": 12,
+      "bestFitness": 0.8510969908223229,
+      "avgFitness": 0.8438655234023562,
+      "bestGenome": "1 lowercase →cascade (2stg) k10",
+      "gapToPaid": -0.0710969908223229
+    },
+    {
+      "generation": 13,
+      "bestFitness": 0.8510969908223229,
+      "avgFitness": 0.843371864223616,
+      "bestGenome": "1 lowercase →cascade (2stg) k10",
+      "gapToPaid": -0.0710969908223229
+    },
+    {
+      "generation": 14,
+      "bestFitness": 0.8510969908223229,
+      "avgFitness": 0.8431895210505769,
+      "bestGenome": "1 lowercase →cascade (2stg) k10",
+      "gapToPaid": -0.0710969908223229
+    },
+    {
+      "generation": 15,
+      "bestFitness": 0.8510969908223229,
+      "avgFitness": 0.8438768997714903,
+      "bestGenome": "1 lowercase →cascade (2stg) k10",
+      "gapToPaid": -0.0710969908223229
+    }
+  ],
+  "beatPaidAt": 1,
+  "findings": [
+    "• Hybrid retrieval (dense + sparse) beats pure dense",
+    "• Multi-stage retrieval (over-fetch then filter) works well",
+    "• Ensemble methods provide robustness",
+    "• Parent-child chunking preserves context"
+  ]
+}
