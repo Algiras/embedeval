@@ -15,9 +15,31 @@ import { StrategyGenome } from '../core/types';
 import { logger } from '../utils/logger';
 
 /**
+ * Available embedding models by provider
+ */
+export const EMBEDDING_MODELS = {
+  ollama: ['nomic-embed-text', 'mxbai-embed-large', 'all-minilm', 'snowflake-arctic-embed'],
+  openai: ['text-embedding-3-small', 'text-embedding-3-large', 'text-embedding-ada-002'],
+  gemini: ['embedding-001', 'text-embedding-004'],
+  huggingface: ['BAAI/bge-small-en-v1.5', 'sentence-transformers/all-MiniLM-L6-v2'],
+};
+
+/**
  * Gene definitions with valid ranges and mutation strategies
  */
 export const GENE_DEFINITIONS = {
+  // Embedding model genes
+  embeddingProvider: {
+    type: 'categorical' as const,
+    values: ['ollama', 'openai', 'gemini', 'huggingface'] as const,
+    default: 'ollama',
+  },
+  embeddingModel: {
+    type: 'categorical' as const,
+    values: [...EMBEDDING_MODELS.ollama, ...EMBEDDING_MODELS.openai, ...EMBEDDING_MODELS.gemini] as const,
+    default: 'nomic-embed-text',
+  },
+  
   // Chunking genes
   chunkingMethod: {
     type: 'categorical' as const,
@@ -39,44 +61,44 @@ export const GENE_DEFINITIONS = {
     default: 0,
   },
   
+  // Query processing genes
+  queryProcessor: {
+    type: 'categorical' as const,
+    values: ['raw', 'lowercase', 'expanded', 'hyde'] as const,
+    default: 'raw',
+  },
+  
   // Retrieval genes
   retrievalMethod: {
     type: 'categorical' as const,
-    values: ['cosine', 'bm25', 'hybrid'] as const,
+    values: ['cosine', 'dot', 'euclidean', 'bm25', 'hybrid_linear', 'hybrid_rrf'] as const,
     default: 'cosine',
   },
   retrievalK: {
     type: 'numeric' as const,
-    min: 10,
+    min: 5,
     max: 100,
-    step: 10,
+    step: 5,
     default: 10,
   },
-  hybridEmbeddingWeight: {
+  hybridAlpha: {
     type: 'numeric' as const,
     min: 0.1,
     max: 0.9,
     step: 0.1,
-    default: 0.5,
-  },
-  hybridBm25Weight: {
-    type: 'numeric' as const,
-    min: 0.1,
-    max: 0.9,
-    step: 0.1,
-    default: 0.5,
+    default: 0.7,
   },
   
   // Reranking genes
   rerankingMethod: {
     type: 'categorical' as const,
-    values: ['none', 'llm', 'mmr', 'cross-encoder'] as const,
+    values: ['none', 'llm', 'mmr', 'cross-encoder', 'cohere'] as const,
     default: 'none',
   },
   rerankingTopK: {
     type: 'numeric' as const,
     min: 5,
-    max: 20,
+    max: 50,
     step: 5,
     default: 10,
   },
@@ -87,35 +109,54 @@ export const GENE_DEFINITIONS = {
     step: 0.1,
     default: 0.5,
   },
+  
+  // Post-processing genes
+  scoreThreshold: {
+    type: 'numeric' as const,
+    min: 0,
+    max: 0.5,
+    step: 0.1,
+    default: 0,
+  },
+  diversityFilter: {
+    type: 'categorical' as const,
+    values: [true, false] as const,
+    default: false,
+  },
 };
 
 /**
  * Create a random genome
  */
-export function createRandomGenome(generation: number = 0): StrategyGenome {
-  const genes = {
+export function createRandomGenome(
+  generation: number = 0,
+  availableProviders: string[] = ['ollama']
+): StrategyGenome {
+  // Select provider from available ones
+  const provider = randomCategorical(
+    availableProviders.filter(p => EMBEDDING_MODELS[p as keyof typeof EMBEDDING_MODELS]) as any[]
+  ) as keyof typeof EMBEDDING_MODELS;
+  
+  // Select model from that provider
+  const availableModels = EMBEDDING_MODELS[provider] || EMBEDDING_MODELS.ollama;
+  const model = randomCategorical(availableModels as any[]);
+
+  const genes: StrategyGenome['genes'] = {
+    embeddingProvider: provider as any,
+    embeddingModel: model,
     chunkingMethod: randomCategorical(GENE_DEFINITIONS.chunkingMethod.values),
     chunkSize: randomNumeric(GENE_DEFINITIONS.chunkSize),
     chunkOverlap: randomNumeric(GENE_DEFINITIONS.chunkOverlap),
+    queryProcessor: randomCategorical(GENE_DEFINITIONS.queryProcessor.values),
     retrievalMethod: randomCategorical(GENE_DEFINITIONS.retrievalMethod.values),
     retrievalK: randomNumeric(GENE_DEFINITIONS.retrievalK),
-    hybridWeights: [
-      randomNumeric(GENE_DEFINITIONS.hybridEmbeddingWeight),
-      randomNumeric(GENE_DEFINITIONS.hybridBm25Weight),
-    ] as [number, number],
+    hybridAlpha: randomNumeric(GENE_DEFINITIONS.hybridAlpha),
     rerankingMethod: randomCategorical(GENE_DEFINITIONS.rerankingMethod.values),
     rerankingTopK: randomNumeric(GENE_DEFINITIONS.rerankingTopK),
     mmrLambda: randomNumeric(GENE_DEFINITIONS.mmrLambda),
+    scoreThreshold: randomNumeric(GENE_DEFINITIONS.scoreThreshold),
+    diversityFilter: randomCategorical(GENE_DEFINITIONS.diversityFilter.values),
   };
-
-  // Normalize hybrid weights to sum to 1
-  if (genes.retrievalMethod === 'hybrid') {
-    const sum = genes.hybridWeights[0] + genes.hybridWeights[1];
-    genes.hybridWeights = [
-      genes.hybridWeights[0] / sum,
-      genes.hybridWeights[1] / sum,
-    ];
-  }
 
   return {
     id: uuidv4(),

@@ -471,28 +471,84 @@ export interface StrategyGenome {
   id: string;
   name: string;
   genes: {
+    // Embedding model genes
+    embeddingProvider: 'ollama' | 'openai' | 'gemini' | 'huggingface';
+    embeddingModel: string;    // e.g., 'nomic-embed-text', 'text-embedding-3-small'
+    
     // Chunking genes
     chunkingMethod: 'none' | 'fixed' | 'semantic' | 'sliding';
     chunkSize?: number;        // 128-1024
     chunkOverlap?: number;     // 0-50%
     
+    // Query processing genes
+    queryProcessor: 'raw' | 'lowercase' | 'expanded' | 'hyde';
+    
     // Retrieval genes
-    retrievalMethod: 'cosine' | 'bm25' | 'hybrid';
+    retrievalMethod: 'cosine' | 'dot' | 'euclidean' | 'bm25' | 'hybrid_linear' | 'hybrid_rrf';
     retrievalK: number;        // 10-100
-    hybridWeights?: [number, number];  // [embedding, bm25]
+    hybridAlpha?: number;      // 0-1 (weight for embeddings vs BM25)
     
     // Reranking genes
-    rerankingMethod: 'none' | 'llm' | 'mmr' | 'cross-encoder';
-    rerankingTopK?: number;    // 5-20
+    rerankingMethod: 'none' | 'llm' | 'mmr' | 'cross-encoder' | 'cohere';
+    rerankingTopK?: number;    // 5-50
     mmrLambda?: number;        // 0-1 (diversity vs relevance)
+    
+    // Post-processing genes
+    scoreThreshold?: number;   // 0-1
+    diversityFilter?: boolean;
+  };
+  
+  // Multi-objective fitness scores
+  fitness?: number;                    // Overall weighted fitness
+  fitnessDetails?: {
+    correctness: number;               // NDCG, Recall, MRR
+    speed: number;                     // Latency score (0-1)
+    cost: number;                      // Cost score (0-1, lower cost = higher score)
+    llmJudgeScore?: number;            // LLM-as-a-judge score (0-1)
   };
   
   // Evolution metadata
-  fitness?: number;
   generation: number;
   parents?: [string, string];
   mutations?: string[];
   createdAt: string;
+}
+
+/**
+ * LLM Judge Configuration
+ */
+export interface LLMJudgeConfig {
+  provider: 'openai' | 'gemini' | 'ollama';
+  model: string;                       // e.g., 'gpt-4o', 'gemini-1.5-flash', 'llama3'
+  prompt?: string;                     // Custom judge prompt
+  evaluationCriteria?: string[];       // ['relevance', 'completeness', 'coherence']
+  maxTokens?: number;
+  temperature?: number;
+}
+
+/**
+ * LLM Judge Result
+ */
+export interface LLMJudgeResult {
+  queryId: string;
+  query: string;
+  retrievedDocs: Array<{
+    docId: string;
+    content: string;
+    score: number;
+  }>;
+  judgment: {
+    overallScore: number;              // 0-1
+    relevanceScore: number;            // 0-1
+    completenessScore: number;         // 0-1
+    reasoning: string;
+    improvements?: string[];
+  };
+  usage: {
+    inputTokens: number;
+    outputTokens: number;
+    cost: number;
+  };
 }
 
 /**

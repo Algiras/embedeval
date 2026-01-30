@@ -19,12 +19,19 @@
     "clean": "rm -rf dist .embedeval",
     "prepublishOnly": "npm run build",
     "preflight": "node scripts/preflight-check.mjs",
-    "evolve": "node scripts/run-evolution.mjs",
-    "evolve:quick": "node scripts/run-evolution.mjs --generations 3 --population 6",
+    "data:create": "node scripts/create-benchmark-data.mjs",
+    "evolve": "node scripts/run-hf-evolution.mjs",
+    "evolve:quick": "GENERATIONS=3 POPULATION_SIZE=6 node scripts/run-hf-evolution.mjs",
+    "evolve:full": "GENERATIONS=10 POPULATION_SIZE=16 node scripts/run-hf-evolution.mjs",
+    "evolve:strategies": "node scripts/run-eval-evolution.mjs",
+    "evolve:ts": "ts-node src/cli/index.ts evolve run",
+    "evolve:ts:schedule": "ts-node src/cli/index.ts evolve schedule",
+    "evolve:ts:show": "ts-node src/cli/index.ts evolve show",
     "evolve:v2": "node scripts/run-evolution-v2.mjs",
     "evolve:v2:local": "node scripts/run-evolution-v2.mjs -e local-only -g 10",
     "evolve:v2:quality": "node scripts/run-evolution-v2.mjs -e quality-optimized --correctness-weight 0.8",
-    "evolve:v2:fast": "node scripts/run-evolution-v2.mjs -p 10 -g 5 -e local-only"
+    "evolve:v2:fast": "node scripts/run-evolution-v2.mjs -p 10 -g 5 -e local-only",
+    "report": "node scripts/generate-report.mjs"
   },
   "keywords": [
     "embeddings",
