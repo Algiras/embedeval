@@ -1,0 +1,70 @@
+# Multilingual Embedding Evaluation
+# Tests cross-lingual and multilingual embedding models
+# Datasets: XTREME, C-MTEB samples
+
+test:
+  name: "Multilingual Model Evaluation"
+  description: "Comparison of multilingual embedding models"
+  tags: ["multilingual", "cross-lingual", "xtreme"]
+
+variants:
+  - id: labse-multi
+    name: "LaBSE"
+    provider:
+      type: huggingface
+      model: sentence-transformers/LaBSE
+    strategy: baseline
+    description: "Language-agnostic BERT (109 languages)"
+
+  - id: multilingual-minilm
+    name: "paraphrase-multilingual-MiniLM"
+    provider:
+      type: huggingface
+      model: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+    strategy: baseline
+    description: "Lightweight multilingual (50+ languages)"
+
+  - id: multilingual-mpnet
+    name: "paraphrase-multilingual-mpnet"
+    provider:
+      type: huggingface
+      model: sentence-transformers/paraphrase-multilingual-mpnet-base-v2
+    strategy: baseline
+    description: "Better quality multilingual"
+
+  - id: multilingual-e5
+    name: "multilingual-e5-large"
+    provider:
+      type: huggingface
+      model: intfloat/multilingual-e5-large
+    strategy: baseline
+    description: "Strong multilingual performance"
+
+  - id: bce-chinese
+    name: "BCE-embedding-base"
+    provider:
+      type: huggingface
+      model: maidalun1020/bce-embedding-base_v1
+    strategy: baseline
+    description: "Optimized for Chinese + English"
+
+dataset: ./datasets/xtreme/queries.jsonl
+corpus: ./datasets/xtreme/corpus.jsonl
+
+metrics:
+  - ndcg@10
+  - recall@10
+  - mrr@10
+  - accuracy
+
+output:
+  json: ./results/multilingual/metrics.json
+  dashboard: ./results/multilingual/dashboard.html
+  csv: ./results/multilingual/results.csv
+
+cache:
+  maxSizeGB: 15
+  checkpointInterval: 1
+
+# Note: Download multilingual datasets first
+# python scripts/download-hf-datasets.py

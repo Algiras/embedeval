@@ -1,0 +1,68 @@
+# SQuAD Question Answering Retrieval
+# Tests retrieval of relevant context passages for questions
+# Dataset: Stanford Question Answering Dataset (sample)
+
+test:
+  name: "SQuAD Retrieval Evaluation"
+  description: "Question-to-context retrieval from SQuAD dataset"
+  tags: ["squad", "qa", "reading-comprehension"]
+
+variants:
+  - id: minilm-squad
+    name: "MiniLM on SQuAD"
+    provider:
+      type: huggingface
+      model: sentence-transformers/all-MiniLM-L6-v2
+    strategy: baseline
+    description: "Fast baseline"
+
+  - id: mpnet-squad
+    name: "MPNet on SQuAD"
+    provider:
+      type: huggingface
+      model: sentence-transformers/all-mpnet-base-v2
+    strategy: baseline
+    description: "Better semantic understanding"
+
+  - id: gte-squad
+    name: "GTE-large on SQuAD"
+    provider:
+      type: huggingface
+      model: thenlper/gte-large
+    strategy: semantic-chunks
+    description: "Best performance with chunking"
+
+  - id: e5-squad
+    name: "E5-large on SQuAD"
+    provider:
+      type: huggingface
+      model: intfloat/e5-large-v2
+    strategy: hybrid-bm25
+    description: "Hybrid retrieval approach"
+
+dataset: ./datasets/squad/queries.jsonl
+corpus: ./datasets/squad/corpus.jsonl
+
+metrics:
+  - ndcg@5
+  - ndcg@10
+  - recall@5
+  - recall@10
+  - mrr@10
+  - map@10
+
+output:
+  json: ./results/squad/metrics.json
+  dashboard: ./results/squad/dashboard.html
+  csv: ./results/squad/results.csv
+
+gates:
+  enabled: true
+  failOnViolation: false
+  metrics:
+    ndcg@10:
+      min: 0.70
+    recall@5:
+      min: 0.65
+  latency:
+    maxMs: 500

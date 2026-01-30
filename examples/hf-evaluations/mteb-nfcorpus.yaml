@@ -1,0 +1,61 @@
+# MTEB NFCorpus Medical Information Retrieval
+# Tests retrieval on medical documents from PubMed
+# Dataset: MTEB NFCorpus benchmark
+
+test:
+  name: "MTEB NFCorpus Medical Retrieval"
+  description: "Medical information retrieval from NFCorpus benchmark"
+  tags: ["mteb", "medical", "retrieval"]
+
+variants:
+  - id: gte-base-nfcorpus
+    name: "GTE-base"
+    provider:
+      type: huggingface
+      model: thenlper/gte-base
+    strategy: baseline
+    description: "Good balance of speed and quality"
+
+  - id: e5-base-nfcorpus
+    name: "E5-base-v2"
+    provider:
+      type: huggingface
+      model: intfloat/e5-base-v2
+    strategy: baseline
+    description: "Strong retrieval performance"
+
+  - id: bge-m3-nfcorpus
+    name: "BGE-M3"
+    provider:
+      type: huggingface
+      model: BAAI/bge-m3
+    strategy: hybrid-bm25
+    description: "Multi-modal with hybrid retrieval"
+
+  - id: bge-large-nfcorpus
+    name: "BGE-large"
+    provider:
+      type: huggingface
+      model: BAAI/bge-large-en-v1.5
+    strategy: semantic-chunks
+    description: "Best accuracy with semantic chunking"
+
+dataset: ./datasets/mteb/nfcorpus-queries.jsonl
+corpus: ./datasets/mteb/nfcorpus-corpus.jsonl
+
+metrics:
+  - ndcg@10
+  - recall@10
+  - recall@100
+  - precision@10
+  - map@10
+  - mrr@10
+
+output:
+  json: ./results/mteb-nfcorpus/metrics.json
+  dashboard: ./results/mteb-nfcorpus/dashboard.html
+  csv: ./results/mteb-nfcorpus/results.csv
+
+cache:
+  maxSizeGB: 10
+  checkpointInterval: 5
