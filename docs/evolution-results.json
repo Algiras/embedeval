@@ -1,0 +1,628 @@
+{
+  "evolutionId": "ffe0e124",
+  "timestamp": "2026-01-30T19:54:04.058Z",
+  "config": {
+    "populationSize": 12,
+    "generations": 8,
+    "environment": "local-only",
+    "objectives": [
+      "correctness",
+      "speed",
+      "cost"
+    ],
+    "weights": {
+      "correctness": 0.5,
+      "speed": 0.25,
+      "cost": 0.25
+    }
+  },
+  "bestGenome": {
+    "id": "46c35bbe-259e-48b0-a722-9678653e85a3",
+    "generation": 0,
+    "createdAt": "2026-01-30T19:54:03.993Z",
+    "parentIds": [
+      "5b902882-7c52-4c9f-8b3c-532a29880faf"
+    ],
+    "pipeline": [
+      "bm25_retrieve"
+    ],
+    "genes": {
+      "primaryEmbedding": "OLLAMA_NOMIC",
+      "secondaryEmbedding": null,
+      "embeddingDimReduction": null,
+      "queryExpander": "NONE",
+      "queryExpandCount": 3,
+      "chunking": "NONE",
+      "initialK": 50,
+      "finalK": 10,
+      "bm25K1": 1.2,
+      "bm25B": 0.75,
+      "fusionMethod": "NONE",
+      "hybridAlpha": 0.5,
+      "reranker": "NONE",
+      "rerankK": 50,
+      "mmrLambda": 0.5,
+      "scoreThreshold": 0,
+      "diversityThreshold": 0.8,
+      "useMultiStage": false,
+      "stage1Method": "bm25",
+      "stage1K": 1000
+    },
+    "fitness": {
+      "correctness": {
+        "ndcg5": 0.970068981106951,
+        "ndcg10": 0.970068981106951,
+        "recall5": 1,
+        "recall10": 1,
+        "mrr10": 1,
+        "map10": 0.9400000000000001,
+        "precision5": 0.4,
+        "hitRate": 1
+      },
+      "speed": {
+        "avgLatencyMs": 0.025961066666666945,
+        "p50LatencyMs": 0.027667000000000996,
+        "p95LatencyMs": 0.030249999999998778,
+        "p99LatencyMs": 0.030249999999998778,
+        "queriesPerSecond": 38519.21852209421
+      },
+      "cost": {
+        "costPerQuery": 0,
+        "embeddingCost": 0,
+        "rerankingCost": 0,
+        "queryExpansionCost": 0,
+        "totalCost": 0
+      },
+      "robustness": {
+        "consistencyScore": 0,
+        "queryTypeScores": {},
+        "edgeCaseScore": 0,
+        "degradationResistance": 0
+      },
+      "overall": 0.9932655207490639,
+      "paretoRank": 0
+    }
+  },
+  "paretoFront": [
+    {
+      "id": "38085b73-cd1d-44b6-a12b-0ba80dbe6419",
+      "generation": 5,
+      "createdAt": "2026-01-30T19:54:04.041Z",
+      "parentIds": [
+        "d845415c-345c-4c46-96dc-8a35d902d543"
+      ],
+      "pipeline": [
+        "bm25_retrieve",
+        "rerank_ce"
+      ],
+      "genes": {
+        "primaryEmbedding": "OLLAMA_NOMIC",
+        "secondaryEmbedding": null,
+        "embeddingDimReduction": null,
+        "queryExpander": "NONE",
+        "queryExpandCount": 3,
+        "chunking": "NONE",
+        "initialK": 570,
+        "finalK": 10,
+        "bm25K1": 1.1686515164290308,
+        "bm25B": 0.7926073640967417,
+        "fusionMethod": "NONE",
+        "hybridAlpha": 0.579313869147442,
+        "reranker": "NONE",
+        "rerankK": 50,
+        "mmrLambda": 0.4488464636986883,
+        "scoreThreshold": 0,
+        "diversityThreshold": 0.5525149867939595,
+        "useMultiStage": true,
+        "stage1Method": "embed",
+        "stage1K": 500
+      },
+      "fitness": {
+        "correctness": {
+          "ndcg5": 0.970068981106951,
+          "ndcg10": 0.970068981106951,
+          "recall5": 1,
+          "recall10": 1,
+          "mrr10": 1,
+          "map10": 0.9400000000000001,
+          "precision5": 0.4,
+          "hitRate": 1
+        },
+        "speed": {
+          "avgLatencyMs": 0.017947200000000406,
+          "p50LatencyMs": 0.01212500000001171,
+          "p95LatencyMs": 0.1021249999999867,
+          "p99LatencyMs": 0.1021249999999867,
+          "queriesPerSecond": 55718.99794953962
+        },
+        "cost": {
+          "costPerQuery": 0,
+          "embeddingCost": 0,
+          "rerankingCost": 0,
+          "queryExpansionCost": 0,
+          "totalCost": 0
+        },
+        "robustness": {
+          "consistencyScore": 0,
+          "queryTypeScores": {},
+          "edgeCaseScore": 0,
+          "degradationResistance": 0
+        },
+        "overall": 0.9932655207490639,
+        "paretoRank": 0
+      }
+    }
+  ],
+  "history": [
+    {
+      "generation": 1,
+      "population": [],
+      "bestFitness": 0.9932655207490639,
+      "avgFitness": 0.8986066602390012,
+      "diversity": 1.18302704528955,
+      "mutationRate": 0.2,
+      "bestGenome": "ollama-nomic-bm25-k10",
+      "improvement": 0.9932655207490639,
+      "duration": 0.022
+    },
+    {
+      "generation": 2,
+      "population": [],
+      "bestFitness": 0.9932655207490639,
+      "avgFitness": 0.6190311778845482,
+      "diversity": 1.1493852807135425,
+      "mutationRate": 0.2,
+      "bestGenome": "ollama-nomic-bm25-k10",
+      "improvement": 0,
+      "duration": 0.009
+    },
+    {
+      "generation": 3,
+      "population": [],
+      "bestFitness": 0.9932655207490639,
+      "avgFitness": 0.8591436098001807,
+      "diversity": 1.030124496345566,
+      "mutationRate": 0.2,
+      "bestGenome": "ollama-nomic-bm25-k10",
+      "improvement": 0,
+      "duration": 0.008
+    },
+    {
+      "generation": 4,
+      "population": [],
+      "bestFitness": 0.9932655207490639,
+      "avgFitness": 0.8673752541672218,
+      "diversity": 0.9024553064914265,
+      "mutationRate": 0.2,
+      "bestGenome": "ollama-nomic-bm25-k10",
+      "improvement": 0,
+      "duration": 0.008
+    },
+    {
+      "generation": 5,
+      "population": [],
+      "bestFitness": 0.9932655207490639,
+      "avgFitness": 0.9020075044243735,
+      "diversity": 0.9660889237854731,
+      "mutationRate": 0.24,
+      "bestGenome": "ollama-nomic-bm25-k10",
+      "improvement": 0,
+      "duration": 0.008
+    },
+    {
+      "generation": 6,
+      "population": [],
+      "bestFitness": 0.9932655207490639,
+      "avgFitness": 0.8953049286890221,
+      "diversity": 0.8830221883291314,
+      "mutationRate": 0.288,
+      "bestGenome": "ollama-nomic-bm25-k10",
+      "improvement": 0,
+      "duration": 0.007
+    }
+  ],
+  "finalPopulation": [
+    {
+      "name": "ollama-nomic-bm25-k10",
+      "pipeline": [
+        "bm25_retrieve"
+      ],
+      "genes": {
+        "primaryEmbedding": "OLLAMA_NOMIC",
+        "secondaryEmbedding": null,
+        "embeddingDimReduction": null,
+        "queryExpander": "NONE",
+        "queryExpandCount": 3,
+        "chunking": "NONE",
+        "initialK": 50,
+        "finalK": 10,
+        "bm25K1": 1.2,
+        "bm25B": 0.75,
+        "fusionMethod": "NONE",
+        "hybridAlpha": 0.5,
+        "reranker": "NONE",
+        "rerankK": 50,
+        "mmrLambda": 0.5,
+        "scoreThreshold": 0,
+        "diversityThreshold": 0.8,
+        "useMultiStage": false,
+        "stage1Method": "bm25",
+        "stage1K": 1000
+      },
+      "fitness": {
+        "correctness": {
+          "ndcg5": 0.970068981106951,
+          "ndcg10": 0.970068981106951,
+          "recall5": 1,
+          "recall10": 1,
+          "mrr10": 1,
+          "map10": 0.9400000000000001,
+          "precision5": 0.4,
+          "hitRate": 1
+        },
+        "speed": {
+          "avgLatencyMs": 0.025961066666666945,
+          "p50LatencyMs": 0.027667000000000996,
+          "p95LatencyMs": 0.030249999999998778,
+          "p99LatencyMs": 0.030249999999998778,
+          "queriesPerSecond": 38519.21852209421
+        },
+        "cost": {
+          "costPerQuery": 0,
+          "embeddingCost": 0,
+          "rerankingCost": 0,
+          "queryExpansionCost": 0,
+          "totalCost": 0
+        },
+        "robustness": {
+          "consistencyScore": 0,
+          "queryTypeScores": {},
+          "edgeCaseScore": 0,
+          "degradationResistance": 0
+        },
+        "overall": 0.9932655207490639,
+        "paretoRank": 0
+      }
+    },
+    {
+      "name": "ollama-nomic-bm25-rce-k10",
+      "pipeline": [
+        "bm25_retrieve",
+        "rerank_ce"
+      ],
+      "genes": {
+        "primaryEmbedding": "OLLAMA_NOMIC",
+        "secondaryEmbedding": null,
+        "embeddingDimReduction": null,
+        "queryExpander": "NONE",
+        "queryExpandCount": 3,
+        "chunking": "NONE",
+        "initialK": 570,
+        "finalK": 10,
+        "bm25K1": 1.1686515164290308,
+        "bm25B": 0.7926073640967417,
+        "fusionMethod": "NONE",
+        "hybridAlpha": 0.579313869147442,
+        "reranker": "NONE",
+        "rerankK": 50,
+        "mmrLambda": 0.4488464636986883,
+        "scoreThreshold": 0,
+        "diversityThreshold": 0.5525149867939595,
+        "useMultiStage": true,
+        "stage1Method": "embed",
+        "stage1K": 500
+      },
+      "fitness": {
+        "correctness": {
+          "ndcg5": 0.970068981106951,
+          "ndcg10": 0.970068981106951,
+          "recall5": 1,
+          "recall10": 1,
+          "mrr10": 1,
+          "map10": 0.9400000000000001,
+          "precision5": 0.4,
+          "hitRate": 1
+        },
+        "speed": {
+          "avgLatencyMs": 0.017947200000000406,
+          "p50LatencyMs": 0.01212500000001171,
+          "p95LatencyMs": 0.1021249999999867,
+          "p99LatencyMs": 0.1021249999999867,
+          "queriesPerSecond": 55718.99794953962
+        },
+        "cost": {
+          "costPerQuery": 0,
+          "embeddingCost": 0,
+          "rerankingCost": 0,
+          "queryExpansionCost": 0,
+          "totalCost": 0
+        },
+        "robustness": {
+          "consistencyScore": 0,
+          "queryTypeScores": {},
+          "edgeCaseScore": 0,
+          "degradationResistance": 0
+        },
+        "overall": 0.9932655207490639,
+        "paretoRank": 0
+      }
+    },
+    {
+      "name": "ollama-nomic-bm25-rce-k12",
+      "pipeline": [
+        "bm25_retrieve",
+        "rerank_ce"
+      ],
+      "genes": {
+        "primaryEmbedding": "OLLAMA_NOMIC",
+        "secondaryEmbedding": null,
+        "embeddingDimReduction": null,
+        "queryExpander": "NONE",
+        "queryExpandCount": 3,
+        "chunking": "SEMANTIC",
+        "initialK": 529,
+        "finalK": 12,
+        "bm25K1": 0.9417271902223083,
+        "bm25B": 0.8607662008812227,
+        "fusionMethod": "NONE",
+        "hybridAlpha": 0.5,
+        "reranker": "CROSS_ENCODER_MS",
+        "rerankK": 59,
+        "mmrLambda": 0.3687918393527738,
+        "scoreThreshold": 0,
+        "diversityThreshold": 0.6325858948809456,
+        "useMultiStage": true,
+        "stage1Method": "embed",
+        "stage1K": 500
+      },
+      "fitness": {
+        "correctness": {
+          "ndcg5": 0.970068981106951,
+          "ndcg10": 0.970068981106951,
+          "recall5": 1,
+          "recall10": 1,
+          "mrr10": 1,
+          "map10": 0.9400000000000001,
+          "precision5": 0.4,
+          "hitRate": 1
+        },
+        "speed": {
+          "avgLatencyMs": 0.018888933333333094,
+          "p50LatencyMs": 0.012332999999998151,
+          "p95LatencyMs": 0.11212500000000603,
+          "p99LatencyMs": 0.11212500000000603,
+          "queriesPerSecond": 52941.051903407955
+        },
+        "cost": {
+          "costPerQuery": 0,
+          "embeddingCost": 0,
+          "rerankingCost": 0,
+          "queryExpansionCost": 0,
+          "totalCost": 0
+        },
+        "robustness": {
+          "consistencyScore": 0,
+          "queryTypeScores": {},
+          "edgeCaseScore": 0,
+          "degradationResistance": 0
+        },
+        "overall": 0.9932655207490639,
+        "paretoRank": 0
+      }
+    },
+    {
+      "name": "openai-large-bm25-rce-k7",
+      "pipeline": [
+        "bm25_retrieve",
+        "rerank_ce"
+      ],
+      "genes": {
+        "primaryEmbedding": "OPENAI_LARGE",
+        "secondaryEmbedding": "OLLAMA_NOMIC",
+        "embeddingDimReduction": null,
+        "queryExpander": "NONE",
+        "queryExpandCount": 3,
+        "chunking": "NONE",
+        "initialK": 495,
+        "finalK": 7,
+        "bm25K1": 0.8651946070050638,
+        "bm25B": 0.9127571212717012,
+        "fusionMethod": "NONE",
+        "hybridAlpha": 0.6324619734378704,
+        "reranker": "NONE",
+        "rerankK": 38,
+        "mmrLambda": 0.4457488813592406,
+        "scoreThreshold": 0,
+        "diversityThreshold": 0.4609400598956002,
+        "useMultiStage": true,
+        "stage1Method": "bm25",
+        "stage1K": 500
+      },
+      "fitness": null
+    },
+    {
+      "name": "qe:synonyms-ollama-nomic-bm25-rce-k10",
+      "pipeline": [
+        "query_expand_llm",
+        "bm25_retrieve",
+        "rerank_ce"
+      ],
+      "genes": {
+        "primaryEmbedding": "OLLAMA_NOMIC",
+        "secondaryEmbedding": null,
+        "embeddingDimReduction": null,
+        "queryExpander": "SYNONYMS",
+        "queryExpandCount": 5,
+        "chunking": "SEMANTIC",
+        "initialK": 785,
+        "finalK": 10,
+        "bm25K1": 0.9362626551119909,
+        "bm25B": 0.8720173641627171,
+        "fusionMethod": "NONE",
+        "hybridAlpha": 0.0079939643423236,
+        "reranker": "CROSS_ENCODER_MS",
+        "rerankK": 57,
+        "mmrLambda": 0.39543240222734094,
+        "scoreThreshold": 0,
+        "diversityThreshold": 0.4618455120362042,
+        "useMultiStage": true,
+        "stage1Method": "embed",
+        "stage1K": 623
+      },
+      "fitness": null
+    },
+    {
+      "name": "ollama-nomic-bm25-rce-k12",
+      "pipeline": [
+        "bm25_retrieve",
+        "rerank_ce"
+      ],
+      "genes": {
+        "primaryEmbedding": "OLLAMA_NOMIC",
+        "secondaryEmbedding": null,
+        "embeddingDimReduction": null,
+        "queryExpander": "NONE",
+        "queryExpandCount": 3,
+        "chunking": "SEMANTIC",
+        "initialK": 86,
+        "finalK": 12,
+        "bm25K1": 1.0973107759426162,
+        "bm25B": 0.8351230478386604,
+        "fusionMethod": "NONE",
+        "hybridAlpha": 0.02435104990810477,
+        "reranker": "CROSS_ENCODER_MS",
+        "rerankK": 63,
+        "mmrLambda": 0.3754025944177848,
+        "scoreThreshold": 0,
+        "diversityThreshold": 0.6527110211995034,
+        "useMultiStage": true,
+        "stage1Method": "bm25",
+        "stage1K": 255
+      },
+      "fitness": null
+    },
+    {
+      "name": "qe:llm_rewrite-ollama-nomic-bm25-rce-k10",
+      "pipeline": [
+        "query_expand_llm",
+        "bm25_retrieve",
+        "rerank_ce"
+      ],
+      "genes": {
+        "primaryEmbedding": "OLLAMA_NOMIC",
+        "secondaryEmbedding": null,
+        "embeddingDimReduction": null,
+        "queryExpander": "LLM_REWRITE",
+        "queryExpandCount": 5,
+        "chunking": "SEMANTIC",
+        "initialK": 446,
+        "finalK": 10,
+        "bm25K1": 1.109830080446868,
+        "bm25B": 0.7846313419603721,
+        "fusionMethod": "NONE",
+        "hybridAlpha": 0.010335403467023073,
+        "reranker": "NONE",
+        "rerankK": 50,
+        "mmrLambda": 0.42086660999087516,
+        "scoreThreshold": 0,
+        "diversityThreshold": 0.43024947225569776,
+        "useMultiStage": true,
+        "stage1Method": "embed",
+        "stage1K": 261
+      },
+      "fitness": null
+    },
+    {
+      "name": "ollama-nomic-bm25-rce-k10",
+      "pipeline": [
+        "bm25_retrieve",
+        "rerank_ce"
+      ],
+      "genes": {
+        "primaryEmbedding": "OLLAMA_NOMIC",
+        "secondaryEmbedding": null,
+        "embeddingDimReduction": null,
+        "queryExpander": "NONE",
+        "queryExpandCount": 3,
+        "chunking": "NONE",
+        "initialK": 50,
+        "finalK": 10,
+        "bm25K1": 1.2,
+        "bm25B": 0.75,
+        "fusionMethod": "NONE",
+        "hybridAlpha": 0.5,
+        "reranker": "NONE",
+        "rerankK": 50,
+        "mmrLambda": 0.5,
+        "scoreThreshold": 0,
+        "diversityThreshold": 0.8,
+        "useMultiStage": false,
+        "stage1Method": "bm25",
+        "stage1K": 1000
+      },
+      "fitness": null
+    },
+    {
+      "name": "openai-large-bm25-rce-rce-k9",
+      "pipeline": [
+        "bm25_retrieve",
+        "rerank_ce",
+        "rerank_ce"
+      ],
+      "genes": {
+        "primaryEmbedding": "OPENAI_LARGE",
+        "secondaryEmbedding": "GEMINI",
+        "embeddingDimReduction": null,
+        "queryExpander": "NONE",
+        "queryExpandCount": 3,
+        "chunking": "SEMANTIC",
+        "initialK": 517,
+        "finalK": 9,
+        "bm25K1": 1.0417036885855637,
+        "bm25B": 0.8966361656443496,
+        "fusionMethod": "NONE",
+        "hybridAlpha": 0.4218377616904157,
+        "reranker": "CROSS_ENCODER_MS",
+        "rerankK": 194,
+        "mmrLambda": 0.3388432933313813,
+        "scoreThreshold": 0.004515585761473972,
+        "diversityThreshold": 0.5642511003406919,
+        "useMultiStage": true,
+        "stage1Method": "embed",
+        "stage1K": 500
+      },
+      "fitness": null
+    },
+    {
+      "name": "openai-small-bm25-rce-k10",
+      "pipeline": [
+        "bm25_retrieve",
+        "rerank_ce"
+      ],
+      "genes": {
+        "primaryEmbedding": "OPENAI_SMALL",
+        "secondaryEmbedding": null,
+        "embeddingDimReduction": null,
+        "queryExpander": "NONE",
+        "queryExpandCount": 3,
+        "chunking": "NONE",
+        "initialK": 570,
+        "finalK": 10,
+        "bm25K1": 1.1686515164290308,
+        "bm25B": 0.7926073640967417,
+        "fusionMethod": "NONE",
+        "hybridAlpha": 0.579313869147442,
+        "reranker": "CROSS_ENCODER_MS",
+        "rerankK": 100,
+        "mmrLambda": 0.4488464636986883,
+        "scoreThreshold": 0,
+        "diversityThreshold": 0.5525149867939595,
+        "useMultiStage": true,
+        "stage1Method": "embed",
+        "stage1K": 500
+      },
+      "fitness": null
+    }
+  ],
+  "duration": 0.063
+}

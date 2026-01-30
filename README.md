@@ -142,6 +142,81 @@ npm run dev -- ab-test \
 
 See [EVALUATION_TESTING.md](EVALUATION_TESTING.md) for detailed results and analysis.
 
+## 🧬 Genetic Evolution
+
+EmbedEval includes a genetic algorithm that automatically evolves optimal embedding strategies.
+
+### Quick Start
+
+```bash
+# Run preflight checks first
+npm run preflight
+
+# Run evolution with default settings (8 population, 5 generations)
+npm run evolve
+
+# Or run a quick evolution (6 population, 3 generations)
+npm run evolve:quick
+
+# Custom settings
+node scripts/run-evolution.mjs --generations 10 --population 16
+```
+
+### Preflight Checks
+
+Before running evolution, the system validates all prerequisites:
+
+```bash
+$ npm run preflight
+
+🔍 Running Preflight Checks
+
+✓ Node.js Version - v22.20.0 (>= 18 required)
+✓ Evaluation Data - Found 5 queries and 9 documents
+✓ Docs Directory - docs/ directory exists and is writable
+✓ Ollama Server - Ollama is running on localhost:11434
+✓ Ollama Model (nomic-embed-text) - Model is installed
+
+✅ All preflight checks passed!
+```
+
+If something is missing, you'll get clear instructions:
+
+```
+✗ Ollama Model (nomic-embed-text) - Model is not installed
+
+   How to fix:
+   Pull the required model:
+     ollama pull nomic-embed-text
+
+   📖 Docs: https://ollama.ai/library
+
+❌ Preflight checks failed!
+Please fix the issues above and run again.
+```
+
+### Command Line Options
+
+```bash
+node scripts/run-evolution.mjs [options]
+
+Options:
+  --skip-preflight     Skip prerequisite checks
+  --provider <name>    Embedding provider (ollama, gemini, openai)
+  --model <name>       Model name (default: nomic-embed-text)
+  --population <n>     Population size (default: 8)
+  --generations <n>    Number of generations (default: 5)
+  -h, --help           Show help
+```
+
+### Results
+
+Evolution results are saved to:
+- `docs/evolution-results.html` - Interactive visual report
+- `docs/evolution-results.json` - Raw data for programmatic access
+
+See [Evolution Documentation](docs/EVOLUTION.md) for detailed information about the genetic algorithm.
+
 ## Configuration
 
 ### YAML Configuration File
@@ -442,14 +517,17 @@ node dist/cli/index.js ab-test \
 
 ## Documentation
 
-- **[QUICKSTART.md](QUICKSTART.md)** - Step-by-step guide for new users
-- **[EVALUATION_TESTING.md](EVALUATION_TESTING.md)** - Testing results and analysis
-- **[STRATEGY_SYSTEM.md](STRATEGY_SYSTEM.md)** - Strategy system details
-- **[SYSTEM_ANALYSIS.md](SYSTEM_ANALYSIS.md)** - Architecture analysis
-- **[IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)** - Roadmap for future development
-- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Guidelines for contributors
-- **[RELEASE.md](RELEASE.md)** - Release process documentation
-- **[CHANGELOG.md](CHANGELOG.md)** - Version history
+- **[AGENTS.md](AGENTS.md)** - AI Agent integration guide (self-evolving capabilities)
+- **[docs/EVOLUTION.md](docs/EVOLUTION.md)** - Genetic algorithm evolution system
+- **[docs/QUICKSTART.md](docs/QUICKSTART.md)** - Step-by-step guide for new users
+- **[docs/ROADMAP.md](docs/ROADMAP.md)** - Roadmap for self-evolving features
+- **[docs/EVALUATION_TESTING.md](docs/EVALUATION_TESTING.md)** - Testing results and analysis
+- **[docs/STRATEGY_SYSTEM.md](docs/STRATEGY_SYSTEM.md)** - Strategy system details
+- **[docs/SYSTEM_ANALYSIS.md](docs/SYSTEM_ANALYSIS.md)** - Architecture analysis
+- **[docs/IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md)** - Implementation details
+- **[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)** - Guidelines for contributors
+- **[docs/RELEASE.md](docs/RELEASE.md)** - Release process documentation
+- **[docs/CHANGELOG.md](docs/CHANGELOG.md)** - Version history
 - **[docs/adr/](docs/adr/)** - Architecture Decision Records
 
 ## Support

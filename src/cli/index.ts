@@ -31,6 +31,8 @@ import { dashboardCommand } from './commands/dashboard';
 import { providersCommand } from './commands/providers';
 import { huggingfaceCommand } from './commands/huggingface';
 import { strategyCommand } from './commands/strategy';
+import { registerAgentCommand } from './commands/agent';
+import { registerEvolveCommand } from './commands/evolve';
 import { logger } from '../utils/logger';
 
 const program = new Command();
@@ -107,6 +109,12 @@ program
   .option('--list', 'List available strategies')
   .option('--test <strategy>', 'Test a strategy configuration')
   .action(strategyCommand);
+
+// Agent commands (for AI agent integration)
+registerAgentCommand(program);
+
+// Evolution commands (genetic algorithm optimization)
+registerEvolveCommand(program);
 
 // Error handling
 program.on('command:*', () => {

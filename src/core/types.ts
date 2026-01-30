@@ -459,3 +459,268 @@ export interface DashboardData {
   sideBySide: SideBySideView[];
   efficiency: EfficiencyAnalysis;
 }
+
+// ============================================================================
+// Evolution Types (Self-Evolving Embedding Researcher)
+// ============================================================================
+
+/**
+ * Strategy Genome - Represents a strategy as an evolvable configuration
+ */
+export interface StrategyGenome {
+  id: string;
+  name: string;
+  genes: {
+    // Chunking genes
+    chunkingMethod: 'none' | 'fixed' | 'semantic' | 'sliding';
+    chunkSize?: number;        // 128-1024
+    chunkOverlap?: number;     // 0-50%
+    
+    // Retrieval genes
+    retrievalMethod: 'cosine' | 'bm25' | 'hybrid';
+    retrievalK: number;        // 10-100
+    hybridWeights?: [number, number];  // [embedding, bm25]
+    
+    // Reranking genes
+    rerankingMethod: 'none' | 'llm' | 'mmr' | 'cross-encoder';
+    rerankingTopK?: number;    // 5-20
+    mmrLambda?: number;        // 0-1 (diversity vs relevance)
+  };
+  
+  // Evolution metadata
+  fitness?: number;
+  generation: number;
+  parents?: [string, string];
+  mutations?: string[];
+  createdAt: string;
+}
+
+/**
+ * Evolution Configuration
+ */
+export interface EvolutionConfig {
+  populationSize: number;
+  generations: number;
+  mutationRate: number;
+  crossoverRate: number;
+  selectionMethod: 'tournament' | 'elitist' | 'roulette';
+  tournamentSize?: number;
+  eliteCount?: number;
+  fitnessMetric: string;
+  fitnessWeights?: Record<string, number>;
+  constraints?: {
+    maxLatencyMs?: number;
+    maxCostPerQuery?: number;
+  };
+  autoDeployEnabled: boolean;
+  autoDeployThreshold: number;
+}
+
+/**
+ * Evolution Result
+ */
+export interface EvolutionResult {
+  evolutionId: string;
+  generations: GenerationResult[];
+  bestGenome: StrategyGenome;
+  improvementOverBaseline: number;
+  totalEvaluations: number;
+  deployed: boolean;
+  timestamp: string;
+}
+
+export interface GenerationResult {
+  generation: number;
+  population: StrategyGenome[];
+  bestFitness: number;
+  avgFitness: number;
+  diversity: number;
+}
+
+// ============================================================================
+// Hypothesis Types (Research Automation)
+// ============================================================================
+
+/**
+ * Experiment Hypothesis
+ */
+export interface Hypothesis {
+  id: string;
+  statement: string;
+  rationale: string;
+  baselineStrategy: string;
+  challengerStrategy: string | StrategyGenome;
+  expectedImprovement: number;
+  confidence: number;
+  conditions?: {
+    documentLength?: 'short' | 'medium' | 'long';
+    queryType?: string;
+    domain?: string;
+  };
+  status: 'proposed' | 'testing' | 'confirmed' | 'rejected' | 'inconclusive';
+  priority: number;
+  createdAt: string;
+  testedAt?: string;
+  result?: {
+    actualImprovement: number;
+    pValue: number;
+    significant: boolean;
+  };
+}
+
+// ============================================================================
+// Knowledge Base Types
+// ============================================================================
+
+/**
+ * Experiment Record for Knowledge Base
+ */
+export interface ExperimentRecord {
+  id: string;
+  name: string;
+  hypothesis?: string;
+  timestamp: string;
+  duration: number;
+  corpus: string;
+  queryCount: number;
+  variants: Array<{
+    name: string;
+    strategy: string;
+    provider: string;
+    model: string;
+  }>;
+  results: Record<string, Record<string, number>>;  // variant -> metric -> value
+  winner?: string;
+  outcome: 'confirmed' | 'rejected' | 'inconclusive' | 'completed';
+  learnings: string[];
+  tags: string[];
+}
+
+/**
+ * Model Performance Profile
+ */
+export interface ModelProfile {
+  modelId: string;
+  provider: string;
+  dimensions: number;
+  avgLatency: number;
+  p95Latency: number;
+  costPer1kTokens: number;
+  strengthDomains: string[];
+  weaknessDomains: string[];
+  performanceByMetric: Record<string, number>;
+  experimentCount: number;
+  lastUpdated: string;
+}
+
+/**
+ * Strategy Performance Profile
+ */
+export interface StrategyProfile {
+  strategyName: string;
+  avgNdcg: number;
+  avgRecall: number;
+  avgLatency: number;
+  avgCost: number;
+  bestForContexts: string[];
+  worstForContexts: string[];
+  experimentCount: number;
+  lastUpdated: string;
+}
+
+/**
+ * Failure Pattern
+ */
+export interface FailurePattern {
+  id: string;
+  pattern: string;
+  description: string;
+  frequency: number;
+  examples: Array<{
+    queryId: string;
+    query: string;
+    expectedDocs: string[];
+    retrievedDocs: string[];
+    metrics: Record<string, number>;
+  }>;
+  suggestedFix: string;
+  fixSuccessRate?: number;
+  detectionRule?: string;
+  createdAt: string;
+  lastSeen: string;
+}
+
+/**
+ * Best Practice (Learned)
+ */
+export interface BestPractice {
+  id: string;
+  title: string;
+  description: string;
+  context: string;
+  recommendation: string;
+  evidence: Array<{
+    experimentId: string;
+    improvement: number;
+  }>;
+  confidence: number;
+  createdAt: string;
+}
+
+// ============================================================================
+// Synthetic Data Types
+// ============================================================================
+
+/**
+ * Synthetic Query Generation Config
+ */
+export interface SyntheticQueryConfig {
+  corpusPath: string;
+  provider: ProviderConfig;
+  llmModel: string;
+  numQueries: number;
+  queryTypes: ('factual' | 'conceptual' | 'comparison' | 'procedural')[];
+  difficulty: 'easy' | 'medium' | 'hard' | 'mixed';
+  includeNegatives: boolean;
+  outputPath: string;
+}
+
+/**
+ * Generated Query with metadata
+ */
+export interface SyntheticQuery {
+  id: string;
+  query: string;
+  sourceDocId: string;
+  relevantDocs: string[];
+  difficulty: 'easy' | 'medium' | 'hard';
+  queryType: string;
+  reasoning: string;
+  generatedAt: string;
+}
+
+// ============================================================================
+// Agent Response Types
+// ============================================================================
+
+/**
+ * Structured response for AI agents
+ */
+export interface AgentResponse<T = any> {
+  status: 'success' | 'error' | 'partial';
+  data?: T;
+  summary: string;
+  interpretation?: string;
+  recommendations?: string[];
+  nextActions?: string[];
+  error?: {
+    code: string;
+    message: string;
+    suggestion: string;
+  };
+  metadata?: {
+    duration: number;
+    timestamp: string;
+    version: string;
+  };
+}

@@ -17,7 +17,14 @@
     "lint:fix": "eslint src/**/*.ts --fix",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist .embedeval",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "preflight": "node scripts/preflight-check.mjs",
+    "evolve": "node scripts/run-evolution.mjs",
+    "evolve:quick": "node scripts/run-evolution.mjs --generations 3 --population 6",
+    "evolve:v2": "node scripts/run-evolution-v2.mjs",
+    "evolve:v2:local": "node scripts/run-evolution-v2.mjs -e local-only -g 10",
+    "evolve:v2:quality": "node scripts/run-evolution-v2.mjs -e quality-optimized --correctness-weight 0.8",
+    "evolve:v2:fast": "node scripts/run-evolution-v2.mjs -p 10 -g 5 -e local-only"
   },
   "keywords": [
     "embeddings",

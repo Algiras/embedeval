@@ -1,0 +1,52 @@
+# OpenClaw Cross-Agent Information Sharing Example
+# Test information sharing between multiple OpenClaw agent instances
+
+test:
+  name: "Cross-Agent Information Sharing"
+  description: "Test if OpenClaw agents can effectively share and retrieve knowledge from each other"
+  tags: ["openclaw", "federated", "multi-agent", "sharing"]
+
+variants:
+  - id: shared-embeddings
+    name: "Shared Embedding Space"
+    provider:
+      type: openai
+      model: text-embedding-3-large
+    strategy: baseline
+    description: "All agents use the same embedding model for consistency"
+
+  - id: federated-search
+    name: "Federated Search"
+    provider:
+      type: huggingface
+      model: BAAI/bge-large-en-v1.5
+    strategy: mmr-diversity
+    description: "Diverse results from multiple agents using MMR reranking"
+
+  - id: ensemble-retrieval
+    name: "Ensemble Retrieval"
+    provider:
+      type: google
+      model: text-embedding-004
+    strategy: fusion-rrf
+    description: "Reciprocal Rank Fusion across multiple agent knowledge bases"
+
+dataset: ./data/openclaw-shared-queries.jsonl
+corpus: ./data/openclaw-federated-corpus.jsonl
+
+metrics:
+  - ndcg@10
+  - recall@10
+  - mrr@10
+  - precision@5
+
+output:
+  json: ./results/openclaw-federated/metrics.json
+  dashboard: ./results/openclaw-federated/dashboard.html
+  sideBySide: ./results/openclaw-federated/comparison.html
+
+# Benefits:
+# - Federated Knowledge: Multiple OpenClaw agents share insights
+# - Better Discovery: Find information across agent boundaries
+# - Collective Intelligence: Pool knowledge from many instances
+# - Consistent Retrieval: All agents use optimal strategy

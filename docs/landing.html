@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EmbedEval - Self-Evolving Embedding Researcher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --secondary: #8b5cf6;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --bg: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-card: #1e293b;
+      --bg-hover: #334155;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --border: #334155;
+      --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      background: radial-gradient(ellipse at top, rgba(99, 102, 241, 0.15), transparent 50%);
+    }
+    
+    .hero-badge {
+      display: inline-block;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: var(--primary);
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+    }
+    
+    h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+    
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+    
+    .hero-links {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background: var(--gradient);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+    
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--bg-hover);
+      border-color: var(--primary);
+    }
+    
+    /* Stats */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      padding: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .stat {
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    
+    /* Main Content */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+    
+    /* Section */
+    .section {
+      margin-bottom: 4rem;
+    }
+    
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    
+    /* Cards Grid */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.2s;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    
+    .card:hover {
+      border-color: var(--primary);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .card-badge {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--success);
+      font-weight: 500;
+    }
+    
+    .card-badge.new {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--primary);
+    }
+    
+    .card-description {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+    
+    .card-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+    
+    .card-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    /* Features Grid */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .feature {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+    
+    .feature-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .feature-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .feature-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    
+    /* Code Block */
+    .code-block {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+    }
+    
+    .code-block .comment { color: #8b949e; }
+    .code-block .command { color: #7ee787; }
+    .code-block .flag { color: #79c0ff; }
+    
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+    
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    
+    footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      h1 { font-size: 2.5rem; }
+      .hero { padding: 4rem 1.5rem 3rem; }
+      .stats { gap: 2rem; }
+      .cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="hero-badge">🧬 Self-Evolving Embedding Research</div>
+    <h1>EmbedEval</h1>
+    <p class="hero-subtitle">
+      CLI-based embedding evaluation system with genetic evolution, A/B testing, 
+      and multi-objective optimization for retrieval strategies.
+    </p>
+    <div class="hero-links">
+      <a href="https://github.com/Algiras/embedeval" class="btn btn-primary">
+        <span>📂</span> View on GitHub
+      </a>
+      <a href="evolution-results.html" class="btn btn-secondary">
+        <span>🧬</span> Evolution Results
+      </a>
+      <a href="index.html" class="btn btn-secondary">
+        <span>📊</span> Meta-Evaluation
+      </a>
+    </div>
+    
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value">5+</div>
+        <div class="stat-label">Embedding Providers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">15+</div>
+        <div class="stat-label">Pipeline Stages</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">4</div>
+        <div class="stat-label">Fitness Dimensions</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">∞</div>
+        <div class="stat-label">Strategy Permutations</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container">
+    <!-- Results Section -->
+    <section class="section">
+      <h2 class="section-title">📈 Results & Reports</h2>
+      <div class="cards">
+        <a href="evolution-results.html" class="card">
+          <div class="card-icon">🧬</div>
+          <div class="card-title">
+            Evolution Results
+            <span class="card-badge new">NEW</span>
+          </div>
+          <p class="card-description">
+            Multi-objective genetic evolution results showing the best discovered 
+            retrieval strategies optimized for correctness, speed, and cost.
+          </p>
+          <div class="card-meta">
+            <span>📊 Interactive Charts</span>
+            <span>🏆 Pareto Front</span>
+          </div>
+        </a>
+        
+        <a href="index.html" class="card">
+          <div class="card-icon">📊</div>
+          <div class="card-title">Meta-Evaluation</div>
+          <p class="card-description">
+            Self-referential analysis of evaluation strategies across 5 dimensions. 
+            How well does EmbedEval evaluate embedding models?
+          </p>
+          <div class="card-meta">
+            <span>🔬 5 Dimensions</span>
+            <span>📈 Benchmarks</span>
+          </div>
+        </a>
+      </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="section">
+      <h2 class="section-title">✨ Key Features</h2>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">🧬</div>
+          <div class="feature-title">Genetic Evolution</div>
+          <p class="feature-desc">
+            Automatically evolve optimal retrieval strategies using genetic algorithms 
+            with mutation, crossover, and selection operators.
+          </p>
+        </div>
+        
+        <div class="feature">
+          <div class="feature-icon">🎯</div>
+          <div class="feature-title">Multi-Objective</div>
+          <p class="feature-desc">
+            Optimize for correctness, speed, and cost simultaneously with 
+            NSGA-II inspired Pareto optimization.
+          </p>
+        </div>
+        
+        <div class="feature">
+          <div class="feature-icon">🔄</div>
+          <div class="feature-title">Pipeline Permutations</div>
+          <p class="feature-desc">
+            Explore all possible combinations: query expansion, BM25, embeddings, 
+            fusion, reranking in any order.
+          </p>
+        </div>
+        
+        <div class="feature">
+          <div class="feature-icon">🌍</div>
+          <div class="feature-title">Environment Presets</div>
+          <p class="feature-desc">
+            Local-only, cost-optimized, speed-optimized, or quality-optimized 
+            evolution environments.
+          </p>
+        </div>
+        
+        <div class="feature">
+          <div class="feature-icon">🔍</div>
+          <div class="feature-title">Preflight Checks</div>
+          <p class="feature-desc">
+            Automatic validation of prerequisites with clear fix instructions 
+            before running evolution.
+          </p>
+        </div>
+        
+        <div class="feature">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">Rich Metrics</div>
+          <p class="feature-desc">
+            NDCG, Recall, MRR, MAP, Hit Rate at multiple K values with 
+            statistical significance testing.
+          </p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Quick Start Section -->
+    <section class="section">
+      <h2 class="section-title">🚀 Quick Start</h2>
+      <div class="code-block">
+<span class="comment"># Clone and install</span>
+<span class="command">git clone</span> https://github.com/Algiras/embedeval.git
+<span class="command">cd</span> embedeval && <span class="command">npm install</span>
+
+<span class="comment"># Run preflight checks</span>
+<span class="command">npm run</span> preflight
+
+<span class="comment"># Run genetic evolution (local models, free)</span>
+<span class="command">npm run</span> evolve:v2:local
+
+<span class="comment"># Run with custom settings</span>
+<span class="command">node</span> scripts/run-evolution-v2.mjs <span class="flag">-p 20 -g 15 -e cost-optimized</span>
+
+<span class="comment"># View results</span>
+<span class="command">open</span> docs/evolution-results.html
+      </div>
+    </section>
+    
+    <!-- Documentation Section -->
+    <section class="section">
+      <h2 class="section-title">📚 Documentation</h2>
+      <div class="cards">
+        <a href="EVOLUTION.md" class="card">
+          <div class="card-title">🧬 Evolution Guide</div>
+          <p class="card-description">
+            Detailed documentation on the genetic evolution system, genome structure, 
+            and fitness functions.
+          </p>
+        </a>
+        
+        <a href="QUICKSTART.md" class="card">
+          <div class="card-title">⚡ Quick Start</div>
+          <p class="card-description">
+            Get up and running with EmbedEval in minutes with step-by-step instructions.
+          </p>
+        </a>
+        
+        <a href="STRATEGY_SYSTEM.md" class="card">
+          <div class="card-title">🔧 Strategy System</div>
+          <p class="card-description">
+            Learn about composable retrieval strategies and how to build custom pipelines.
+          </p>
+        </a>
+        
+        <a href="ROADMAP.md" class="card">
+          <div class="card-title">🗺️ Roadmap</div>
+          <p class="card-description">
+            See what's planned for EmbedEval including MCP integration and federated learning.
+          </p>
+        </a>
+      </div>
+    </section>
+  </div>
+  
+  <footer>
+    <p>
+      Built with ❤️ by <a href="https://github.com/Algiras">Algiras</a>
+    </p>
+    <div class="footer-links">
+      <a href="https://github.com/Algiras/embedeval">GitHub</a>
+      <a href="https://github.com/Algiras/embedeval/issues">Issues</a>
+      <a href="CONTRIBUTING.md">Contributing</a>
+      <a href="CHANGELOG.md">Changelog</a>
+    </div>
+  </footer>
+</body>
+</html>

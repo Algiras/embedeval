@@ -1,0 +1,146 @@
+---
+description: Rules for research automation features
+globs: ["src/research/**/*.ts"]
+alwaysApply: false
+---
+
+# Research Automation Rules
+
+## Hypothesis-Driven Development
+
+All research features should follow the scientific method:
+
+1. **Observe** - Collect data about current performance
+2. **Hypothesize** - Propose an improvement
+3. **Experiment** - Test the hypothesis with A/B testing
+4. **Analyze** - Determine statistical significance
+5. **Learn** - Update knowledge base with findings
+
+## Hypothesis Structure
+
+```typescript
+interface Hypothesis {
+  id: string;
+  statement: string;           // "Hybrid BM25 improves NDCG for long documents"
+  rationale: string;           // "BM25 captures exact matches embeddings miss"
+  baseline: string;            // Strategy name
+  challenger: string;          // Strategy name
+  expectedImprovement: number; // 0.05 = 5%
+  confidence: number;          // 0.0-1.0
+  conditions?: {               // When to test
+    documentLength?: 'short' | 'long';
+    queryType?: string;
+    domain?: string;
+  };
+  status: 'proposed' | 'testing' | 'confirmed' | 'rejected' | 'inconclusive';
+}
+```
+
+## Synthetic Data Generation
+
+When generating test data:
+
+```typescript
+interface SyntheticDataConfig {
+  corpus: string;              // Path to documents
+  provider: string;            // LLM provider for generation
+  model: string;               // e.g., 'gpt-4'
+  numQueries: number;          // How many to generate
+  queryTypes: string[];        // ['factual', 'conceptual', 'comparison']
+  difficulty: 'easy' | 'medium' | 'hard';
+  includeNegatives: boolean;   // Generate hard negatives
+}
+```
+
+Generation prompt template:
+
+```
+Given this document:
+{document}
+
+Generate {n} search queries that someone might use to find this information.
+Include queries of varying difficulty:
+- Easy: Direct questions with answers in text
+- Medium: Require inference or connection
+- Hard: Paraphrased or conceptual
+
+Format as JSON:
+[
+  { "query": "...", "difficulty": "easy", "relevantPassage": "..." }
+]
+```
+
+## Model Discovery
+
+When discovering new models:
+
+```typescript
+interface ModelDiscoveryConfig {
+  sources: ('huggingface' | 'mteb' | 'openai')[];
+  filters: {
+    taskType?: 'retrieval' | 'similarity' | 'classification';
+    dimensions?: { min?: number; max?: number };
+    languages?: string[];
+    license?: string[];
+  };
+  rankBy: 'mteb_score' | 'downloads' | 'recent';
+  limit: number;
+}
+```
+
+Always check:
+1. Model compatibility with our provider system
+2. Licensing for commercial use
+3. Dimension compatibility with existing indexes
+4. Performance benchmarks on relevant tasks
+
+## Failure Analysis
+
+When analyzing failures:
+
+```typescript
+interface FailurePattern {
+  id: string;
+  pattern: string;           // e.g., "long_query_failure"
+  description: string;
+  frequency: number;         // How often it occurs
+  examples: FailedQuery[];   // Sample failures
+  suggestedFix: string;      // e.g., "Try semantic chunking"
+  fixSuccessRate?: number;   // Historical success rate
+  
+  detection: {
+    type: 'rule' | 'ml';
+    rule?: string;           // e.g., "query.length > 100 && ndcg < 0.3"
+    model?: string;          // ML model for detection
+  };
+}
+```
+
+Common failure patterns to detect:
+- Long query failures
+- Out-of-vocabulary terms
+- Multi-hop reasoning requirements
+- Ambiguous queries
+- Domain mismatch
+- Temporal queries (outdated info)
+
+## Benchmark Integration
+
+When integrating MTEB or other benchmarks:
+
+```typescript
+interface BenchmarkConfig {
+  name: string;              // 'mteb', 'beir', 'custom'
+  tasks: string[];           // ['retrieval', 'sts', 'classification']
+  datasets: string[];        // ['msmarco', 'nfcorpus', 'scifact']
+  metrics: string[];         // ['ndcg@10', 'mrr@10']
+  downloadPath: string;      // Where to cache datasets
+}
+```
+
+Benchmark workflow:
+1. Download dataset if not cached
+2. Convert to EmbedEval format
+3. Run evaluation
+4. Compare against MTEB leaderboard
+5. Store results in knowledge base

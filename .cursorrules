@@ -1,0 +1,253 @@
+# EmbedEval Cursor Rules
+# Project: Self-Evolving Embedding Researcher
+
+## Project Context
+
+EmbedEval is a CLI-based embedding evaluation system being transformed into a self-evolving embedding researcher. The system enables AI agents to autonomously improve their retrieval systems through:
+
+1. **Evaluation** - A/B testing embedding models and strategies
+2. **Experimentation** - Hypothesis-driven experiments
+3. **Evolution** - Genetic algorithm-based strategy optimization
+4. **Deployment** - Auto-promote winning configurations
+
+## Architecture Overview
+
+```
+embedeval/
+├── src/
+│   ├── cli/commands/      # CLI command implementations
+│   ├── core/              # Core types and A/B testing engine
+│   ├── providers/         # Embedding providers (Ollama, OpenAI, Google, HF)
+│   ├── strategies/        # Composable strategy system
+│   ├── jobs/              # BullMQ job processing
+│   ├── utils/             # Cache, config, statistics
+│   ├── research/          # [NEW] Research automation modules
+│   ├── evolution/         # [NEW] Self-evolution engine
+│   └── analysis/          # [NEW] Failure analysis & visualization
+├── docs/
+│   ├── AGENTS.md          # AI agent integration guide
+│   ├── adr/               # Architecture Decision Records
+│   └── ...
+└── examples/              # Example configurations
+```
+
+## Code Style Guidelines
+
+### TypeScript
+
+- Use strict TypeScript with explicit types
+- Prefer interfaces over types for object shapes
+- Use enums for fixed sets of values
+- Document public APIs with JSDoc comments
+- Use async/await over raw promises
+- Prefer functional programming patterns where appropriate
+
+### Naming Conventions
+
+- Files: `kebab-case.ts` (e.g., `hypothesis-engine.ts`)
+- Classes: `PascalCase` (e.g., `HypothesisEngine`)
+- Functions: `camelCase` (e.g., `generateHypotheses`)
+- Constants: `SCREAMING_SNAKE_CASE` (e.g., `DEFAULT_POPULATION_SIZE`)
+- Interfaces: `PascalCase` with `I` prefix optional (e.g., `StrategyGenome`)
+
+### File Organization
+
+- One class per file
+- Group related functionality in directories
+- Index files for public exports
+- Keep files under 400 lines
+
+## Key Patterns
+
+### Strategy Pattern
+
+Strategies are composable pipelines:
+
+```typescript
+const strategy: Strategy = {
+  name: 'hybrid-bm25',
+  stages: [
+    { type: 'bm25', config: { k: 100 } },
+    { type: 'embedding', config: {} },
+    { type: 'fusion', config: { method: 'rrf' } },
+  ],
+};
+```
+
+### Provider Pattern
+
+All embedding providers implement:
+
+```typescript
+interface EmbeddingProvider {
+  name: string;
+  embed(text: string): Promise<number[]>;
+  embedBatch(texts: string[]): Promise<number[][]>;
+  getModelInfo(): ModelInfo;
+}
+```
+
+### Evolution Pattern (New)
+
+Strategy genomes for evolutionary optimization:
+
+```typescript
+interface StrategyGenome {
+  id: string;
+  genes: {
+    chunkingMethod?: 'fixed' | 'semantic' | 'sliding';
+    chunkSize?: number;
+    retrievalMethod: 'cosine' | 'bm25' | 'hybrid';
+    rerankingMethod?: 'none' | 'llm' | 'mmr';
+  };
+  fitness?: number;
+  generation: number;
+}
+```
+
+## When Adding New Features
+
+### New Provider
+
+1. Create `src/providers/{name}.ts`
+2. Implement `EmbeddingProvider` interface
+3. Add to `src/providers/index.ts` factory
+4. Add config type to `src/core/types.ts`
+5. Add tests in `tests/providers/{name}.test.ts`
+
+### New Strategy Stage
+
+1. Create in appropriate `src/strategies/{type}/` directory
+2. Implement `StrategyStage` interface
+3. Register in `src/strategies/registry.ts`
+4. Add to predefined strategies if commonly useful
+
+### New CLI Command
+
+1. Create `src/cli/commands/{name}.ts`
+2. Register in `src/cli/index.ts`
+3. Add help documentation
+4. Create example config in `examples/`
+
+### New Research Module
+
+1. Create in `src/research/{name}.ts`
+2. Follow hypothesis-experiment-learn pattern
+3. Integrate with knowledge base
+4. Add agent CLI wrapper
+
+## Testing Guidelines
+
+- Unit tests for all public functions
+- Integration tests for provider connectivity
+- Use Jest for testing framework
+- Mock external APIs in unit tests
+- Use sample data from `examples/`
+
+## Dependencies
+
+### Core Dependencies
+
+- `bullmq` - Job queue for parallel processing
+- `commander` - CLI framework
+- `yaml` - Configuration parsing
+- `openai`, `@google/generative-ai` - API clients
+- `ioredis` - Redis client for BullMQ
+
+### When Adding Dependencies
+
+- Prefer well-maintained packages
+- Check bundle size impact
+- Ensure TypeScript types available
+- Document in package.json
+
+## Error Handling
+
+- Use custom error classes for domain errors
+- Log errors with context using logger
+- Provide actionable error messages
+- Include recovery suggestions
+
+```typescript
+throw new EvaluationError(
+  `Provider ${provider} failed: ${message}`,
+  { provider, query, suggestion: 'Check API key or rate limits' }
+);
+```
+
+## Performance Considerations
+
+- Use embedding cache (10GB LRU)
+- Batch API calls where possible
+- Use BullMQ for parallel processing
+- Checkpoint long-running operations
+- Profile with `--verbose` flag
+
+## Documentation Standards
+
+- Update README.md for user-facing changes
+- Add ADR for architectural decisions
+- Document agent integration in AGENTS.md
+- Include examples for new features
+
+## Common Tasks
+
+### Run Development
+
+```bash
+npm run dev -- <command>
+```
+
+### Run Tests
+
+```bash
+npm test
+npm run test:local  # Requires Ollama
+```
+
+### Build
+
+```bash
+npm run build
+```
+
+### Lint
+
+```bash
+npm run lint
+npm run lint:fix
+```
+
+## AI Assistant Guidelines
+
+When helping with this project:
+
+1. **Understand the evolution goal** - We're building self-improving AI
+2. **Maintain type safety** - TypeScript is critical
+3. **Follow existing patterns** - Look at similar code first
+4. **Consider agents** - Features should be agent-accessible
+5. **Think about the loop** - Observe → Analyze → Hypothesize → Experiment → Learn → Deploy
+6. **Keep it composable** - Strategies should mix and match
+7. **Document decisions** - ADRs for significant choices
+
+## Priority Features (Roadmap)
+
+### P0 - Foundation
+- [ ] Synthetic query generation (`src/research/synthetic-data.ts`)
+- [ ] Experiment history tracking (`src/evolution/knowledge-base.ts`)
+- [ ] Agent CLI commands (`src/cli/commands/agent.ts`)
+
+### P1 - Intelligence
+- [ ] Hypothesis engine (`src/research/hypothesis-engine.ts`)
+- [ ] Failure analysis (`src/analysis/failure-analyzer.ts`)
+- [ ] Model discovery (`src/research/model-discovery.ts`)
+
+### P2 - Evolution
+- [ ] Strategy genome (`src/evolution/strategy-genome.ts`)
+- [ ] Evolution scheduler (`src/evolution/scheduler.ts`)
+- [ ] Auto-deployment (`src/evolution/deployer.ts`)
+
+### P3 - Integration
+- [ ] MCP server (`src/mcp/server.ts`)
+- [ ] Embedding visualization (`src/analysis/visualizer.ts`)
+- [ ] Federated learning (`src/federation/`)

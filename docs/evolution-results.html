@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EmbedEval Evolution Results v2</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #6366f1;
+      --secondary: #8b5cf6;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --bg: #0f172a;
+      --bg-card: #1e293b;
+      --bg-hover: #334155;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --border: #334155;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem;
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    header { text-align: center; margin-bottom: 3rem; }
+    h1 { 
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle { color: var(--text-muted); font-size: 1.1rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .card { background: var(--bg-card); border-radius: 12px; padding: 1.5rem; border: 1px solid var(--border); }
+    .card h2 { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; }
+    .metric { font-size: 2.5rem; font-weight: 700; color: var(--primary); }
+    .metric-small { font-size: 1.5rem; }
+    .metric-label { color: var(--text-muted); font-size: 0.9rem; }
+    .best-genome { 
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+      border: 1px solid var(--primary);
+    }
+    .genome-name { font-family: monospace; font-size: 1.1rem; color: var(--primary); word-break: break-all; }
+    .pipeline { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+    .stage { 
+      background: var(--bg-hover);
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-family: monospace;
+    }
+    .stage::before { content: '→ '; color: var(--text-muted); }
+    .stage:first-child::before { content: ''; }
+    .genes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-top: 1rem; }
+    .gene { padding: 0.5rem; background: rgba(0,0,0,0.2); border-radius: 6px; }
+    .gene-name { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+    .gene-value { font-family: monospace; color: var(--text); }
+    .chart-container { height: 300px; margin-top: 1rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border); }
+    th { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; }
+    tr:hover { background: rgba(99, 102, 241, 0.05); }
+    .rank-1 { color: #fbbf24; }
+    .rank-2 { color: #9ca3af; }
+    .rank-3 { color: #b45309; }
+    .fitness-bar { 
+      height: 8px; 
+      background: var(--bg-hover);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .fitness-bar-fill { 
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transition: width 0.3s;
+    }
+    .objectives { display: flex; gap: 2rem; margin-top: 1rem; }
+    .objective { text-align: center; }
+    .objective-value { font-size: 1.5rem; font-weight: 600; }
+    .objective-label { font-size: 0.8rem; color: var(--text-muted); }
+    footer { text-align: center; padding: 2rem; color: var(--text-muted); border-top: 1px solid var(--border); margin-top: 2rem; }
+    footer a { color: var(--primary); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <nav style="margin-bottom: 1rem; display: flex; gap: 1rem; justify-content: center;">
+        <a href="landing.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">🏠 Home</a>
+        <a href="index.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">📊 Meta-Evaluation</a>
+        <a href="https://github.com/Algiras/embedeval" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">📂 GitHub</a>
+      </nav>
+      <h1>🧬 Evolution Results v2</h1>
+      <p class="subtitle">Multi-Objective Strategy Optimization</p>
+      <p class="subtitle" style="margin-top: 0.5rem; font-size: 0.9rem;">
+        Environment: local-only | 
+        Generations: 6 | 
+        Duration: 0.1s
+      </p>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Configuration</h2>
+        <div class="genes-grid">
+          <div class="gene">
+            <div class="gene-name">Population</div>
+            <div class="gene-value">12</div>
+          </div>
+          <div class="gene">
+            <div class="gene-name">Generations</div>
+            <div class="gene-value">6</div>
+          </div>
+          <div class="gene">
+            <div class="gene-name">Correctness ↔</div>
+            <div class="gene-value">50%</div>
+          </div>
+          <div class="gene">
+            <div class="gene-name">Speed ↔</div>
+            <div class="gene-value">25%</div>
+          </div>
+          <div class="gene">
+            <div class="gene-name">Cost ↔</div>
+            <div class="gene-value">25%</div>
+          </div>
+          <div class="gene">
+            <div class="gene-name">Environment</div>
+            <div class="gene-value">local-only</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Multi-Objective Scores</h2>
+        <div class="objectives">
+          <div class="objective">
+            <div class="objective-value" style="color: var(--success);">97.0%</div>
+            <div class="objective-label">NDCG@10</div>
+          </div>
+          <div class="objective">
+            <div class="objective-value" style="color: var(--warning);">0ms</div>
+            <div class="objective-label">Latency</div>
+          </div>
+          <div class="objective">
+            <div class="objective-value" style="color: var(--primary);">$0.00000</div>
+            <div class="objective-label">Cost/Query</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card best-genome" style="margin-bottom: 2rem;">
+      <h2>🏆 Best Evolved Strategy</h2>
+      <div class="genome-name">ollama-nomic-bm25-k10</div>
+      <div style="margin-top: 0.5rem;">
+        <span class="metric metric-small">0.9933</span>
+        <span class="metric-label">fitness score</span>
+      </div>
+      
+      <h3 style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">Pipeline Stages</h3>
+      <div class="pipeline">
+        <span class="stage">bm25_retrieve</span>
+      </div>
+      
+      <div class="genes-grid" style="margin-top: 1.5rem;">
+        <div class="gene">
+          <div class="gene-name">Embedding</div>
+          <div class="gene-value">OLLAMA_NOMIC</div>
+        </div>
+        <div class="gene">
+          <div class="gene-name">Query Expander</div>
+          <div class="gene-value">NONE</div>
+        </div>
+        <div class="gene">
+          <div class="gene-name">Fusion Method</div>
+          <div class="gene-value">NONE</div>
+        </div>
+        <div class="gene">
+          <div class="gene-name">Reranker</div>
+          <div class="gene-value">NONE</div>
+        </div>
+        <div class="gene">
+          <div class="gene-name">Initial K</div>
+          <div class="gene-value">50</div>
+        </div>
+        <div class="gene">
+          <div class="gene-name">Final K</div>
+          <div class="gene-value">10</div>
+        </div>
+        <div class="gene">
+          <div class="gene-name">Hybrid Alpha</div>
+          <div class="gene-value">0.50</div>
+        </div>
+        <div class="gene">
+          <div class="gene-name">MMR Lambda</div>
+          <div class="gene-value">0.50</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Evolution Progress</h2>
+        <div class="chart-container">
+          <canvas id="evolutionChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Multi-Objective Progress</h2>
+        <div class="chart-container">
+          <canvas id="objectivesChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 2rem;">
+      <h2>Top Evolved Strategies</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Strategy</th>
+            <th>Fitness</th>
+            <th>NDCG@10</th>
+            <th>Latency</th>
+            <th>Cost</th>
+            <th>Pipeline</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td class="rank-1">#1</td>
+            <td style="font-family: monospace; font-size: 0.85rem;">ollama-nomic-bm25-k10</td>
+            <td>
+              <div class="fitness-bar" style="width: 60px;">
+                <div class="fitness-bar-fill" style="width: 99.32655207490639%;"></div>
+              </div>
+              <span style="font-size: 0.8rem;">0.9933</span>
+            </td>
+            <td>97.0%</td>
+            <td>0ms</td>
+            <td>$0.00000</td>
+            <td style="font-size: 0.75rem; color: var(--text-muted);">bm25_retrieve</td>
+          </tr>
+          <tr>
+            <td class="rank-2">#2</td>
+            <td style="font-family: monospace; font-size: 0.85rem;">ollama-nomic-bm25-rce-k10</td>
+            <td>
+              <div class="fitness-bar" style="width: 60px;">
+                <div class="fitness-bar-fill" style="width: 99.32655207490639%;"></div>
+              </div>
+              <span style="font-size: 0.8rem;">0.9933</span>
+            </td>
+            <td>97.0%</td>
+            <td>0ms</td>
+            <td>$0.00000</td>
+            <td style="font-size: 0.75rem; color: var(--text-muted);">bm25_retrieve → rerank_ce</td>
+          </tr>
+          <tr>
+            <td class="rank-3">#3</td>
+            <td style="font-family: monospace; font-size: 0.85rem;">ollama-nomic-bm25-rce-k12</td>
+            <td>
+              <div class="fitness-bar" style="width: 60px;">
+                <div class="fitness-bar-fill" style="width: 99.32655207490639%;"></div>
+              </div>
+              <span style="font-size: 0.8rem;">0.9933</span>
+            </td>
+            <td>97.0%</td>
+            <td>0ms</td>
+            <td>$0.00000</td>
+            <td style="font-size: 0.75rem; color: var(--text-muted);">bm25_retrieve → rerank_ce</td>
+          </tr>
+          <tr>
+            <td class="">#4</td>
+            <td style="font-family: monospace; font-size: 0.85rem;">openai-large-bm25-rce-k7</td>
+            <td>
+              <div class="fitness-bar" style="width: 60px;">
+                <div class="fitness-bar-fill" style="width: 0%;"></div>
+              </div>
+              <span style="font-size: 0.8rem;">0</span>
+            </td>
+            <td>0.0%</td>
+            <td>0ms</td>
+            <td>$0</td>
+            <td style="font-size: 0.75rem; color: var(--text-muted);">bm25_retrieve → rerank_ce</td>
+          </tr>
+          <tr>
+            <td class="">#5</td>
+            <td style="font-family: monospace; font-size: 0.85rem;">qe:synonyms-ollama-nomic-bm25-rce-k10</td>
+            <td>
+              <div class="fitness-bar" style="width: 60px;">
+                <div class="fitness-bar-fill" style="width: 0%;"></div>
+              </div>
+              <span style="font-size: 0.8rem;">0</span>
+            </td>
+            <td>0.0%</td>
+            <td>0ms</td>
+            <td>$0</td>
+            <td style="font-size: 0.75rem; color: var(--text-muted);">query_expand_llm → bm25_retrieve → rerank_ce</td>
+          </tr>
+          <tr>
+            <td class="">#6</td>
+            <td style="font-family: monospace; font-size: 0.85rem;">ollama-nomic-bm25-rce-k12</td>
+            <td>
+              <div class="fitness-bar" style="width: 60px;">
+                <div class="fitness-bar-fill" style="width: 0%;"></div>
+              </div>
+              <span style="font-size: 0.8rem;">0</span>
+            </td>
+            <td>0.0%</td>
+            <td>0ms</td>
+            <td>$0</td>
+            <td style="font-size: 0.75rem; color: var(--text-muted);">bm25_retrieve → rerank_ce</td>
+          </tr>
+          <tr>
+            <td class="">#7</td>
+            <td style="font-family: monospace; font-size: 0.85rem;">qe:llm_rewrite-ollama-nomic-bm25-rce-k10</td>
+            <td>
+              <div class="fitness-bar" style="width: 60px;">
+                <div class="fitness-bar-fill" style="width: 0%;"></div>
+              </div>
+              <span style="font-size: 0.8rem;">0</span>
+            </td>
+            <td>0.0%</td>
+            <td>0ms</td>
+            <td>$0</td>
+            <td style="font-size: 0.75rem; color: var(--text-muted);">query_expand_llm → bm25_retrieve → rerank_ce</td>
+          </tr>
+          <tr>
+            <td class="">#8</td>
+            <td style="font-family: monospace; font-size: 0.85rem;">ollama-nomic-bm25-rce-k10</td>
+            <td>
+              <div class="fitness-bar" style="width: 60px;">
+                <div class="fitness-bar-fill" style="width: 0%;"></div>
+              </div>
+              <span style="font-size: 0.8rem;">0</span>
+            </td>
+            <td>0.0%</td>
+            <td>0ms</td>
+            <td>$0</td>
+            <td style="font-size: 0.75rem; color: var(--text-muted);">bm25_retrieve → rerank_ce</td>
+          </tr>
+          <tr>
+            <td class="">#9</td>
+            <td style="font-family: monospace; font-size: 0.85rem;">openai-large-bm25-rce-rce-k9</td>
+            <td>
+              <div class="fitness-bar" style="width: 60px;">
+                <div class="fitness-bar-fill" style="width: 0%;"></div>
+              </div>
+              <span style="font-size: 0.8rem;">0</span>
+            </td>
+            <td>0.0%</td>
+            <td>0ms</td>
+            <td>$0</td>
+            <td style="font-size: 0.75rem; color: var(--text-muted);">bm25_retrieve → rerank_ce → rerank_ce</td>
+          </tr>
+          <tr>
+            <td class="">#10</td>
+            <td style="font-family: monospace; font-size: 0.85rem;">openai-small-bm25-rce-k10</td>
+            <td>
+              <div class="fitness-bar" style="width: 60px;">
+                <div class="fitness-bar-fill" style="width: 0%;"></div>
+              </div>
+              <span style="font-size: 0.8rem;">0</span>
+            </td>
+            <td>0.0%</td>
+            <td>0ms</td>
+            <td>$0</td>
+            <td style="font-size: 0.75rem; color: var(--text-muted);">bm25_retrieve → rerank_ce</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <footer>
+      <p>Generated by EmbedEval v2 - Self-Evolving Embedding Researcher</p>
+      <p style="margin-top: 0.5rem;">
+        <a href="landing.html">Home</a> • 
+        <a href="index.html">Meta-Evaluation</a> • 
+        <a href="https://github.com/Algiras/embedeval">GitHub</a>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    // Evolution progress chart
+    const ctx1 = document.getElementById('evolutionChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'line',
+      data: {
+        labels: ["Gen 1","Gen 2","Gen 3","Gen 4","Gen 5","Gen 6"],
+        datasets: [
+          {
+            label: 'Best Fitness',
+            data: [0.9932655207490639,0.9932655207490639,0.9932655207490639,0.9932655207490639,0.9932655207490639,0.9932655207490639],
+            borderColor: '#6366f1',
+            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            fill: true,
+            tension: 0.3,
+          },
+          {
+            label: 'Avg Fitness',
+            data: [0.8986066602390012,0.6190311778845482,0.8591436098001807,0.8673752541672218,0.9020075044243735,0.8953049286890221],
+            borderColor: '#8b5cf6',
+            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+            fill: true,
+            tension: 0.3,
+          },
+          {
+            label: 'Diversity',
+            data: [1.18302704528955,1.1493852807135425,1.030124496345566,0.9024553064914265,0.9660889237854731,0.8830221883291314],
+            borderColor: '#22c55e',
+            borderDash: [5, 5],
+            fill: false,
+            tension: 0.3,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: '#94a3b8' } } },
+        scales: {
+          y: { beginAtZero: false, grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+          x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } }
+        }
+      }
+    });
+
+    // Objectives chart (radar)
+    const ctx2 = document.getElementById('objectivesChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'radar',
+      data: {
+        labels: ['NDCG@10', 'Recall@10', 'MRR@10', 'Speed', 'Cost Efficiency'],
+        datasets: [{
+          label: 'Best Strategy',
+          data: [
+            97.00689811069509,
+            100,
+            100,
+            99.99948077866667,
+            100,
+          ],
+          borderColor: '#6366f1',
+          backgroundColor: 'rgba(99, 102, 241, 0.2)',
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: '#94a3b8' } } },
+        scales: {
+          r: {
+            angleLines: { color: '#334155' },
+            grid: { color: '#334155' },
+            pointLabels: { color: '#94a3b8' },
+            ticks: { color: '#94a3b8', backdropColor: 'transparent' }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

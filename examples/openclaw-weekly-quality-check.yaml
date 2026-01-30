@@ -1,0 +1,50 @@
+# OpenClaw Weekly Quality Monitoring Example
+# Automated quality check to detect knowledge degradation
+
+test:
+  name: "Weekly Knowledge Quality Check"
+  description: "Monitor knowledge base quality over time to detect degradation"
+  tags: ["openclaw", "monitoring", "quality", "automated"]
+
+variants:
+  - id: baseline-check
+    name: "Baseline Quality Check"
+    provider:
+      type: openai
+      model: text-embedding-3-small
+    strategy: baseline
+    description: "Standard weekly quality assessment"
+
+  - id: enhanced-check
+    name: "Enhanced Quality Check"
+    provider:
+      type: openai
+      model: text-embedding-3-large
+    strategy: full-pipeline
+    description: "Higher quality check for critical assessments"
+
+dataset: ./data/openclaw-weekly-queries.jsonl
+corpus: ./data/openclaw-knowledge-corpus.jsonl
+
+metrics:
+  - ndcg@10
+  - recall@10
+  - mrr@10
+  - map@10
+
+gates:
+  enabled: true
+  failOnViolation: true
+  metrics:
+    ndcg@10:
+      min: 0.75  # Alert if quality drops below 75%
+    recall@10:
+      min: 0.70
+
+output:
+  json: ./results/openclaw-weekly/$(date +%Y-%m-%d)/metrics.json
+  dashboard: ./results/openclaw-weekly/$(date +%Y-%m-%d)/dashboard.html
+  csv: ./results/openclaw-weekly/quality-trend.csv
+
+# Run this via cron weekly:
+# 0 2 * * 0 cd /path/to/openclaw && embedeval ab-test --config weekly-quality-check.yaml

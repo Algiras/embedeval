@@ -1,0 +1,56 @@
+# OpenClaw Knowledge Clustering Example
+# Test different clustering strategies for better information organization
+
+test:
+  name: "Knowledge Corpus Clustering Evaluation"
+  description: "Test which clustering strategy helps OpenClaw find related information faster"
+  tags: ["openclaw", "clustering", "knowledge-management"]
+
+variants:
+  - id: semantic-clusters
+    name: "Semantic Clustering"
+    provider:
+      type: openai
+      model: text-embedding-3-large
+    strategy: semantic-chunks
+    description: "Groups related documents by semantic similarity"
+
+  - id: topic-clusters
+    name: "Topic-Based Clustering"
+    provider:
+      type: huggingface
+      model: sentence-transformers/all-MiniLM-L6-v2
+    strategy: fixed-chunks
+    description: "Organizes by explicit topics and tags"
+
+  - id: hybrid-clusters
+    name: "Hybrid Clustering"
+    provider:
+      type: google
+      model: text-embedding-004
+    strategy: hybrid-bm25
+    description: "Combines semantic similarity with keyword matching"
+
+dataset: ./data/openclaw-cluster-queries.jsonl
+corpus: ./data/openclaw-knowledge-corpus.jsonl
+
+metrics:
+  - ndcg@10
+  - recall@10
+  - precision@5
+  - mrr@10
+
+gates:
+  enabled: true
+  metrics:
+    recall@10:
+      min: 0.80
+    ndcg@10:
+      improvement: 0.03
+
+output:
+  json: ./results/openclaw-clustering/metrics.json
+  dashboard: ./results/openclaw-clustering/dashboard.html
+
+# This helps OpenClaw optimize how it organizes information
+# Run weekly to ensure optimal clustering strategy

@@ -1,0 +1,60 @@
+# OpenClaw Memory Self-Improvement Example
+# This example shows how OpenClaw could evaluate and improve its memory corpus
+
+test:
+  name: "OpenClaw Memory Quality Evaluation"
+  description: "Evaluate memory retrieval quality to improve long-term memory"
+  tags: ["openclaw", "memory", "self-improvement"]
+
+variants:
+  - id: current-memory
+    name: "Current Memory Strategy"
+    provider:
+      type: openai
+      model: text-embedding-3-small
+    strategy: semantic-chunks
+    description: "Current production memory strategy"
+
+  - id: improved-memory
+    name: "Proposed Memory Strategy"
+    provider:
+      type: openai
+      model: text-embedding-3-large
+    strategy: full-pipeline
+    description: "Higher quality embedding model with full pipeline"
+
+  - id: local-memory
+    name: "Local Memory Strategy"
+    provider:
+      type: ollama
+      model: nomic-embed-text
+    strategy: semantic-chunks
+    description: "Cost-effective local alternative"
+
+dataset: ./data/openclaw-memory-queries.jsonl
+corpus: ./data/openclaw-memory-corpus.jsonl
+
+metrics:
+  - ndcg@10
+  - recall@10
+  - mrr@10
+  - map@10
+
+gates:
+  enabled: true
+  failOnViolation: true
+  metrics:
+    ndcg@10:
+      min: 0.75
+      improvement: 0.05
+    recall@10:
+      min: 0.70
+
+output:
+  json: ./results/openclaw-memory/metrics.json
+  dashboard: ./results/openclaw-memory/dashboard.html
+  csv: ./results/openclaw-memory/results.csv
+
+cache:
+  maxSizeGB: 5
+  checkpointInterval: 1
