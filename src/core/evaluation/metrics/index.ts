@@ -3,7 +3,7 @@
  * NDCG, Recall, MRR, MAP
  */
 
-import { RetrievedDoc } from '../core/types';
+import { RetrievedDoc } from '../../types';
 
 /**
  * Calculate DCG (Discounted Cumulative Gain)
