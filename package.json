@@ -25,9 +25,23 @@
     "rag",
     "retrieval",
     "cli",
-    "ab-testing"
+    "ab-testing",
+    "semantic-search",
+    "vector-search",
+    "llm",
+    "ai",
+    "machine-learning"
   ],
-  "author": "Your Name",
+  "author": "Algiras <your.email@example.com>",
+  "files": [
+    "dist/",
+    "examples/",
+    "docker/",
+    "scripts/",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
