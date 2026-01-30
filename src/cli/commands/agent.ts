@@ -30,30 +30,7 @@ interface AgentQueryOptions {
   explain?: boolean;
 }
 
-interface AgentAnalyzeOptions {
-  path: string;
-  depth?: string;
-  suggestions?: boolean;
-}
-
-interface AgentHypothesizeOptions {
-  context?: string;
-  count?: string;
-  focus?: string;
-}
-
-interface AgentTestOptions {
-  hypothesisId: string;
-  dataset?: string;
-  runs?: string;
-}
-
-interface AgentGenerateOptions {
-  corpusPath?: string;
-  count?: string;
-  types?: string;
-  difficulty?: string;
-}
+// Unused interfaces removed - all typing is done inline
 
 /**
  * Format response for agent consumption
@@ -156,7 +133,7 @@ export function registerAgentCommand(program: Command): void {
           {
             summary: `Evaluation completed: NDCG@10=${variant.metrics.ndcg10?.toFixed(3)}, Recall@10=${variant.metrics.recall10?.toFixed(3)}`,
             interpretation: interpretResults(variant.metrics),
-            recommendations: generateRecommendations(variant.metrics, options.strategy),
+            recommendations: generateRecommendations(variant.metrics, options.strategy || 'baseline'),
           }
         );
         
@@ -385,32 +362,37 @@ export function registerAgentCommand(program: Command): void {
         let summary = '';
 
         if (options.bestModels) {
-          data.bestModels = kb.getBestModels('ndcg10', 5);
-          summary = `Top ${data.bestModels.length} models by NDCG@10`;
+          const models = kb.getBestModels('ndcg10', 5);
+          data.bestModels = models;
+          summary = `Top ${models.length} models by NDCG@10`;
         }
 
         if (options.bestStrategies) {
-          data.bestStrategies = kb.getBestStrategies({ limit: 5 });
+          const strategies = kb.getBestStrategies({ limit: 5 });
+          data.bestStrategies = strategies;
           summary += summary ? '; ' : '';
-          summary += `Top ${data.bestStrategies.length} strategies`;
+          summary += `Top ${strategies.length} strategies`;
         }
 
         if (options.failures) {
-          data.failurePatterns = kb.getFailurePatterns({ limit: 10 });
+          const patterns = kb.getFailurePatterns({ limit: 10 });
+          data.failurePatterns = patterns;
           summary += summary ? '; ' : '';
-          summary += `${data.failurePatterns.length} failure patterns`;
+          summary += `${patterns.length} failure patterns`;
         }
 
         if (options.insights) {
-          data.insights = kb.generateInsights();
+          const insights = kb.generateInsights();
+          data.insights = insights;
           summary += summary ? '; ' : '';
-          summary += `${data.insights.length} insights`;
+          summary += `${insights.length} insights`;
         }
 
         if (options.stats) {
-          data.stats = kb.getStats();
+          const stats = kb.getStats();
+          data.stats = stats;
           summary += summary ? '; ' : '';
-          summary += `Stats: ${data.stats.totalExperiments} experiments`;
+          summary += `Stats: ${(stats as { totalExperiments?: number }).totalExperiments || 0} experiments`;
         }
 
         if (options.query) {
@@ -423,12 +405,15 @@ export function registerAgentCommand(program: Command): void {
 
         await kb.close();
 
+        const insights = data.insights as string[] | undefined;
+        const recommendations = data.recommendations as string[] | undefined;
+        
         const response = formatAgentResponse(
           Object.keys(data).length > 0 ? 'success' : 'partial',
           data,
           {
             summary: summary || 'No query specified',
-            recommendations: data.recommendations || data.insights?.slice(0, 3),
+            recommendations: recommendations || insights?.slice(0, 3),
           }
         );
         
@@ -436,13 +421,13 @@ export function registerAgentCommand(program: Command): void {
 
         if (options.outputFormat === 'summary') {
           console.log(response.summary);
-          if (data.insights) {
+          if (insights) {
             console.log('\nInsights:');
-            data.insights.forEach((i: string) => console.log(`  - ${i}`));
+            insights.forEach((i: string) => console.log(`  - ${i}`));
           }
-          if (data.recommendations) {
+          if (recommendations) {
             console.log('\nRecommendations:');
-            data.recommendations.forEach((r: string) => console.log(`  - ${r}`));
+            recommendations.forEach((r: string) => console.log(`  - ${r}`));
           }
         } else {
           console.log(JSON.stringify(response, null, 2));
