@@ -14,10 +14,22 @@ import chalk from 'chalk';
 import ora from 'ora';
 import {
   EvolutionConfig,
+  AgentResponse,
 } from '../../core/types';
 import { runEvolution } from '../../evolution/evolution-engine';
 import { startEvolutionScheduler } from '../../evolution/scheduler';
 import { genomeToStrategy } from '../../evolution/strategy-genome';
+import { logger } from '../../utils/logger';
+
+/** Schedule options interface */
+interface ScheduleOptions {
+  queries: string;
+  corpus: string;
+  cron?: string;
+  runNow?: boolean;
+  autoDeploy?: boolean;
+  output?: string;
+}
 
 /** CLI Options interface */
 interface EvolveRunOptions {
@@ -410,9 +422,10 @@ export function registerEvolveCommand(program: Command): void {
         };
 
         // Write as JSON (YAML would need additional dependency)
-        const outputPath = options.output.endsWith('.yaml') 
-          ? options.output.replace('.yaml', '.json')
-          : options.output;
+        const outFile = options.output || 'evolved-strategy.yaml';
+        const outputPath = outFile.endsWith('.yaml') 
+          ? outFile.replace('.yaml', '.json')
+          : outFile;
         
         await fs.writeJson(outputPath, config, { spaces: 2 });
         
