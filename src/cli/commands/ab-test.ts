@@ -10,6 +10,7 @@ import { Command } from 'commander';
 import { EnhancedABTestingEngine } from '../../core/ab-testing/enhanced-engine';
 import { loadConfig, toABTestConfig, loadDataset } from '../../utils/config';
 import { logger } from '../../utils/logger';
+import { EvalConfig } from '../../core/types';
 
 interface ABTestOptions {
   config?: string;
@@ -64,6 +65,8 @@ export async function abTestCommand(options: ABTestOptions, _command: Command): 
       }
 
       config = {
+        providers: [], // Will be populated from variants
+        strategies: strategies.map(s => ({ name: s, pipeline: [s] })),
         variants,
         dataset: options.dataset!,
         corpus: options.corpus,
@@ -71,7 +74,7 @@ export async function abTestCommand(options: ABTestOptions, _command: Command): 
         output: {
           json: options.output || './results',
         },
-      };
+      } as EvalConfig;
     }
 
     // Load dataset

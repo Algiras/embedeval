@@ -255,7 +255,14 @@ export class JobProcessor {
     failed: number;
     delayed: number;
   }> {
-    return this.queue.getJobCounts();
+    const counts = await this.queue.getJobCounts();
+    return {
+      waiting: counts.waiting || 0,
+      active: counts.active || 0,
+      completed: counts.completed || 0,
+      failed: counts.failed || 0,
+      delayed: counts.delayed || 0,
+    };
   }
 }
 

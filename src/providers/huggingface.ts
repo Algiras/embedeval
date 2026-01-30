@@ -104,8 +104,8 @@ export class HuggingFaceProvider implements EmbeddingProvider {
       throw new Error(`Endpoint error: ${response.status} - ${errorText}`);
     }
 
-    const data = await response.json();
-    return data.embedding || data;
+    const data = await response.json() as { embedding?: number[] } | number[];
+    return (data as { embedding?: number[] }).embedding || (data as number[]);
   }
 
   async embedBatch(texts: string[]): Promise<number[][]> {
@@ -185,9 +185,17 @@ export async function searchHuggingFaceModels(
     throw new Error(`Failed to search Hugging Face: ${response.status}`);
   }
 
-  const models = await response.json();
+  const models = await response.json() as Array<{
+    id: string;
+    modelId?: string;
+    description?: string;
+    downloads?: number;
+    likes?: number;
+    tags?: string[];
+    pipeline_tag?: string;
+  }>;
   
-  return models.map((model: any) => ({
+  return models.map((model) => ({
     id: model.id,
     name: model.modelId || model.id,
     description: model.description || '',
@@ -222,7 +230,17 @@ export async function getHuggingFaceModelInfo(
     throw new Error(`Failed to get model info: ${response.status}`);
   }
 
-  const model = await response.json();
+  const model = await response.json() as {
+    id: string;
+    modelId?: string;
+    description?: string;
+    downloads?: number;
+    likes?: number;
+    tags?: string[];
+    pipeline_tag?: string;
+    config?: unknown;
+    siblings?: Array<{ rfilename: string }>;
+  };
   
   return {
     id: model.id,
@@ -233,7 +251,7 @@ export async function getHuggingFaceModelInfo(
     tags: model.tags || [],
     pipeline_tag: model.pipeline_tag,
     config: model.config,
-    siblings: model.siblings?.map((s: any) => s.rfilename) || [],
+    siblings: model.siblings?.map((s) => s.rfilename) || [],
   };
 }
 
