@@ -1,0 +1,117 @@
+# Example: Chunking Size Experiment
+# Grid search over different chunk sizes and overlaps
+
+test:
+  name: "Chunking Size Optimization"
+  description: "Finding optimal chunk size for your data"
+
+variants:
+  # Baseline (no chunking)
+  - id: baseline
+    name: "No Chunking"
+    provider:
+      type: ollama
+      baseUrl: http://localhost:11434
+      model: nomic-embed-text
+    strategy: baseline
+
+  # Small chunks (128)
+  - id: chunks-128-0
+    name: "Chunks 128 (0% overlap)"
+    provider:
+      type: ollama
+      baseUrl: http://localhost:11434
+      model: nomic-embed-text
+    strategy: fixed-chunks-custom
+    strategyConfig:
+      chunkSize: 128
+      overlap: 0
+
+  - id: chunks-128-25
+    name: "Chunks 128 (25% overlap)"
+    provider:
+      type: ollama
+      baseUrl: http://localhost:11434
+      model: nomic-embed-text
+    strategy: fixed-chunks-custom
+    strategyConfig:
+      chunkSize: 128
+      overlap: 32
+
+  # Medium chunks (256)
+  - id: chunks-256-0
+    name: "Chunks 256 (0% overlap)"
+    provider:
+      type: ollama
+      baseUrl: http://localhost:11434
+      model: nomic-embed-text
+    strategy: fixed-chunks-custom
+    strategyConfig:
+      chunkSize: 256
+      overlap: 0
+
+  - id: chunks-256-25
+    name: "Chunks 256 (25% overlap)"
+    provider:
+      type: ollama
+      baseUrl: http://localhost:11434
+      model: nomic-embed-text
+    strategy: fixed-chunks-custom
+    strategyConfig:
+      chunkSize: 256
+      overlap: 64
+
+  # Standard chunks (512)
+  - id: chunks-512-0
+    name: "Chunks 512 (0% overlap)"
+    provider:
+      type: ollama
+      baseUrl: http://localhost:11434
+      model: nomic-embed-text
+    strategy: fixed-chunks
+
+  - id: chunks-512-25
+    name: "Chunks 512 (25% overlap)"
+    provider:
+      type: ollama
+      baseUrl: http://localhost:11434
+      model: nomic-embed-text
+    strategy: fixed-chunks-custom
+    strategyConfig:
+      chunkSize: 512
+      overlap: 128
+
+  # Large chunks (1024)
+  - id: chunks-1024-0
+    name: "Chunks 1024 (0% overlap)"
+    provider:
+      type: ollama
+      baseUrl: http://localhost:11434
+      model: nomic-embed-text
+    strategy: fixed-chunks-custom
+    strategyConfig:
+      chunkSize: 1024
+      overlap: 0
+
+  # Semantic chunking
+  - id: semantic-chunks
+    name: "Semantic Chunks"
+    provider:
+      type: ollama
+      baseUrl: http://localhost:11434
+      model: nomic-embed-text
+    strategy: semantic-chunks
+
+dataset: ./data/chunking-test-queries.jsonl
+corpus: ./data/long-documents-corpus.jsonl
+
+metrics:
+  - ndcg@5
+  - ndcg@10
+  - recall@5
+  - recall@10
+
+output:
+  json: ./results/chunking-experiment.json
+  dashboard: ./results/chunking-dashboard.html
+  csv: ./results/chunking-results.csv

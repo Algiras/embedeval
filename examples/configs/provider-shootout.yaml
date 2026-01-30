@@ -1,0 +1,111 @@
+# Example: Multi-Provider Shootout
+# Compare all supported providers head-to-head
+
+test:
+  name: "Provider Comparison Shootout"
+  description: "Comparing Ollama, OpenAI, Google, and HuggingFace"
+
+variants:
+  # Local Models (Ollama)
+  - id: ollama-nomic
+    name: "Ollama - Nomic"
+    provider:
+      type: ollama
+      baseUrl: http://localhost:11434
+      model: nomic-embed-text
+    strategy: baseline
+
+  - id: ollama-mxbai
+    name: "Ollama - MXBAI"
+    provider:
+      type: ollama
+      baseUrl: http://localhost:11434
+      model: mxbai-embed-large
+    strategy: baseline
+
+  # OpenAI Models
+  - id: openai-small
+    name: "OpenAI - 3 Small"
+    provider:
+      type: openai
+      apiKey: ${OPENAI_API_KEY}
+      model: text-embedding-3-small
+    strategy: baseline
+
+  - id: openai-large
+    name: "OpenAI - 3 Large"
+    provider:
+      type: openai
+      apiKey: ${OPENAI_API_KEY}
+      model: text-embedding-3-large
+    strategy: baseline
+
+  # Google Models
+  - id: google-001
+    name: "Google - Embedding-001"
+    provider:
+      type: google
+      apiKey: ${GEMINI_API_KEY}
+      model: embedding-001
+    strategy: baseline
+
+  - id: google-004
+    name: "Google - Text-Embedding-004"
+    provider:
+      type: google
+      apiKey: ${GEMINI_API_KEY}
+      model: text-embedding-004
+    strategy: baseline
+
+  # HuggingFace Models
+  - id: hf-minilm
+    name: "HF - MiniLM"
+    provider:
+      type: huggingface
+      model: sentence-transformers/all-MiniLM-L6-v2
+      apiKey: ${HUGGINGFACE_API_KEY}
+    strategy: baseline
+
+  - id: hf-mpnet
+    name: "HF - MPNet"
+    provider:
+      type: huggingface
+      model: sentence-transformers/all-mpnet-base-v2
+      apiKey: ${HUGGINGFACE_API_KEY}
+    strategy: baseline
+
+  - id: hf-bge
+    name: "HF - BGE Large"
+    provider:
+      type: huggingface
+      model: BAAI/bge-large-en-v1.5
+      apiKey: ${HUGGINGFACE_API_KEY}
+    strategy: baseline
+
+  # OpenRouter (OpenAI-compatible)
+  - id: openrouter-cohere
+    name: "OpenRouter - Cohere"
+    provider:
+      type: openai
+      apiKey: ${OPENROUTER_API_KEY}
+      baseUrl: https://openrouter.ai/api/v1
+      model: cohere/embed-v3-multilingual
+    strategy: baseline
+
+dataset: ./data/provider-test-queries.jsonl
+corpus: ./data/provider-test-corpus.jsonl
+
+metrics:
+  - ndcg@5
+  - ndcg@10
+  - recall@5
+  - recall@10
+  - mrr@10
+
+output:
+  json: ./results/provider-shootout.json
+  dashboard: ./results/provider-comparison.html
+  csv: ./results/provider-metrics.csv
+
+cache:
+  maxSizeGB: 10
