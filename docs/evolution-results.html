@@ -3,88 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EmbedEval Evolution Results v2</title>
+  <title>EmbedEval - Evaluation Strategy Evolution</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --primary: #6366f1;
-      --secondary: #8b5cf6;
-      --success: #22c55e;
-      --warning: #f59e0b;
-      --error: #ef4444;
-      --bg: #0f172a;
-      --bg-card: #1e293b;
-      --bg-hover: #334155;
-      --text: #e2e8f0;
-      --text-muted: #94a3b8;
-      --border: #334155;
+      --primary: #6366f1; --secondary: #8b5cf6; --success: #22c55e;
+      --warning: #f59e0b; --error: #ef4444; --bg: #0f172a;
+      --bg-card: #1e293b; --text: #e2e8f0; --text-muted: #94a3b8; --border: #334155;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { 
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      padding: 2rem;
-    }
+    body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 2rem; }
     .container { max-width: 1400px; margin: 0 auto; }
-    header { text-align: center; margin-bottom: 3rem; }
-    h1 { 
-      font-size: 2.5rem;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 0.5rem;
-    }
-    .subtitle { color: var(--text-muted); font-size: 1.1rem; }
+    header { text-align: center; margin-bottom: 2rem; }
+    header nav { margin-bottom: 1rem; display: flex; gap: 1rem; justify-content: center; }
+    header nav a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; }
+    h1 { font-size: 2.5rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .subtitle { color: var(--text-muted); }
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
     .card { background: var(--bg-card); border-radius: 12px; padding: 1.5rem; border: 1px solid var(--border); }
-    .card h2 { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; }
-    .metric { font-size: 2.5rem; font-weight: 700; color: var(--primary); }
-    .metric-small { font-size: 1.5rem; }
-    .metric-label { color: var(--text-muted); font-size: 0.9rem; }
-    .best-genome { 
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-      border: 1px solid var(--primary);
-    }
-    .genome-name { font-family: monospace; font-size: 1.1rem; color: var(--primary); word-break: break-all; }
-    .pipeline { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
-    .stage { 
-      background: var(--bg-hover);
-      padding: 0.25rem 0.75rem;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      font-family: monospace;
-    }
-    .stage::before { content: '→ '; color: var(--text-muted); }
-    .stage:first-child::before { content: ''; }
-    .genes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-top: 1rem; }
-    .gene { padding: 0.5rem; background: rgba(0,0,0,0.2); border-radius: 6px; }
-    .gene-name { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
-    .gene-value { font-family: monospace; color: var(--text); }
-    .chart-container { height: 300px; margin-top: 1rem; }
-    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    .card h2 { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 1rem; }
+    .metric { font-size: 2rem; font-weight: 700; color: var(--primary); }
+    .metric-label { color: var(--text-muted); font-size: 0.85rem; }
+    .best-strategy { background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1)); border-color: var(--primary); }
+    .strategy-name { font-size: 1rem; color: var(--primary); margin-bottom: 0.5rem; line-height: 1.4; }
+    .component { display: inline-block; background: var(--bg); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; margin: 0.2rem; }
+    .chart-container { height: 300px; }
+    table { width: 100%; border-collapse: collapse; }
     th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--border); }
     th { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; }
-    tr:hover { background: rgba(99, 102, 241, 0.05); }
-    .rank-1 { color: #fbbf24; }
-    .rank-2 { color: #9ca3af; }
-    .rank-3 { color: #b45309; }
-    .fitness-bar { 
-      height: 8px; 
-      background: var(--bg-hover);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    .fitness-bar-fill { 
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      transition: width 0.3s;
-    }
-    .objectives { display: flex; gap: 2rem; margin-top: 1rem; }
-    .objective { text-align: center; }
-    .objective-value { font-size: 1.5rem; font-weight: 600; }
-    .objective-label { font-size: 0.8rem; color: var(--text-muted); }
+    .rank-1 { color: #fbbf24; } .rank-2 { color: #9ca3af; } .rank-3 { color: #b45309; }
+    .bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--primary); }
     footer { text-align: center; padding: 2rem; color: var(--text-muted); border-top: 1px solid var(--border); margin-top: 2rem; }
     footer a { color: var(--primary); text-decoration: none; }
   </style>
@@ -92,382 +41,299 @@
 <body>
   <div class="container">
     <header>
-      <nav style="margin-bottom: 1rem; display: flex; gap: 1rem; justify-content: center;">
-        <a href="landing.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">🏠 Home</a>
-        <a href="index.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">📊 Meta-Evaluation</a>
-        <a href="https://github.com/Algiras/embedeval" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">📂 GitHub</a>
+      <nav>
+        <a href="landing.html">🏠 Home</a>
+        <a href="index.html">📊 Meta-Evaluation</a>
+        <a href="https://github.com/Algiras/embedeval">📂 GitHub</a>
       </nav>
-      <h1>🧬 Evolution Results v2</h1>
-      <p class="subtitle">Multi-Objective Strategy Optimization</p>
+      <h1>🧬 Evaluation Strategy Evolution</h1>
+      <p class="subtitle">Testing Different Retrieval Approaches</p>
       <p class="subtitle" style="margin-top: 0.5rem; font-size: 0.9rem;">
-        Environment: local-only | 
-        Generations: 6 | 
-        Duration: 0.1s
+        10 generations | 16 strategies evaluated
       </p>
     </header>
 
     <div class="grid">
-      <div class="card">
-        <h2>Configuration</h2>
-        <div class="genes-grid">
-          <div class="gene">
-            <div class="gene-name">Population</div>
-            <div class="gene-value">12</div>
-          </div>
-          <div class="gene">
-            <div class="gene-name">Generations</div>
-            <div class="gene-value">6</div>
-          </div>
-          <div class="gene">
-            <div class="gene-name">Correctness ↔</div>
-            <div class="gene-value">50%</div>
-          </div>
-          <div class="gene">
-            <div class="gene-name">Speed ↔</div>
-            <div class="gene-value">25%</div>
-          </div>
-          <div class="gene">
-            <div class="gene-name">Cost ↔</div>
-            <div class="gene-value">25%</div>
-          </div>
-          <div class="gene">
-            <div class="gene-name">Environment</div>
-            <div class="gene-value">local-only</div>
-          </div>
+      <div class="card best-strategy">
+        <h2>🏆 Best Strategy</h2>
+        <div class="strategy-name">Synonym Expansion | OpenAI Large | Hybrid (Learned) | Paragraph-level | → MMR</div>
+        <div style="margin: 1rem 0;">
+          <span class="metric">81.2%</span>
+          <span class="metric-label">fitness</span>
         </div>
-      </div>
-
-      <div class="card">
-        <h2>Multi-Objective Scores</h2>
-        <div class="objectives">
-          <div class="objective">
-            <div class="objective-value" style="color: var(--success);">97.0%</div>
-            <div class="objective-label">NDCG@10</div>
-          </div>
-          <div class="objective">
-            <div class="objective-value" style="color: var(--warning);">0ms</div>
-            <div class="objective-label">Latency</div>
-          </div>
-          <div class="objective">
-            <div class="objective-value" style="color: var(--primary);">$0.00000</div>
-            <div class="objective-label">Cost/Query</div>
-          </div>
+        <div>
+          <span class="component">📊 HYBRID_LEARNED</span>
+          <span class="component">🔍 EXPANDED_SYNONYMS</span>
+          <span class="component">📄 PARAGRAPH</span>
+          <span class="component">🎯 MMR</span>
         </div>
-      </div>
-    </div>
-
-    <div class="card best-genome" style="margin-bottom: 2rem;">
-      <h2>🏆 Best Evolved Strategy</h2>
-      <div class="genome-name">ollama-nomic-bm25-k10</div>
-      <div style="margin-top: 0.5rem;">
-        <span class="metric metric-small">0.9933</span>
-        <span class="metric-label">fitness score</span>
+        <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+          NDCG: 85.7% |
+          Recall: 83.9% |
+          Latency: 45ms
+        </div>
       </div>
       
-      <h3 style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">Pipeline Stages</h3>
-      <div class="pipeline">
-        <span class="stage">bm25_retrieve</span>
-      </div>
-      
-      <div class="genes-grid" style="margin-top: 1.5rem;">
-        <div class="gene">
-          <div class="gene-name">Embedding</div>
-          <div class="gene-value">OLLAMA_NOMIC</div>
-        </div>
-        <div class="gene">
-          <div class="gene-name">Query Expander</div>
-          <div class="gene-value">NONE</div>
-        </div>
-        <div class="gene">
-          <div class="gene-name">Fusion Method</div>
-          <div class="gene-value">NONE</div>
-        </div>
-        <div class="gene">
-          <div class="gene-name">Reranker</div>
-          <div class="gene-value">NONE</div>
-        </div>
-        <div class="gene">
-          <div class="gene-name">Initial K</div>
-          <div class="gene-value">50</div>
-        </div>
-        <div class="gene">
-          <div class="gene-name">Final K</div>
-          <div class="gene-value">10</div>
-        </div>
-        <div class="gene">
-          <div class="gene-name">Hybrid Alpha</div>
-          <div class="gene-value">0.50</div>
-        </div>
-        <div class="gene">
-          <div class="gene-name">MMR Lambda</div>
-          <div class="gene-value">0.50</div>
-        </div>
+      <div class="card">
+        <h2>Performance by Query Type</h2>
+        <div class="chart-container"><canvas id="queryTypeChart"></canvas></div>
       </div>
     </div>
 
     <div class="grid">
       <div class="card">
         <h2>Evolution Progress</h2>
-        <div class="chart-container">
-          <canvas id="evolutionChart"></canvas>
-        </div>
+        <div class="chart-container"><canvas id="evolutionChart"></canvas></div>
       </div>
-
       <div class="card">
-        <h2>Multi-Objective Progress</h2>
-        <div class="chart-container">
-          <canvas id="objectivesChart"></canvas>
-        </div>
+        <h2>Performance by Difficulty</h2>
+        <div class="chart-container"><canvas id="difficultyChart"></canvas></div>
       </div>
     </div>
 
     <div class="card" style="margin-top: 2rem;">
-      <h2>Top Evolved Strategies</h2>
+      <h2>All Strategies Ranked</h2>
       <table>
         <thead>
           <tr>
-            <th>Rank</th>
+            <th>#</th>
             <th>Strategy</th>
             <th>Fitness</th>
             <th>NDCG@10</th>
+            <th>Recall@10</th>
             <th>Latency</th>
             <th>Cost</th>
-            <th>Pipeline</th>
           </tr>
         </thead>
         <tbody>
           
           <tr>
             <td class="rank-1">#1</td>
-            <td style="font-family: monospace; font-size: 0.85rem;">ollama-nomic-bm25-k10</td>
+            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | OpenAI Large | Hybrid (Learned) | Paragraph-level | → MMR</td>
             <td>
-              <div class="fitness-bar" style="width: 60px;">
-                <div class="fitness-bar-fill" style="width: 99.32655207490639%;"></div>
-              </div>
-              <span style="font-size: 0.8rem;">0.9933</span>
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 81.16615906251134%;"></div></div>
+              81.2%
             </td>
-            <td>97.0%</td>
-            <td>0ms</td>
-            <td>$0.00000</td>
-            <td style="font-size: 0.75rem; color: var(--text-muted);">bm25_retrieve</td>
+            <td>85.7%</td>
+            <td>83.9%</td>
+            <td>45ms</td>
+            <td>$0.0001</td>
           </tr>
           <tr>
             <td class="rank-2">#2</td>
-            <td style="font-family: monospace; font-size: 0.85rem;">ollama-nomic-bm25-rce-k10</td>
+            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | OpenAI Large | Hybrid (Learned) | Paragraph-level | → MMR | + Diversity Filter</td>
             <td>
-              <div class="fitness-bar" style="width: 60px;">
-                <div class="fitness-bar-fill" style="width: 99.32655207490639%;"></div>
-              </div>
-              <span style="font-size: 0.8rem;">0.9933</span>
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 80.81126482927907%;"></div></div>
+              80.8%
             </td>
-            <td>97.0%</td>
-            <td>0ms</td>
-            <td>$0.00000</td>
-            <td style="font-size: 0.75rem; color: var(--text-muted);">bm25_retrieve → rerank_ce</td>
+            <td>85.1%</td>
+            <td>83.8%</td>
+            <td>45ms</td>
+            <td>$0.0001</td>
           </tr>
           <tr>
             <td class="rank-3">#3</td>
-            <td style="font-family: monospace; font-size: 0.85rem;">ollama-nomic-bm25-rce-k12</td>
+            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | OpenAI Large | Hybrid (Learned) | → MMR | + Context Expansion</td>
             <td>
-              <div class="fitness-bar" style="width: 60px;">
-                <div class="fitness-bar-fill" style="width: 99.32655207490639%;"></div>
-              </div>
-              <span style="font-size: 0.8rem;">0.9933</span>
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 80.68071107282906%;"></div></div>
+              80.7%
             </td>
-            <td>97.0%</td>
-            <td>0ms</td>
-            <td>$0.00000</td>
-            <td style="font-size: 0.75rem; color: var(--text-muted);">bm25_retrieve → rerank_ce</td>
+            <td>82.2%</td>
+            <td>82.6%</td>
+            <td>35ms</td>
+            <td>$0.0001</td>
           </tr>
           <tr>
             <td class="">#4</td>
-            <td style="font-family: monospace; font-size: 0.85rem;">openai-large-bm25-rce-k7</td>
+            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | OpenAI Large | Hybrid (Learned) | → MMR | + Context Expansion</td>
             <td>
-              <div class="fitness-bar" style="width: 60px;">
-                <div class="fitness-bar-fill" style="width: 0%;"></div>
-              </div>
-              <span style="font-size: 0.8rem;">0</span>
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 80.63220909140507%;"></div></div>
+              80.6%
             </td>
-            <td>0.0%</td>
-            <td>0ms</td>
-            <td>$0</td>
-            <td style="font-size: 0.75rem; color: var(--text-muted);">bm25_retrieve → rerank_ce</td>
+            <td>82.2%</td>
+            <td>82.3%</td>
+            <td>35ms</td>
+            <td>$0.0001</td>
           </tr>
           <tr>
             <td class="">#5</td>
-            <td style="font-family: monospace; font-size: 0.85rem;">qe:synonyms-ollama-nomic-bm25-rce-k10</td>
+            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | OpenAI Large | Hybrid (Learned) | Semantic Chunking | → MMR | + Context Expansion</td>
             <td>
-              <div class="fitness-bar" style="width: 60px;">
-                <div class="fitness-bar-fill" style="width: 0%;"></div>
-              </div>
-              <span style="font-size: 0.8rem;">0</span>
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 79.3814187140142%;"></div></div>
+              79.4%
             </td>
-            <td>0.0%</td>
-            <td>0ms</td>
-            <td>$0</td>
-            <td style="font-size: 0.75rem; color: var(--text-muted);">query_expand_llm → bm25_retrieve → rerank_ce</td>
+            <td>89.3%</td>
+            <td>86.3%</td>
+            <td>85ms</td>
+            <td>$0.0001</td>
           </tr>
           <tr>
             <td class="">#6</td>
-            <td style="font-family: monospace; font-size: 0.85rem;">ollama-nomic-bm25-rce-k12</td>
+            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | OpenAI Large | Hybrid (Learned) | Semantic Chunking | → MMR | + Context Expansion</td>
             <td>
-              <div class="fitness-bar" style="width: 60px;">
-                <div class="fitness-bar-fill" style="width: 0%;"></div>
-              </div>
-              <span style="font-size: 0.8rem;">0</span>
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 79.08302783441522%;"></div></div>
+              79.1%
             </td>
-            <td>0.0%</td>
-            <td>0ms</td>
-            <td>$0</td>
-            <td style="font-size: 0.75rem; color: var(--text-muted);">bm25_retrieve → rerank_ce</td>
+            <td>88.9%</td>
+            <td>86.3%</td>
+            <td>85ms</td>
+            <td>$0.0001</td>
           </tr>
           <tr>
             <td class="">#7</td>
-            <td style="font-family: monospace; font-size: 0.85rem;">qe:llm_rewrite-ollama-nomic-bm25-rce-k10</td>
+            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | Nomic Embed | Hybrid (Learned) | Semantic Chunking | → MMR | + Context Expansion</td>
             <td>
-              <div class="fitness-bar" style="width: 60px;">
-                <div class="fitness-bar-fill" style="width: 0%;"></div>
-              </div>
-              <span style="font-size: 0.8rem;">0</span>
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 76.1540703944121%;"></div></div>
+              76.2%
             </td>
-            <td>0.0%</td>
-            <td>0ms</td>
-            <td>$0</td>
-            <td style="font-size: 0.75rem; color: var(--text-muted);">query_expand_llm → bm25_retrieve → rerank_ce</td>
+            <td>81.3%</td>
+            <td>77.9%</td>
+            <td>85ms</td>
+            <td>$0.0000</td>
           </tr>
           <tr>
             <td class="">#8</td>
-            <td style="font-family: monospace; font-size: 0.85rem;">ollama-nomic-bm25-rce-k10</td>
+            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | Nomic Embed | Hybrid (Learned) | Fixed 256 tokens | → MMR</td>
             <td>
-              <div class="fitness-bar" style="width: 60px;">
-                <div class="fitness-bar-fill" style="width: 0%;"></div>
-              </div>
-              <span style="font-size: 0.8rem;">0</span>
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 75.57693974513175%;"></div></div>
+              75.6%
             </td>
-            <td>0.0%</td>
-            <td>0ms</td>
-            <td>$0</td>
-            <td style="font-size: 0.75rem; color: var(--text-muted);">bm25_retrieve → rerank_ce</td>
+            <td>78.0%</td>
+            <td>68.2%</td>
+            <td>55ms</td>
+            <td>$0.0000</td>
           </tr>
           <tr>
             <td class="">#9</td>
-            <td style="font-family: monospace; font-size: 0.85rem;">openai-large-bm25-rce-rce-k9</td>
+            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | OpenAI Small | Vector (Dot Product) | Fixed 512 tokens | → Lost-in-Middle Fix | + Context Expansion</td>
             <td>
-              <div class="fitness-bar" style="width: 60px;">
-                <div class="fitness-bar-fill" style="width: 0%;"></div>
-              </div>
-              <span style="font-size: 0.8rem;">0</span>
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 72.60072520631289%;"></div></div>
+              72.6%
             </td>
-            <td>0.0%</td>
-            <td>0ms</td>
-            <td>$0</td>
-            <td style="font-size: 0.75rem; color: var(--text-muted);">bm25_retrieve → rerank_ce → rerank_ce</td>
+            <td>70.0%</td>
+            <td>65.0%</td>
+            <td>45ms</td>
+            <td>$0.0000</td>
           </tr>
           <tr>
             <td class="">#10</td>
-            <td style="font-family: monospace; font-size: 0.85rem;">openai-small-bm25-rce-k10</td>
+            <td style="font-size: 0.85rem; max-width: 400px;">LLM Rewrite | OpenAI Large | Hybrid (Learned) | Sentence-level | → MMR</td>
             <td>
-              <div class="fitness-bar" style="width: 60px;">
-                <div class="fitness-bar-fill" style="width: 0%;"></div>
-              </div>
-              <span style="font-size: 0.8rem;">0</span>
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 65.27964907539256%;"></div></div>
+              65.3%
             </td>
-            <td>0.0%</td>
-            <td>0ms</td>
-            <td>$0</td>
-            <td style="font-size: 0.75rem; color: var(--text-muted);">bm25_retrieve → rerank_ce</td>
+            <td>91.0%</td>
+            <td>75.9%</td>
+            <td>260ms</td>
+            <td>$0.0011</td>
+          </tr>
+          <tr>
+            <td class="">#11</td>
+            <td style="font-size: 0.85rem; max-width: 400px;">OpenAI Large | Vector (Euclidean) | Semantic Chunking | → Cross-Encoder (Large) | + Context Expansion</td>
+            <td>
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 64.05948219794146%;"></div></div>
+              64.1%
+            </td>
+            <td>75.3%</td>
+            <td>72.0%</td>
+            <td>270ms</td>
+            <td>$0.0001</td>
+          </tr>
+          <tr>
+            <td class="">#12</td>
+            <td style="font-size: 0.85rem; max-width: 400px;">Step-Back Prompting | OpenAI Large | Hybrid (Linear) | Semantic Chunking | → MMR | + Context Expansion</td>
+            <td>
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 61.563681301471306%;"></div></div>
+              61.6%
+            </td>
+            <td>88.5%</td>
+            <td>85.4%</td>
+            <td>430ms</td>
+            <td>$0.0021</td>
+          </tr>
+          <tr>
+            <td class="">#13</td>
+            <td style="font-size: 0.85rem; max-width: 400px;">LLM Rewrite | MxBai Large | Hybrid (Learned) | Fixed 512 tokens | → Cohere Rerank | + Context Expansion</td>
+            <td>
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 61.403850775499166%;"></div></div>
+              61.4%
+            </td>
+            <td>87.9%</td>
+            <td>82.8%</td>
+            <td>385ms</td>
+            <td>$0.0020</td>
+          </tr>
+          <tr>
+            <td class="">#14</td>
+            <td style="font-size: 0.85rem; max-width: 400px;">LLM Expansion | OpenAI Large | Vector (Cosine) | → Cohere Rerank | + Score Threshold</td>
+            <td>
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 60.91600581891362%;"></div></div>
+              60.9%
+            </td>
+            <td>85.7%</td>
+            <td>85.3%</td>
+            <td>370ms</td>
+            <td>$0.0021</td>
+          </tr>
+          <tr>
+            <td class="">#15</td>
+            <td style="font-size: 0.85rem; max-width: 400px;">Synonym Expansion | OpenAI Large | Vector (Cosine) | → LLM Listwise | + Context Expansion</td>
+            <td>
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 54.60977337082495%;"></div></div>
+              54.6%
+            </td>
+            <td>86.3%</td>
+            <td>85.9%</td>
+            <td>825ms</td>
+            <td>$0.0201</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <footer>
-      <p>Generated by EmbedEval v2 - Self-Evolving Embedding Researcher</p>
-      <p style="margin-top: 0.5rem;">
-        <a href="landing.html">Home</a> • 
-        <a href="index.html">Meta-Evaluation</a> • 
-        <a href="https://github.com/Algiras/embedeval">GitHub</a>
-      </p>
+      <p>Generated by EmbedEval - Self-Evolving Embedding Researcher</p>
+      <p><a href="landing.html">Home</a> • <a href="index.html">Meta-Evaluation</a> • <a href="https://github.com/Algiras/embedeval">GitHub</a></p>
     </footer>
   </div>
 
   <script>
-    // Evolution progress chart
-    const ctx1 = document.getElementById('evolutionChart').getContext('2d');
-    new Chart(ctx1, {
+    // Evolution chart
+    new Chart(document.getElementById('evolutionChart'), {
       type: 'line',
       data: {
-        labels: ["Gen 1","Gen 2","Gen 3","Gen 4","Gen 5","Gen 6"],
+        labels: ["Gen 1","Gen 2","Gen 3","Gen 4","Gen 5","Gen 6","Gen 7","Gen 8","Gen 9","Gen 10"],
         datasets: [
-          {
-            label: 'Best Fitness',
-            data: [0.9932655207490639,0.9932655207490639,0.9932655207490639,0.9932655207490639,0.9932655207490639,0.9932655207490639],
-            borderColor: '#6366f1',
-            backgroundColor: 'rgba(99, 102, 241, 0.1)',
-            fill: true,
-            tension: 0.3,
-          },
-          {
-            label: 'Avg Fitness',
-            data: [0.8986066602390012,0.6190311778845482,0.8591436098001807,0.8673752541672218,0.9020075044243735,0.8953049286890221],
-            borderColor: '#8b5cf6',
-            backgroundColor: 'rgba(139, 92, 246, 0.1)',
-            fill: true,
-            tension: 0.3,
-          },
-          {
-            label: 'Diversity',
-            data: [1.18302704528955,1.1493852807135425,1.030124496345566,0.9024553064914265,0.9660889237854731,0.8830221883291314],
-            borderColor: '#22c55e',
-            borderDash: [5, 5],
-            fill: false,
-            tension: 0.3,
-          }
+          { label: 'Best', data: [0.7549669137493981,0.76645308830642,0.7714790542018842,0.7793773063492797,0.8068071107282906,0.8068071107282906,0.8068071107282906,0.8116615906251134,0.8116615906251134,0.8116615906251134], borderColor: '#6366f1', fill: false },
+          { label: 'Average', data: [0.6293501610141267,0.6754003876405784,0.7107022412696697,0.7207170485717932,0.7326321078476847,0.6786418950297222,0.7001471869762549,0.7204091266893763,0.7444657271005413,0.7048641019201204], borderColor: '#8b5cf6', fill: false },
+          { label: 'Diversity', data: [1,1,0.9375,0.9375,0.8125,1,0.9375,0.9375,0.9375,0.8125], borderColor: '#22c55e', borderDash: [5,5], fill: false }
         ]
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { labels: { color: '#94a3b8' } } },
-        scales: {
-          y: { beginAtZero: false, grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
-          x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } }
-        }
-      }
+      options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: false } } }
     });
 
-    // Objectives chart (radar)
-    const ctx2 = document.getElementById('objectivesChart').getContext('2d');
-    new Chart(ctx2, {
-      type: 'radar',
+    // Query type chart
+    const queryTypes = ["factual","procedural","best_practice","educational","technical","keyword","comparison","specific","abbreviation"];
+    const queryNdcg = [100,88.30245038301567,81.26964554743849,96.10275739217204,79.63110675449121,89.43826122164434,86.60820067746216,88.67221569070855,92.11148158989833];
+    new Chart(document.getElementById('queryTypeChart'), {
+      type: 'bar',
       data: {
-        labels: ['NDCG@10', 'Recall@10', 'MRR@10', 'Speed', 'Cost Efficiency'],
-        datasets: [{
-          label: 'Best Strategy',
-          data: [
-            97.00689811069509,
-            100,
-            100,
-            99.99948077866667,
-            100,
-          ],
-          borderColor: '#6366f1',
-          backgroundColor: 'rgba(99, 102, 241, 0.2)',
-        }]
+        labels: queryTypes,
+        datasets: [{ label: 'NDCG@10', data: queryNdcg, backgroundColor: '#6366f1' }]
       },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { labels: { color: '#94a3b8' } } },
-        scales: {
-          r: {
-            angleLines: { color: '#334155' },
-            grid: { color: '#334155' },
-            pointLabels: { color: '#94a3b8' },
-            ticks: { color: '#94a3b8', backdropColor: 'transparent' }
-          }
-        }
-      }
+      options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
+    });
+
+    // Difficulty chart
+    const difficulties = ["easy","medium","hard"];
+    const diffNdcg = [98.70091913072402,90.79607689335101,76.94535625511143];
+    new Chart(document.getElementById('difficultyChart'), {
+      type: 'bar',
+      data: {
+        labels: difficulties,
+        datasets: [{ label: 'NDCG@10', data: diffNdcg, backgroundColor: '#8b5cf6' }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
     });
   </script>
 </body>
