@@ -102,7 +102,7 @@ export class QueryClassifier {
     }
     
     // Structured (tables, lists, JSON-like)
-    if (/(\|.*\||\d\.\s|\-\s\[|\{.*:.*\})/.test(content)) {
+    if (/(\|.*\||\d\.\s|-\s\[|\{.*:.*\})/.test(content)) {
       return 'structured';
     }
     
