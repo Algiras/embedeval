@@ -1,0 +1,27 @@
+{
+  "id": "trace-003",
+  "timestamp": "2026-01-30T10:02:00Z",
+  "query": "What's the pricing for enterprise?",
+  "response": "Our enterprise pricing starts at $999/month for up to 100 users. This includes priority support, custom integrations, and dedicated account management. For larger teams, we offer custom pricing based on your specific needs. Contact our sales team at sales@example.com for a personalized quote.",
+  "context": {
+    "retrievedDocs": [
+      {
+        "id": "doc-enterprise",
+        "content": "Enterprise plans start at $999/month for 100 users. Includes priority support and custom integrations.",
+        "score": 0.96
+      },
+      {
+        "id": "doc-contact-sales",
+        "content": "For custom enterprise quotes, contact sales@example.com with your requirements.",
+        "score": 0.88
+      }
+    ]
+  },
+  "metadata": {
+    "provider": "google",
+    "model": "gemini-1.5-flash",
+    "latency": 150,
+    "cost": 0.00008,
+    "sessionId": "session-def456"
+  }
+}

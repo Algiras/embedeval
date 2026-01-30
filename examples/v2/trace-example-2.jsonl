@@ -1,0 +1,27 @@
+{
+  "id": "trace-002",
+  "timestamp": "2026-01-30T10:01:00Z",
+  "query": "How do I integrate with your API?",
+  "response": "To integrate with our API, you'll need an API key. You can generate one from your dashboard under Settings > API Keys. Our API uses REST endpoints with JSON responses. Authentication is done via Bearer tokens. We also offer SDKs for Python, JavaScript, and Ruby to make integration easier.",
+  "context": {
+    "retrievedDocs": [
+      {
+        "id": "doc-api-intro",
+        "content": "Our REST API allows programmatic access to all platform features. Generate API keys from your dashboard.",
+        "score": 0.91
+      },
+      {
+        "id": "doc-authentication",
+        "content": "Authentication is via Bearer token. Include 'Authorization: Bearer YOUR_API_KEY' in all requests.",
+        "score": 0.85
+      }
+    ]
+  },
+  "metadata": {
+    "provider": "ollama",
+    "model": "nomic-embed-text",
+    "latency": 3200,
+    "cost": 0,
+    "sessionId": "session-abc123"
+  }
+}

@@ -1,19 +1,20 @@
 #!/usr/bin/env node
-
 /**
- * EmbedEval CLI Entry Point
+ * CLI Entry Point - Hamel Husain Style
+ * Trace-centric, binary evals, error-analysis-first
  */
 
-// Load environment variables from .env file
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import * as fs from 'fs-extra';
+import { Command } from 'commander';
+import chalk from 'chalk';
 
-// Try to load .env from multiple locations (in order of priority)
+// Load environment variables
 const envPaths = [
-  path.join(process.cwd(), '.env'),           // Current working directory
-  path.join(process.cwd(), '.env.local'),     // Local overrides
-  path.join(__dirname, '../../.env'),         // Project root
+  path.join(process.cwd(), '.env'),
+  path.join(process.cwd(), '.env.local'),
+  path.join(__dirname, '../../.env'),
 ];
 
 for (const envPath of envPaths) {
@@ -23,110 +24,168 @@ for (const envPath of envPaths) {
   }
 }
 
-import { Command } from 'commander';
-import chalk from 'chalk';
-import { abTestCommand } from './commands/ab-test';
-import { humanEvalCommand } from './commands/human-eval';
-import { dashboardCommand } from './commands/dashboard';
-import { providersCommand } from './commands/providers';
-import { huggingfaceCommand } from './commands/huggingface';
-import { strategyCommand } from './commands/strategy';
-import { registerAgentCommand } from './commands/agent';
-import { registerEvolveCommand } from './commands/evolve';
-import { logger } from '../utils/logger';
+// Import commands
+import { collectCommand } from './commands/collect';
+import { viewCommand } from './commands/view';
+import { annotateCommand } from './commands/annotate';
+import { taxonomyCommand } from './commands/taxonomy';
+import { evalCommand } from './commands/eval';
+import { generateCommand } from './commands/generate';
+import { exportCommand } from './commands/export';
+import { reportCommand } from './commands/report';
 
 const program = new Command();
 
 program
   .name('embedeval')
-  .description('CLI-based embedding evaluation system with A/B testing')
-  .version('1.0.0')
-  .option('-v, --verbose', 'Enable verbose logging', () => logger.setLevel('debug'));
+  .description('Hamel Husain-style evaluation CLI - binary evals, trace-centric, error-analysis-first')
+  .version('2.0.0');
 
-// A/B Test command
+// Collect command - Import traces
 program
-  .command('ab-test')
-  .description('Run A/B test comparing multiple embedding models')
-  .option('-c, --config <path>', 'Configuration file path')
-  .option('-n, --name <name>', 'Test name', 'A/B Test')
-  .option('-d, --dataset <path>', 'Dataset file path (JSONL)')
-  .option('--corpus <path>', 'Corpus file path (JSONL)')
-  .option('-o, --output <path>', 'Output directory')
-  .option('--variants <variants>', 'Comma-separated list of provider:model pairs')
-  .option('--strategies <strategies>', 'Comma-separated list of strategies (baseline,hybrid-bm25,llm-reranked)', 'baseline')
-  .option('--metrics <metrics>', 'Comma-separated list of metrics', 'ndcg@10,recall@10,mrr@10')
-  .option('--concurrency <n>', 'Number of concurrent workers', '5')
-  .action(abTestCommand);
+  .command('collect <source>')
+  .description('Collect traces from JSONL file, API, or logs')
+  .option('-o, --output <file>', 'Output file', 'traces.jsonl')
+  .option('-l, --limit <n>', 'Limit number of traces', parseInt)
+  .option('--filter <pattern>', 'Filter traces by pattern')
+  .action(collectCommand);
 
-// Human Eval command
+// View command - Read-only trace viewer
 program
-  .command('human-eval')
-  .description('Interactive human evaluation wizard')
-  .option('-c, --config <path>', 'Configuration file path')
-  .option('-d, --dataset <path>', 'Dataset file path')
-  .option('-s, --session <name>', 'Session name')
-  .option('--provider <provider>', 'Provider to evaluate')
-  .option('--model <model>', 'Model to evaluate')
-  .option('--notes', 'Enable note-taking', true)
-  .action(humanEvalCommand);
+  .command('view <traces>')
+  .description('View traces in interactive terminal UI (read-only)')
+  .option('-a, --annotations <file>', 'Annotations file to show with traces')
+  .option('--filter <category>', 'Filter by failure category')
+  .action(viewCommand);
 
-// Dashboard command
+// Annotate command - Interactive annotation
 program
-  .command('dashboard')
-  .description('Generate HTML dashboard from test results')
-  .option('-r, --results <path>', 'Results JSON file path')
-  .option('-t, --test-id <id>', 'Test ID to generate dashboard for')
-  .option('-o, --output <path>', 'Output HTML file path')
-  .option('--format <format>', 'Output format (html, json, csv)', 'html')
-  .action(dashboardCommand);
+  .command('annotate <traces>')
+  .description('Interactive trace annotation (binary pass/fail)')
+  .requiredOption('-u, --user <email>', 'Annotator email (benevolent dictator)')
+  .option('-a, --annotations <file>', 'Annotations output file', 'annotations.jsonl')
+  .option('-r, --resume', 'Resume from previous session')
+  .action(annotateCommand);
 
-// Providers command
+// Taxonomy command - Failure taxonomy management
 program
-  .command('providers')
-  .description('Manage embedding providers')
-  .option('--list', 'List available providers')
-  .option('--test <provider>', 'Test provider connectivity')
-  .option('--base-url <url>', 'Custom base URL for testing')
-  .option('--api-key <key>', 'API key for testing')
-  .action(providersCommand);
+  .command('taxonomy')
+  .description('Manage failure taxonomy (build, show, update)')
+  .addCommand(
+    new Command('build')
+      .description('Build taxonomy from annotations')
+      .requiredOption('-a, --annotations <file>', 'Annotations file')
+      .requiredOption('-u, --user <email>', 'Taxonomy maintainer')
+      .option('-o, --output <file>', 'Output file', 'taxonomy.json')
+      .action(taxonomyCommand.build)
+  )
+  .addCommand(
+    new Command('show')
+      .description('Display taxonomy tree')
+      .option('-t, --taxonomy <file>', 'Taxonomy file', 'taxonomy.json')
+      .action(taxonomyCommand.show)
+  )
+  .addCommand(
+    new Command('update')
+      .description('Update taxonomy with new annotations')
+      .option('-t, --taxonomy <file>', 'Taxonomy file', 'taxonomy.json')
+      .option('-a, --annotations <file>', 'Annotations file', 'annotations.jsonl')
+      .action(taxonomyCommand.update)
+  );
 
-// Hugging Face command
+// Eval command - Run evaluations
 program
-  .command('huggingface')
-  .description('Search and browse Hugging Face embedding models')
-  .alias('hf')
-  .option('-s, --search <query>', 'Search query', 'sentence-transformers')
-  .option('-l, --limit <n>', 'Number of results', '20')
-  .option('-m, --model <id>', 'Model ID to get info for')
-  .option('--info', 'Show detailed model info')
-  .action(huggingfaceCommand);
+  .command('eval')
+  .description('Binary evaluation commands (assertions, LLM-as-judge)')
+  .addCommand(
+    new Command('add')
+      .description('Interactive wizard to add new evaluator')
+      .option('-f, --file <file>', 'Eval config file', 'evals.yaml')
+      .action(evalCommand.add)
+  )
+  .addCommand(
+    new Command('list')
+      .description('List all registered evaluators')
+      .option('-f, --file <file>', 'Eval config file', 'evals.yaml')
+      .action(evalCommand.list)
+  )
+  .addCommand(
+    new Command('run <traces>')
+      .description('Run evaluators on traces')
+      .requiredOption('-c, --config <file>', 'Eval config file')
+      .option('-o, --output <file>', 'Results output', 'eval-results.jsonl')
+      .option('--stop-on-fail', 'Stop on first failure (cheap evals only)')
+      .action(evalCommand.run)
+  )
+  .addCommand(
+    new Command('report')
+      .description('Generate evaluation report')
+      .requiredOption('-r, --results <file>', 'Results file')
+      .option('-f, --format <format>', 'Output format (markdown, html, json)', 'markdown')
+      .option('-o, --output <file>', 'Output file')
+      .action(evalCommand.report)
+  );
 
-// Strategy command
+// Generate command - Synthetic data
 program
-  .command('strategy')
-  .description('List and test retrieval strategies')
-  .alias('strategies')
-  .option('--list', 'List available strategies')
-  .option('--test <strategy>', 'Test a strategy configuration')
-  .action(strategyCommand);
+  .command('generate')
+  .description('Generate synthetic traces using dimensions')
+  .addCommand(
+    new Command('init')
+      .description('Create dimensions.yaml template')
+      .option('-o, --output <file>', 'Output file', 'dimensions.yaml')
+      .action(generateCommand.init)
+  )
+  .addCommand(
+    new Command('create')
+      .description('Generate synthetic traces')
+      .requiredOption('-d, --dimensions <file>', 'Dimensions config file')
+      .requiredOption('-n, --count <n>', 'Number of traces to generate', parseInt)
+      .option('-o, --output <file>', 'Output file', 'synthetic-traces.jsonl')
+      .option('--run-through-system', 'Run queries through actual LLM system')
+      .action(generateCommand.create)
+  );
 
-// Agent commands (for AI agent integration)
-registerAgentCommand(program);
+// Export command - Export to notebooks
+program
+  .command('export <traces>')
+  .description('Export traces to various formats')
+  .option('-f, --format <format>', 'Export format (notebook, markdown, json)', 'notebook')
+  .option('-a, --annotations <file>', 'Include annotations')
+  .option('-o, --output <file>', 'Output file')
+  .option('--results <file>', 'Include evaluation results')
+  .action(exportCommand);
 
-// Evolution commands (genetic algorithm optimization)
-registerEvolveCommand(program);
+// Report command - Simple dashboard
+program
+  .command('report')
+  .description('Generate HTML dashboard from traces and annotations')
+  .requiredOption('-t, --traces <file>', 'Traces file')
+  .option('-a, --annotations <file>', 'Annotations file')
+  .option('-r, --results <file>', 'Evaluation results file')
+  .option('-o, --output <file>', 'Output HTML file', 'report.html')
+  .action(reportCommand);
 
 // Error handling
-program.on('command:*', () => {
-  console.error(chalk.red(`Invalid command: ${program.args.join(' ')}`));
-  console.log(chalk.yellow('See --help for a list of available commands.'));
-  process.exit(1);
+program.configureOutput({
+  writeErr: (str) => process.stderr.write(chalk.red(str)),
 });
 
-// Parse arguments
-program.parse();
+program.exitOverride();
 
-// Show help if no command provided
-if (!process.argv.slice(2).length) {
-  program.outputHelp();
+async function main() {
+  try {
+    await program.parseAsync(process.argv);
+  } catch (error: any) {
+    if (error.code === 'commander.help') {
+      process.exit(0);
+    }
+    if (error.code === 'commander.version') {
+      process.exit(0);
+    }
+    console.error(chalk.red('\nError:'), error.message || error);
+    process.exit(1);
+  }
 }
+
+main();

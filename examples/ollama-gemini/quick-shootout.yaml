@@ -1,0 +1,67 @@
+# Quick Multi-Model Evaluation
+# Runs 4 key variants in ~10-15 minutes for GitHub Pages demo
+
+test:
+  name: "Quick Multi-Model Comparison"
+  description: "Compare Ollama vs Gemini with key strategies"
+  tags: ["quick", "demo", "ollama", "gemini"]
+
+variants:
+  # Best free option
+  - id: ollama-nomic-baseline
+    name: "Ollama: nomic-embed-text"
+    provider:
+      type: ollama
+      model: nomic-embed-text
+    strategy: baseline
+    description: "Most popular Ollama model (free)"
+
+  # With semantic chunking
+  - id: ollama-nomic-chunks
+    name: "Ollama: nomic-embed-text + chunks"
+    provider:
+      type: ollama
+      model: nomic-embed-text
+    strategy: semantic-chunks
+    description: "Ollama with intelligent chunking (free)"
+
+  # Gemini baseline
+  - id: gemini-004-baseline
+    name: "Gemini: text-embedding-004"
+    provider:
+      type: google
+      model: text-embedding-004
+    strategy: baseline
+    description: "Latest Gemini embedding model"
+
+  # Gemini with chunking
+  - id: gemini-004-chunks
+    name: "Gemini: text-embedding-004 + chunks"
+    provider:
+      type: google
+      model: text-embedding-004
+    strategy: semantic-chunks
+    description: "Gemini with semantic chunking"
+
+dataset: ./examples/data/sample-queries.jsonl
+corpus: ./examples/data/sample-corpus.jsonl
+
+metrics:
+  - ndcg@10
+  - ndcg@5
+  - recall@10
+  - recall@5
+  - mrr@10
+
+output:
+  json: ./results/quick-shootout/metrics.json
+  dashboard: ./results/quick-shootout/dashboard.html
+
+cache:
+  maxSizeGB: 5
+  checkpointInterval: 10
+
+# Quick evaluation - runs in ~10-15 minutes
+# Total variants: 4
+# With 20 queries each: 80 total queries
+# Estimated cost: $0.50-1.00

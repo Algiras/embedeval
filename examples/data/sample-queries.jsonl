@@ -1,0 +1,20 @@
+{"id": "query-001", "query": "machine learning algorithms and neural networks", "relevantDocs": ["doc-001", "doc-002"], "relevanceScores": {"doc-001": 0.95, "doc-002": 0.88}}
+{"id": "query-002", "query": "natural language processing and text analysis", "relevantDocs": ["doc-003"], "relevanceScores": {"doc-003": 0.92}}
+{"id": "query-003", "query": "computer vision and image recognition", "relevantDocs": ["doc-004"], "relevanceScores": {"doc-004": 0.90}}
+{"id": "query-004", "query": "agile software development and scrum methodology", "relevantDocs": ["doc-006"], "relevanceScores": {"doc-006": 0.93}}
+{"id": "query-005", "query": "DevOps continuous integration deployment", "relevantDocs": ["doc-007"], "relevanceScores": {"doc-007": 0.91}}
+{"id": "query-006", "query": "microservices architecture patterns", "relevantDocs": ["doc-008"], "relevanceScores": {"doc-008": 0.94}}
+{"id": "query-007", "query": "AWS cloud services and infrastructure", "relevantDocs": ["doc-011", "doc-012"], "relevanceScores": {"doc-011": 0.85, "doc-012": 0.96}}
+{"id": "query-008", "query": "Kubernetes container orchestration docker", "relevantDocs": ["doc-013"], "relevanceScores": {"doc-013": 0.95}}
+{"id": "query-009", "query": "serverless computing lambda functions", "relevantDocs": ["doc-014"], "relevanceScores": {"doc-014": 0.92}}
+{"id": "query-010", "query": "data science machine learning python pandas", "relevantDocs": ["doc-016", "doc-020"], "relevanceScores": {"doc-016": 0.89, "doc-020": 0.94}}
+{"id": "query-011", "query": "big data analytics hadoop spark", "relevantDocs": ["doc-017"], "relevanceScores": {"doc-017": 0.93}}
+{"id": "query-012", "query": "data visualization charts dashboards", "relevantDocs": ["doc-018"], "relevanceScores": {"doc-018": 0.91}}
+{"id": "query-013", "query": "statistical analysis hypothesis testing", "relevantDocs": ["doc-019"], "relevanceScores": {"doc-019": 0.88}}
+{"id": "query-014", "query": "JavaScript React frontend development", "relevantDocs": ["doc-021"], "relevanceScores": {"doc-021": 0.90}}
+{"id": "query-015", "query": "Go programming language concurrency goroutines", "relevantDocs": ["doc-022"], "relevanceScores": {"doc-022": 0.95}}
+{"id": "query-016", "query": "Rust memory safety systems programming", "relevantDocs": ["doc-023"], "relevanceScores": {"doc-023": 0.94}}
+{"id": "query-017", "query": "SQL database queries relational data", "relevantDocs": ["doc-024"], "relevanceScores": {"doc-024": 0.92}}
+{"id": "query-018", "query": "TypeScript static typing JavaScript", "relevantDocs": ["doc-025"], "relevanceScores": {"doc-025": 0.93}}
+{"id": "query-019", "query": "cloud security IAM encryption best practices", "relevantDocs": ["doc-015"], "relevanceScores": {"doc-015": 0.90}}
+{"id": "query-020", "query": "reinforcement learning AI game playing", "relevantDocs": ["doc-005"], "relevanceScores": {"doc-005": 0.91}}

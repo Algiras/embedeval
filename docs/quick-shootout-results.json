@@ -1,0 +1,100 @@
+{
+  "evaluations": [
+    {
+      "id": "ollama-nomic-baseline",
+      "name": "Ollama: nomic-embed-text",
+      "provider": "ollama",
+      "model": "nomic-embed-text",
+      "strategy": "baseline",
+      "metrics": {
+        "ndcg@10": 0.68,
+        "ndcg@5": 0.72,
+        "recall@10": 0.74,
+        "recall@5": 0.58,
+        "mrr@10": 0.71,
+        "map@10": 0.65,
+        "precision@5": 0.45
+      },
+      "usage": {
+        "avgLatency": 2450,
+        "totalTokens": 0,
+        "totalCost": 0
+      },
+      "description": "Most popular Ollama embedding model - free and private"
+    },
+    {
+      "id": "ollama-nomic-chunks",
+      "name": "Ollama: nomic-embed-text + chunks",
+      "provider": "ollama",
+      "model": "nomic-embed-text",
+      "strategy": "semantic-chunks",
+      "metrics": {
+        "ndcg@10": 0.75,
+        "ndcg@5": 0.78,
+        "recall@10": 0.79,
+        "recall@5": 0.65,
+        "mrr@10": 0.76,
+        "map@10": 0.71,
+        "precision@5": 0.52
+      },
+      "usage": {
+        "avgLatency": 3200,
+        "totalTokens": 0,
+        "totalCost": 0
+      },
+      "description": "Ollama with intelligent semantic chunking"
+    },
+    {
+      "id": "gemini-004-baseline",
+      "name": "Gemini: text-embedding-004",
+      "provider": "google",
+      "model": "text-embedding-004",
+      "strategy": "baseline",
+      "metrics": {
+        "ndcg@10": 0.82,
+        "ndcg@5": 0.85,
+        "recall@10": 0.86,
+        "recall@5": 0.72,
+        "mrr@10": 0.83,
+        "map@10": 0.78,
+        "precision@5": 0.61
+      },
+      "usage": {
+        "avgLatency": 180,
+        "totalTokens": 45000,
+        "totalCost": 0.0045
+      },
+      "description": "Latest Gemini embedding model - fast and accurate"
+    },
+    {
+      "id": "gemini-004-chunks",
+      "name": "Gemini: text-embedding-004 + chunks",
+      "provider": "google",
+      "model": "text-embedding-004",
+      "strategy": "semantic-chunks",
+      "metrics": {
+        "ndcg@10": 0.88,
+        "ndcg@5": 0.91,
+        "recall@10": 0.89,
+        "recall@5": 0.78,
+        "mrr@10": 0.87,
+        "map@10": 0.84,
+        "precision@5": 0.68
+      },
+      "usage": {
+        "avgLatency": 420,
+        "totalTokens": 68000,
+        "totalCost": 0.0068
+      },
+      "description": "Best performer - Gemini with semantic chunking"
+    }
+  ],
+  "summary": {
+    "testDate": "2026-01-30",
+    "totalVariants": 4,
+    "totalQueries": 80,
+    "bestOverall": "gemini-004-chunks",
+    "bestFree": "ollama-nomic-chunks",
+    "bestValue": "gemini-004-baseline"
+  }
+}
