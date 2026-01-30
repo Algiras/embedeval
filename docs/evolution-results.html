@@ -45,7 +45,7 @@
       <h1>🧬 HuggingFace Evolution Results</h1>
       <p class="subtitle">Real Embedding Evaluation with MTEB Datasets</p>
       <p class="subtitle" style="margin-top: 0.5rem; font-size: 0.9rem;">
-        6 generations | 3 embedding models | Combined Benchmark dataset
+        3 generations | 3 embedding models | Combined Benchmark dataset
       </p>
     </header>
 
@@ -59,21 +59,21 @@
     <div class="grid">
       <div class="card best">
         <h2>🏆 Best Strategy</h2>
-        <div class="strategy-name">Gemini Text Embedding 004 | Hybrid Linear | k10</div>
+        <div class="strategy-name">Nomic Embed | Hybrid RRF | k10</div>
         <div style="margin: 1rem 0;">
-          <span class="metric">98.1%</span>
+          <span class="metric">95.1%</span>
           <span style="color: var(--text-muted);">fitness</span>
         </div>
         <div>
-          <span class="gene">🤖 gemini/text-embedding-004</span>
-          <span class="gene">🔍 HYBRID_LINEAR</span>
+          <span class="gene">🤖 ollama/nomic-embed-text</span>
+          <span class="gene">🔍 HYBRID_RRF</span>
           <span class="gene">📝 RAW</span>
           <span class="gene">🎯 NONE</span>
         </div>
         <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-muted);">
-          NDCG@10: 96.5% |
-          Recall@10: 100.0% |
-          MRR: 96.2% |
+          NDCG@10: 91.8% |
+          Recall@10: 96.2% |
+          MRR: 91.2% |
           Latency: 0ms
         </div>
       </div>
@@ -113,122 +113,74 @@
           
           <tr>
             <td class="rank-1">#1</td>
-            <td style="font-size: 0.85rem;">HYBRID_LINEAR | RAW | NONE</td>
-            <td style="font-size: 0.8rem; color: var(--text-muted);">text-embedding-004</td>
+            <td style="font-size: 0.85rem;">HYBRID_RRF | RAW | NONE</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">nomic-embed-text</td>
             <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 98.11275070720592%;"></div></div>
-              98.1%
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 95.05439055536998%;"></div></div>
+              95.1%
             </td>
-            <td>96.5%</td>
-            <td>100.0%</td>
+            <td>91.8%</td>
+            <td>96.2%</td>
             <td>0ms</td>
           </tr>
           <tr>
             <td class="rank-2">#2</td>
             <td style="font-size: 0.85rem;">HYBRID_LINEAR | RAW | NONE</td>
-            <td style="font-size: 0.8rem; color: var(--text-muted);">text-embedding-004</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">nomic-embed-text</td>
             <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 98.11275070720592%;"></div></div>
-              98.1%
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 95.04927416402639%;"></div></div>
+              95.0%
             </td>
-            <td>96.5%</td>
-            <td>100.0%</td>
+            <td>91.8%</td>
+            <td>96.2%</td>
             <td>0ms</td>
           </tr>
           <tr>
             <td class="rank-3">#3</td>
-            <td style="font-size: 0.85rem;">HYBRID_LINEAR | RAW | NONE</td>
-            <td style="font-size: 0.8rem; color: var(--text-muted);">text-embedding-004</td>
+            <td style="font-size: 0.85rem;">HYBRID_RRF | RAW | NONE</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">nomic-embed-text</td>
             <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 98.11275070720592%;"></div></div>
-              98.1%
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 95.04927416402639%;"></div></div>
+              95.0%
             </td>
-            <td>96.5%</td>
-            <td>100.0%</td>
+            <td>91.8%</td>
+            <td>96.2%</td>
             <td>0ms</td>
           </tr>
           <tr>
             <td class="">#4</td>
-            <td style="font-size: 0.85rem;">HYBRID_RRF | RAW | NONE</td>
-            <td style="font-size: 0.8rem; color: var(--text-muted);">text-embedding-004</td>
+            <td style="font-size: 0.85rem;">HYBRID_LINEAR | RAW | NONE</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">nomic-embed-text</td>
             <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 98.10763431586234%;"></div></div>
-              98.1%
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 95.04927416402639%;"></div></div>
+              95.0%
             </td>
-            <td>96.5%</td>
-            <td>100.0%</td>
+            <td>91.8%</td>
+            <td>96.2%</td>
             <td>0ms</td>
           </tr>
           <tr>
             <td class="">#5</td>
-            <td style="font-size: 0.85rem;">HYBRID_LINEAR | EXPANDED | NONE</td>
-            <td style="font-size: 0.8rem; color: var(--text-muted);">text-embedding-004</td>
+            <td style="font-size: 0.85rem;">HYBRID_LINEAR | RAW | NONE</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">nomic-embed-text</td>
             <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 98.05843324086872%;"></div></div>
-              98.1%
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 95.04927416402639%;"></div></div>
+              95.0%
             </td>
-            <td>96.3%</td>
-            <td>100.0%</td>
+            <td>91.8%</td>
+            <td>96.2%</td>
             <td>0ms</td>
           </tr>
           <tr>
             <td class="">#6</td>
-            <td style="font-size: 0.85rem;">HYBRID_LINEAR | RAW | NONE</td>
-            <td style="font-size: 0.8rem; color: var(--text-muted);">text-embedding-004</td>
+            <td style="font-size: 0.85rem;">BM25 | RAW | NONE</td>
+            <td style="font-size: 0.8rem; color: var(--text-muted);">nomic-embed-text</td>
             <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 97.65376061155465%;"></div></div>
-              97.7%
+              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 81.85341510867302%;"></div></div>
+              81.9%
             </td>
-            <td>95.9%</td>
-            <td>98.7%</td>
-            <td>0ms</td>
-          </tr>
-          <tr>
-            <td class="">#7</td>
-            <td style="font-size: 0.85rem;">VECTOR_COSINE | LOWERCASE | NONE</td>
-            <td style="font-size: 0.8rem; color: var(--text-muted);">text-embedding-004</td>
-            <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 97.51868787947421%;"></div></div>
-              97.5%
-            </td>
-            <td>95.3%</td>
-            <td>100.0%</td>
-            <td>0ms</td>
-          </tr>
-          <tr>
-            <td class="">#8</td>
-            <td style="font-size: 0.85rem;">HYBRID_LINEAR | LOWERCASE | NONE</td>
-            <td style="font-size: 0.8rem; color: var(--text-muted);">embedding-001</td>
-            <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 97.36832056006686%;"></div></div>
-              97.4%
-            </td>
-            <td>95.7%</td>
-            <td>97.4%</td>
-            <td>0ms</td>
-          </tr>
-          <tr>
-            <td class="">#9</td>
-            <td style="font-size: 0.85rem;">HYBRID_LINEAR | RAW | NONE</td>
-            <td style="font-size: 0.8rem; color: var(--text-muted);">text-embedding-004</td>
-            <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 96.06386916800952%;"></div></div>
-              96.1%
-            </td>
-            <td>93.2%</td>
-            <td>98.7%</td>
-            <td>0ms</td>
-          </tr>
-          <tr>
-            <td class="">#10</td>
-            <td style="font-size: 0.85rem;">VECTOR_COSINE | LOWERCASE | NONE</td>
-            <td style="font-size: 0.8rem; color: var(--text-muted);">embedding-001</td>
-            <td>
-              <div class="bar" style="width: 80px;"><div class="bar-fill" style="width: 96.04655890922419%;"></div></div>
-              96.0%
-            </td>
-            <td>93.3%</td>
-            <td>97.4%</td>
+            <td>70.5%</td>
+            <td>85.9%</td>
             <td>0ms</td>
           </tr>
         </tbody>
@@ -246,17 +198,17 @@
     new Chart(document.getElementById('evolutionChart'), {
       type: 'line',
       data: {
-        labels: ["Gen 1","Gen 2","Gen 3","Gen 4","Gen 5","Gen 6"],
+        labels: ["Gen 1","Gen 2","Gen 3"],
         datasets: [
-          { label: 'Best', data: ["97.9","98.1","98.1","98.1","98.1","98.1"], borderColor: '#6366f1', fill: false, tension: 0.3 },
-          { label: 'Average', data: ["88.8","92.4","91.3","97.3","97.1","97.5"], borderColor: '#8b5cf6', fill: false, tension: 0.3 }
+          { label: 'Best', data: ["95.0","95.0","95.1"], borderColor: '#6366f1', fill: false, tension: 0.3 },
+          { label: 'Average', data: ["88.0","93.0","92.9"], borderColor: '#8b5cf6', fill: false, tension: 0.3 }
         ]
       },
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8' } } }, scales: { x: { ticks: { color: '#94a3b8' } }, y: { ticks: { color: '#94a3b8' }, title: { display: true, text: 'Fitness %', color: '#94a3b8' } } } }
     });
 
     // Model comparison
-    const modelData = {"text-embedding-004":0.9771757966717339,"embedding-001":0.9670743973464553};
+    const modelData = {"nomic-embed-text":0.9285081705335809};
     new Chart(document.getElementById('modelChart'), {
       type: 'bar',
       data: {
@@ -267,7 +219,7 @@
     });
 
     // Method comparison
-    const methodData = {"HYBRID_LINEAR":0.9764037652887392,"HYBRID_RRF":0.9810763431586234,"VECTOR_COSINE":0.967826233943492};
+    const methodData = {"HYBRID_RRF":0.9505183235969819,"HYBRID_LINEAR":0.9504927416402639,"BM25":0.8185341510867302};
     new Chart(document.getElementById('methodChart'), {
       type: 'bar',
       data: {
