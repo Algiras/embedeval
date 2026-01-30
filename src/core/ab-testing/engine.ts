@@ -122,7 +122,7 @@ export class ABTestingEngine {
    * Process a single evaluation job
    */
   private async processJob(job: Job<JobData>): Promise<JobResult> {
-    const { testId, variantId, query, documents, providerConfig, strategy } = job.data;
+    const { variantId, query, documents, providerConfig } = job.data;
 
     try {
       const startTime = Date.now();

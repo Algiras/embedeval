@@ -65,7 +65,7 @@ export class CheckpointManager {
   /**
    * Mark a query as failed
    */
-  async markFailed(variantId: string, queryId: string, error: string): Promise<void> {
+  async markFailed(variantId: string, queryId: string, _error: string): Promise<void> {
     const checkpointPath = this.getCheckpointPath(variantId);
     
     try {

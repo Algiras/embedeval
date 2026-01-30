@@ -5,16 +5,13 @@
 
 import { Queue, Worker, Job, FlowProducer } from 'bullmq';
 import IORedis from 'ioredis';
-import { v4 as uuidv4 } from 'uuid';
 import { 
   JobData, 
   JobResult, 
-  Checkpoint, 
   EvaluationResult,
   ABVariant,
   TestCase,
-  Document,
-  ProviderConfig 
+  Document
 } from '../core/types';
 import { CheckpointManager } from './checkpoint-manager';
 import { logger } from '../utils/logger';
