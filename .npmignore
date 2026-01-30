@@ -1,0 +1,31 @@
+# Source files
+src/
+tsconfig.json
+
+# Tests
+tests/
+*.test.ts
+*.spec.ts
+
+# Development
+.github/
+.vscode/
+.eslintrc
+.eslintignore
+
+# Examples (keep for documentation)
+# examples/
+
+# Scripts
+scripts/
+
+# Documentation (keep)
+# *.md
+
+# Misc
+.gitignore
+.env
+.env.example
+
+# Build artifacts (not needed)
+# dist/ is included

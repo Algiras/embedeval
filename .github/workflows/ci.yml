@@ -1,0 +1,148 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ created ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Type check
+      run: npm run typecheck
+    
+    - name: Lint
+      run: npm run lint
+    
+    - name: Build
+      run: npm run build
+    
+    - name: Test
+      run: npm test
+      env:
+        REDIS_URL: redis://localhost:6379
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build
+        path: dist/
+
+  integration-test:
+    runs-on: ubuntu-latest
+    needs: build
+    
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+      ollama:
+        image: ollama/ollama:latest
+        ports:
+          - 11434:11434
+        options: >-
+          --health-cmd "curl -f http://localhost:11434/api/tags || exit 1"
+          --health-interval 30s
+          --health-timeout 10s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build
+        path: dist/
+    
+    - name: Pull Ollama model
+      run: |
+        sleep 10  # Wait for Ollama to be ready
+        curl -X POST http://localhost:11434/api/pull -d '{"name": "nomic-embed-text"}'
+        sleep 30  # Wait for model to download
+    
+    - name: Test CLI commands
+      run: |
+        # Test providers list
+        node dist/cli/index.js providers --list
+        
+        # Test strategy list
+        node dist/cli/index.js strategy --list
+        
+        # Test Ollama provider (if model is ready)
+        node dist/cli/index.js providers --test ollama --base-url http://localhost:11434 || true
+        
+        # Test A/B test with sample data
+        node dist/cli/index.js ab-test \
+          --name "CI Test" \
+          --variants ollama:nomic-embed-text \
+          --strategies baseline \
+          --dataset ./examples/sample-queries.jsonl \
+          --corpus ./examples/sample-corpus.jsonl \
+          --output ./ci-results || true
+      env:
+        REDIS_URL: redis://localhost:6379
+        OLLAMA_HOST: http://localhost:11434
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: [build, integration-test]
+    if: github.event_name == 'release'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        registry-url: 'https://registry.npmjs.org'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build
+      run: npm run build
+    
+    - name: Publish to NPM
+      run: npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

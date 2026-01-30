@@ -1,0 +1,363 @@
+# EmbedEval
+
+[![CI/CD](https://github.com/Algiras/embedeval/actions/workflows/ci.yml/badge.svg)](https://github.com/Algiras/embedeval/actions/workflows/ci.yml)
+[![npm version](https://badge.fury.io/js/embedeval.svg)](https://badge.fury.io/js/embedeval)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+CLI-based embedding evaluation system with A/B testing, human evaluation, and composable pipelines. Compare different embedding models, strategies, and approaches with statistical significance testing.
+
+## Features
+
+- **🔬 A/B Testing**: Compare multiple embedding models side-by-side on the same queries
+- **📊 Comprehensive Metrics**: NDCG@K, Recall@K, MRR@K, MAP@K, Hit Rate@K
+- **🤖 Multiple Providers**: Ollama (local), OpenAI, Google Gemini, Hugging Face, and OpenAI-compatible APIs (OpenRouter, etc.)
+- **⚡ Parallel Processing**: BullMQ-based job queue for efficient evaluation
+- **💾 Binary Cache**: 10GB LRU cache for embeddings with binary storage
+- **📝 Human Evaluation**: Interactive wizard for manual relevance judgments with note-taking
+- **📈 HTML Dashboard**: Visual comparison with side-by-side results
+- **🔄 Checkpointing**: Per-query checkpointing for crash recovery
+- **📉 Statistical Tests**: Paired t-test and Wilcoxon signed-rank test
+
+## Quick Start
+
+### 1. Install Dependencies
+
+```bash
+cd embedeval
+npm install
+```
+
+### 2. Start Redis (for BullMQ)
+
+```bash
+# Using Docker
+./docker/redis.sh start
+
+# Or with docker-compose directly
+cd docker && docker-compose up -d
+```
+
+### 3. Set Environment Variables
+
+```bash
+export OPENAI_API_KEY="your-openai-key"
+export GEMINI_API_KEY="your-gemini-key"
+# Ollama uses local instance by default
+```
+
+### 4. Run A/B Test
+
+```bash
+# Compare two models
+npm run dev -- ab-test \
+  --name "Local vs Cloud" \
+  --variants ollama:nomic-embed-text,openai:text-embedding-3-small \
+  --dataset ./data/queries.jsonl \
+  --corpus ./data/documents.jsonl \
+  --output ./results
+
+# Or use a config file
+npm run dev -- ab-test --config ./config.yaml
+```
+
+## Configuration
+
+### YAML Configuration File
+
+```yaml
+# config.yaml
+providers:
+  - type: ollama
+    baseUrl: http://localhost:11434
+    model: nomic-embed-text
+  
+  - type: openai
+    apiKey: ${OPENAI_API_KEY}
+    model: text-embedding-3-small
+  
+  - type: openai
+    apiKey: ${OPENROUTER_API_KEY}
+    baseUrl: https://openrouter.ai/api/v1
+    model: cohere/embed-v3-multilingual
+  
+  - type: google
+    apiKey: ${GEMINI_API_KEY}
+    model: embedding-001
+
+strategies:
+  - name: baseline
+    pipeline: [embed, retrieve]
+
+metrics:
+  - ndcg@5
+  - ndcg@10
+  - recall@5
+  - recall@10
+  - mrr@10
+
+dataset: ./data/queries.jsonl
+corpus: ./data/documents.jsonl
+
+output:
+  json: ./results/metrics.json
+  dashboard: ./results/dashboard.html
+
+cache:
+  maxSizeGB: 10
+  checkpointInterval: 1
+```
+
+### Dataset Format (JSONL)
+
+```jsonl
+{"id": "q1", "query": "What is machine learning?", "relevantDocs": ["doc1", "doc5"], "tags": ["technical"]}
+{"id": "q2", "query": "How to bake bread?", "relevantDocs": ["doc3"], "tags": ["cooking"]}
+```
+
+### Corpus Format (JSONL)
+
+```jsonl
+{"id": "doc1", "content": "Machine learning is a subset of artificial intelligence...", "metadata": {"category": "tech"}}
+{"id": "doc2", "content": "Bread baking requires flour, water, yeast, and salt...", "metadata": {"category": "cooking"}}
+```
+
+## CLI Commands
+
+### A/B Test
+
+```bash
+embedeval ab-test [options]
+
+Options:
+  -c, --config <path>       Configuration file path
+  -n, --name <name>         Test name (default: "A/B Test")
+  -d, --dataset <path>      Dataset file path (JSONL)
+  --corpus <path>           Corpus file path (JSONL)
+  -o, --output <path>       Output directory
+  --variants <variants>     Comma-separated provider:model pairs
+  --metrics <metrics>       Comma-separated metrics (default: ndcg@10,recall@10,mrr@10)
+  --concurrency <n>         Number of concurrent workers (default: 5)
+```
+
+### Human Evaluation
+
+```bash
+embedeval human-eval [options]
+
+Options:
+  -d, --dataset <path>      Dataset file path
+  -s, --session <name>      Session name
+  --provider <provider>     Provider to evaluate
+  --model <model>           Model to evaluate
+  --notes                   Enable note-taking (default: true)
+```
+
+### Dashboard
+
+```bash
+embedeval dashboard [options]
+
+Options:
+  -r, --results <path>      Results JSON file path
+  -t, --test-id <id>        Test ID to generate dashboard for
+  -o, --output <path>       Output HTML file path
+  --format <format>         Output format: html, json, csv (default: html)
+```
+
+### Providers
+
+```bash
+# List available providers
+embedeval providers --list
+
+# Test provider connectivity
+embedeval providers --test ollama
+embedeval providers --test openai
+embedeval providers --test google
+embedeval providers --test huggingface
+```
+
+### Hugging Face
+
+```bash
+# Search for embedding models
+embedeval huggingface --search "sentence-transformers"
+
+# Get detailed info about a specific model
+embedeval huggingface --model "sentence-transformers/all-MiniLM-L6-v2" --info
+
+# Use a HF model in A/B test
+embedeval ab-test \
+  --variants "huggingface:sentence-transformers/all-MiniLM-L6-v2" \
+  --dataset ./data/queries.jsonl
+```
+
+## Architecture
+
+```
+embedeval/
+├── src/
+│   ├── cli/
+│   │   ├── commands/          # CLI command implementations
+│   │   │   ├── ab-test.ts
+│   │   │   ├── human-eval.ts
+│   │   │   ├── dashboard.ts
+│   │   │   └── providers.ts
+│   │   └── index.ts           # CLI entry point
+│   ├── core/
+│   │   ├── types.ts           # TypeScript type definitions
+│   │   ├── evaluation/
+│   │   │   └── metrics/       # NDCG, Recall, MRR, MAP
+│   │   └── ab-testing/
+│   │       └── engine.ts      # A/B test orchestration
+│   ├── providers/
+│   │   ├── ollama.ts          # Ollama provider
+│   │   ├── openai.ts          # OpenAI provider (with custom routes)
+│   │   ├── google.ts          # Google Gemini provider
+│   │   └── index.ts           # Provider factory
+│   ├── jobs/
+│   │   ├── processor.ts       # BullMQ job processor
+│   │   └── checkpoint-manager.ts  # Per-query checkpointing
+│   └── utils/
+│       ├── cache.ts           # Binary embedding cache (10GB)
+│       ├── config.ts          # Configuration loader
+│       ├── statistics.ts      # Statistical tests
+│       └── logger.ts          # Logging utility
+├── docker/
+│   ├── docker-compose.yml     # Redis for BullMQ
+│   └── redis.sh               # Docker helper script
+└── tests/                     # Test suite
+```
+
+## Key Features
+
+### 1. Pluggable Provider System
+
+```typescript
+// Add a new provider
+const provider = createProvider({
+  type: 'openai',
+  apiKey: process.env.OPENAI_API_KEY,
+  baseUrl: 'https://openrouter.ai/api/v1',  // Custom route
+  model: 'cohere/embed-v3'
+});
+```
+
+### 2. Composable Pipelines
+
+```typescript
+// Define custom strategies
+strategies:
+  - name: baseline
+    pipeline: [embed, retrieve]
+  
+  - name: reranked
+    pipeline: [embed, retrieve, rerank]
+```
+
+### 3. Binary Embedding Cache
+
+- Stores embeddings in binary format (8 bytes per float)
+- LRU eviction when approaching 10GB limit
+- SHA-256 keys based on text + provider + model
+- Significant speedup for repeated queries
+
+### 4. Per-Query Checkpointing
+
+- Saves progress after each query
+- Resume from last checkpoint on crash
+- JSONL append-only format
+- Location: `.embedeval/runs/{test-id}/checkpoints/`
+
+### 5. Statistical Testing
+
+- Paired t-test for same-query comparisons
+- Wilcoxon signed-rank test (non-parametric)
+- Cohen's d for effect size
+- Confidence intervals
+
+## Development
+
+### Build
+
+```bash
+npm run build
+```
+
+### Run in Development
+
+```bash
+npm run dev -- <command> [options]
+```
+
+### Run Tests
+
+```bash
+npm test
+```
+
+### Lint
+
+```bash
+npm run lint
+```
+
+## Testing
+
+### Unit Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+```
+
+### Local Integration Tests (requires Ollama)
+
+```bash
+# Start Ollama
+ollama serve
+
+# Pull embedding model
+ollama pull nomic-embed-text
+
+# Run local integration tests
+npm run test:local
+```
+
+### Manual CLI Testing
+
+```bash
+# Build first
+npm run build
+
+# Test CLI commands
+node dist/cli/index.js --help
+node dist/cli/index.js providers --list
+node dist/cli/index.js strategy --list
+
+# Test with Ollama
+node dist/cli/index.js providers --test ollama
+node dist/cli/index.js ab-test \
+  --variants ollama:nomic-embed-text \
+  --strategies baseline \
+  --dataset ./examples/sample-queries.jsonl \
+  --corpus ./examples/sample-corpus.jsonl
+```
+
+## Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `OPENAI_API_KEY` | OpenAI API key | - |
+| `GEMINI_API_KEY` | Google Gemini API key | - |
+| `HUGGINGFACE_API_KEY` | Hugging Face API key (optional, for Inference API) | - |
+| `OLLAMA_HOST` | Ollama host URL | `http://localhost:11434` |
+| `REDIS_URL` | Redis URL for BullMQ | `redis://localhost:6379` |
+| `LOG_LEVEL` | Logging level (debug, info, warn, error) | `info` |
+
+## License
+
+MIT
