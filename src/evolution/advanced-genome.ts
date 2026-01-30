@@ -19,7 +19,6 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { logger } from '../utils/logger';
 
 // ============================================================================
 // ARCHITECTURE DEFINITIONS
@@ -416,7 +415,6 @@ export class AdvancedGenomeFactory {
     const { 
       availableProviders = ['ollama'], 
       maxComplexity = 4,
-      enableAdvancedFeatures = true 
     } = options;
     
     const pick = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
@@ -515,7 +513,7 @@ export class AdvancedGenomeFactory {
         retrievalK: 20,
         rerankingMethod: 'MMR',
         mmrLambda: 0.5,
-        postProcessing: ['threshold'],
+        postProcessing: ['SCORE_THRESHOLD'],
       }),
       
       // 3. Hierarchical RAG
@@ -532,7 +530,7 @@ export class AdvancedGenomeFactory {
         rerankingMethod: 'CROSS_ENCODER',
         rerankingTopK: 10,
         hierarchicalLevels: 3,
-        postProcessing: ['expand', 'threshold'],
+        postProcessing: ['CONTEXT_EXPANSION', 'SCORE_THRESHOLD'],
       }),
       
       // 4. Multi-query RAG fusion
@@ -548,7 +546,7 @@ export class AdvancedGenomeFactory {
         retrievalMethod: 'HYBRID_RRF',
         retrievalK: 20,
         rerankingMethod: 'LLM_POINTWISE',
-        postProcessing: ['dedup'],
+        postProcessing: ['DEDUPLICATION'],
       }),
       
       // 5. Self-RAG
@@ -581,7 +579,7 @@ export class AdvancedGenomeFactory {
         rerankingMethod: 'MMR',
         graphEnabled: true,
         graphTraversalDepth: 2,
-        postProcessing: ['expand'],
+        postProcessing: ['CONTEXT_EXPANSION'],
       }),
       
       // 7. Multi-hop for complex queries
@@ -597,7 +595,7 @@ export class AdvancedGenomeFactory {
         rerankingMethod: 'LLM_LISTWISE',
         maxHops: 3,
         hopTerminationThreshold: 0.8,
-        postProcessing: ['compress'],
+        postProcessing: ['LLM_COMPRESSION'],
       }),
       
       // 8. Adaptive routing
@@ -611,7 +609,7 @@ export class AdvancedGenomeFactory {
         retrievalMethod: 'HYBRID_RRF',
         retrievalK: 20,
         rerankingMethod: 'CASCADE',
-        postProcessing: ['threshold', 'reorder'],
+        postProcessing: ['SCORE_THRESHOLD', 'REORDER'],
       }),
     ];
   }

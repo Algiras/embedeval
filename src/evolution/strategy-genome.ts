@@ -196,9 +196,9 @@ export function createGenomeFromStrategy(strategyName: string, generation: numbe
     },
     'hybrid-bm25': {
       chunkingMethod: 'none',
-      retrievalMethod: 'hybrid',
+      retrievalMethod: 'hybrid_rrf',
       retrievalK: 100,
-      hybridWeights: [0.6, 0.4],
+      hybridAlpha: 0.6,
       rerankingMethod: 'none',
     },
     'llm-reranked': {
@@ -220,9 +220,9 @@ export function createGenomeFromStrategy(strategyName: string, generation: numbe
       chunkingMethod: 'semantic',
       chunkSize: 512,
       chunkOverlap: 50,
-      retrievalMethod: 'hybrid',
+      retrievalMethod: 'hybrid_rrf',
       retrievalK: 100,
-      hybridWeights: [0.6, 0.4],
+      hybridAlpha: 0.6,
       rerankingMethod: 'llm',
       rerankingTopK: 10,
     },
@@ -231,12 +231,15 @@ export function createGenomeFromStrategy(strategyName: string, generation: numbe
   const preset = presets[strategyName] || presets['baseline'];
   
   const genes: StrategyGenome['genes'] = {
+    embeddingProvider: 'ollama',
+    embeddingModel: 'nomic-embed-text',
+    queryProcessor: 'raw',
     chunkingMethod: preset.chunkingMethod || 'none',
     chunkSize: preset.chunkSize,
     chunkOverlap: preset.chunkOverlap,
     retrievalMethod: preset.retrievalMethod || 'cosine',
     retrievalK: preset.retrievalK || 10,
-    hybridWeights: preset.hybridWeights,
+    hybridAlpha: preset.hybridAlpha,
     rerankingMethod: preset.rerankingMethod || 'none',
     rerankingTopK: preset.rerankingTopK,
     mmrLambda: preset.mmrLambda,
@@ -309,13 +312,13 @@ export function mutate(genome: StrategyGenome, mutationRate: number = 0.2): Stra
     mutations.push('retrievalK');
   }
 
-  if (mutated.genes.retrievalMethod === 'hybrid' && Math.random() < mutationRate) {
+  if ((mutated.genes.retrievalMethod === 'hybrid_rrf' || mutated.genes.retrievalMethod === 'hybrid_linear') && Math.random() < mutationRate) {
     const newWeight = mutateGene(
-      mutated.genes.hybridWeights?.[0] || 0.5,
-      GENE_DEFINITIONS.hybridEmbeddingWeight
+      mutated.genes.hybridAlpha || 0.5,
+      GENE_DEFINITIONS.hybridAlpha
     );
-    mutated.genes.hybridWeights = [newWeight, 1 - newWeight];
-    mutations.push('hybridWeights');
+    mutated.genes.hybridAlpha = newWeight;
+    mutations.push('hybridAlpha');
   }
 
   if (Math.random() < mutationRate) {
@@ -362,7 +365,7 @@ export function crossover(parent1: StrategyGenome, parent2: StrategyGenome): [St
   // Uniform crossover - randomly swap each gene
   const geneKeys = [
     'chunkingMethod', 'chunkSize', 'chunkOverlap',
-    'retrievalMethod', 'retrievalK', 'hybridWeights',
+    'retrievalMethod', 'retrievalK', 'hybridAlpha',
     'rerankingMethod', 'rerankingTopK', 'mmrLambda'
   ] as const;
 
@@ -457,14 +460,14 @@ export function genomeToStrategy(genome: StrategyGenome): {
   }
 
   // Add fusion if hybrid
-  if (genome.genes.retrievalMethod === 'hybrid') {
+  if (genome.genes.retrievalMethod === 'hybrid_rrf' || genome.genes.retrievalMethod === 'hybrid_linear') {
     stages.push({
       type: 'fusion',
-      name: 'rrf',
+      name: genome.genes.retrievalMethod === 'hybrid_rrf' ? 'rrf' : 'linear',
       config: {
         k: 60,
         topK: genome.genes.rerankingMethod === 'none' ? 10 : genome.genes.rerankingTopK || 20,
-        weights: genome.genes.hybridWeights,
+        alpha: genome.genes.hybridAlpha,
       },
       enabled: true,
     });
@@ -588,8 +591,8 @@ function generateGenomeName(genes: StrategyGenome['genes']): string {
   
   parts.push(genes.retrievalMethod);
   
-  if (genes.retrievalMethod === 'hybrid' && genes.hybridWeights) {
-    parts.push(`w${(genes.hybridWeights[0] * 100).toFixed(0)}`);
+  if ((genes.retrievalMethod === 'hybrid_rrf' || genes.retrievalMethod === 'hybrid_linear') && genes.hybridAlpha !== undefined) {
+    parts.push(`α${(genes.hybridAlpha * 100).toFixed(0)}`);
   }
   
   if (genes.rerankingMethod !== 'none') {

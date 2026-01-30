@@ -14,11 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 import {
   AdvancedStrategyGenome,
   StrategyGenes,
-  AdvancedGenomeFactory,
   RAG_ARCHITECTURES,
-  RETRIEVAL_METHODS,
-  QUERY_STRATEGIES,
-  RERANKING_METHODS,
 } from './advanced-genome';
 import { TestCase, Document, LLMJudgeResult } from '../core/types';
 import { logger } from '../utils/logger';
@@ -202,7 +198,6 @@ export interface StrategySuggestion {
  */
 export class StrategyDiscoveryEngine {
   private failurePatterns: FailurePattern[] = [];
-  private llmJudgeResults: LLMJudgeResult[] = [];
   
   /**
    * Analyze evaluation results to find failure patterns
@@ -574,7 +569,7 @@ Respond in JSON format:
   /**
    * Call LLM for discovery
    */
-  private async callLLM(prompt: string, provider: string): Promise<string> {
+  private async callLLM(_prompt: string, provider: string): Promise<string> {
     // Implementation similar to llm-judge.ts
     // For brevity, returning placeholder
     logger.info(`Would call ${provider} with discovery prompt`);
@@ -603,11 +598,4 @@ Respond in JSON format:
   }
 }
 
-// ============================================================================
-// EXPORTS
-// ============================================================================
-
-export {
-  RESEARCH_PAPERS,
-  StrategyDiscoveryEngine,
-};
+// Types and classes are already exported at their definitions

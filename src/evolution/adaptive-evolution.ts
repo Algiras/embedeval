@@ -11,14 +11,10 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import {
-  AdvancedStrategyGenome,
   StrategyGenes,
   DataTypeProfile,
-  ConditionalStrategy,
   AdvancedGenomeFactory,
   mutateAdvanced,
-  crossoverAdvanced,
-  RAG_ARCHITECTURES,
 } from './advanced-genome';
 import { TestCase, Document } from '../core/types';
 import { logger } from '../utils/logger';
@@ -221,7 +217,7 @@ function createOptimalStrategyForType(
         retrievalMethod: 'HYBRID_RRF',
         retrievalK: 10,
         rerankingMethod: 'NONE',
-        postProcessing: ['threshold'],
+        postProcessing: ['SCORE_THRESHOLD'],
         scoreThreshold: 0.3,
       };
       
@@ -237,7 +233,7 @@ function createOptimalStrategyForType(
         retrievalK: 20,
         rerankingMethod: 'LLM_LISTWISE',
         maxHops: 2,
-        postProcessing: ['expand'],
+        postProcessing: ['CONTEXT_EXPANSION'],
       };
       
     case 'procedural':
@@ -250,7 +246,7 @@ function createOptimalStrategyForType(
         retrievalK: 15,
         hybridAlpha: 0.6,
         rerankingMethod: 'POSITIONAL',
-        postProcessing: ['reorder'],
+        postProcessing: ['REORDER'],
       };
       
     case 'code':
@@ -263,7 +259,7 @@ function createOptimalStrategyForType(
         retrievalK: 20,
         rerankingMethod: 'CROSS_ENCODER',
         rerankingTopK: 10,
-        postProcessing: ['threshold'],
+        postProcessing: ['SCORE_THRESHOLD'],
         scoreThreshold: 0.4,
       };
       
@@ -292,7 +288,7 @@ function createOptimalStrategyForType(
         retrievalK: 30,
         rerankingMethod: 'MMR',
         mmrLambda: 0.4, // More diversity
-        postProcessing: ['dedup'],
+        postProcessing: ['DEDUPLICATION'],
       };
       
     default:
@@ -616,12 +612,4 @@ interface AdaptiveEvolutionResult {
   finalPopulation: AdaptiveGenome[];
 }
 
-// ============================================================================
-// EXPORTS
-// ============================================================================
-
-export {
-  QueryClassifier,
-  createAdaptiveGenome,
-  AdaptiveEvolutionEngine,
-};
+// Types and classes are already exported at their definitions
