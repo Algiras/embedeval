@@ -243,7 +243,7 @@ export function registerEvolveCommand(program: Command): void {
         const scheduler = await startEvolutionScheduler({
           corpusPath: options.corpus,
           queriesPath: options.queries,
-          provider: providerConfig,
+          provider: providerConfig as any,
           schedule: options.cron,
           runImmediately: options.runNow,
           autoDeployEnabled: options.autoDeploy,

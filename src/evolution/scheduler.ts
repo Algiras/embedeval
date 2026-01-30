@@ -19,7 +19,7 @@ import {
   StrategyGenome,
   ProviderConfig,
 } from '../core/types';
-import { EvolutionEngine, runEvolution } from './evolution-engine';
+import { runEvolution } from './evolution-engine';
 import { KnowledgeBase } from './knowledge-base';
 import { HypothesisEngine } from '../research/hypothesis-engine';
 import { logger } from '../utils/logger';
@@ -418,7 +418,7 @@ export class EvolutionScheduler {
   /**
    * Send webhook notification
    */
-  private async notifyWebhook(event: keyof SchedulerConfig['webhooks'], data: any): Promise<void> {
+  private async notifyWebhook(event: 'onStart' | 'onComplete' | 'onImprovement' | 'onRegression' | 'onError', data: Record<string, unknown>): Promise<void> {
     const url = this.config.webhooks?.[event];
     if (!url) return;
 

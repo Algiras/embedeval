@@ -149,7 +149,7 @@ function generateHTML(data: {
   } = data;
 
   const genes = best.genes;
-  const fitnessDetails = best.fitnessDetails || {};
+  const fitnessDetails = best.fitnessDetails || {} as { correctness?: number; speed?: number; cost?: number; llmJudgeScore?: number };
 
   return `<!DOCTYPE html>
 <html lang="en">

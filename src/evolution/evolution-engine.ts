@@ -22,7 +22,6 @@ import {
   GenerationResult,
   TestCase,
   Document,
-  ABTestResult,
   ProviderConfig,
 } from '../core/types';
 import {
