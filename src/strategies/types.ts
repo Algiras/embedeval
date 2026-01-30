@@ -2,7 +2,7 @@
  * Enhanced Strategy System with Composable Stages
  */
 
-import { Document, RetrievedDoc, TestCase, EmbeddingProvider } from '../../core/types';
+import { Document, RetrievedDoc, TestCase, EmbeddingProvider } from '../core/types';
 
 export interface StrategyContext {
   query: string;
