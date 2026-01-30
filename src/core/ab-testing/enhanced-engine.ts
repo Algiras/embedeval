@@ -15,8 +15,6 @@ import {
   JobResult,
   TestCase,
   Document,
-  RetrievedDoc,
-  UsageMetrics,
 } from '../types';
 import { JobProcessor } from '../../jobs/processor';
 import { CheckpointManager } from '../../jobs/checkpoint-manager';
@@ -25,7 +23,7 @@ import { EmbeddingCache } from '../../utils/cache';
 import { calculateMetricsAtMultipleK } from '../evaluation/metrics';
 import { calculatePercentile, calculateMean } from '../../utils/statistics';
 import { logger } from '../../utils/logger';
-import { StrategyExecutor, PREDEFINED_STRATEGIES, StrategyRegistry } from '../../strategies/registry';
+import { StrategyExecutor, PREDEFINED_STRATEGIES } from '../../strategies/registry';
 import { StrategyContext } from '../../strategies/types';
 
 export class EnhancedABTestingEngine {
@@ -112,7 +110,7 @@ export class EnhancedABTestingEngine {
   }
 
   private async processJobWithStrategy(job: Job<JobData>): Promise<JobResult> {
-    const { testId, variantId, query, documents, providerConfig, strategy } = job.data;
+    const { variantId, query, documents, providerConfig, strategy } = job.data;
 
     try {
       const startTime = Date.now();
@@ -239,7 +237,7 @@ export class EnhancedABTestingEngine {
     };
   }
 
-  private calculateComparisons(variantResults: ABVariantResult[]): any[] {
+  private calculateComparisons(_variantResults: ABVariantResult[]): any[] {
     return [];
   }
 

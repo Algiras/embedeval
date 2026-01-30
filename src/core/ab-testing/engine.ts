@@ -338,7 +338,7 @@ export class ABTestingEngine {
   /**
    * Calculate statistical comparisons between variants
    */
-  private calculateComparisons(variantResults: ABVariantResult[]): any[] {
+  private calculateComparisons(_variantResults: ABVariantResult[]): any[] {
     // TODO: Implement statistical comparison (paired t-test, Wilcoxon)
     // For now, return basic comparison
     return [];
