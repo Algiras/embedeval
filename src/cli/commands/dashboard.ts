@@ -15,7 +15,7 @@ interface DashboardOptions {
   format: string;
 }
 
-export async function dashboardCommand(options: DashboardOptions, command: Command): Promise<void> {
+export async function dashboardCommand(options: DashboardOptions, _command: Command): Promise<void> {
   console.log(chalk.blue('Generating dashboard...\n'));
 
   try {

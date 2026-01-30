@@ -8,7 +8,6 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { Command } from 'commander';
 import { EnhancedABTestingEngine } from '../../core/ab-testing/enhanced-engine';
-import { PREDEFINED_STRATEGIES } from '../../strategies/registry';
 import { loadConfig, toABTestConfig, loadDataset } from '../../utils/config';
 import { logger } from '../../utils/logger';
 
@@ -24,7 +23,7 @@ interface ABTestOptions {
   concurrency: string;
 }
 
-export async function abTestCommand(options: ABTestOptions, command: Command): Promise<void> {
+export async function abTestCommand(options: ABTestOptions, _command: Command): Promise<void> {
   const spinner = ora('Initializing A/B test...').start();
 
   try {
@@ -87,10 +86,10 @@ export async function abTestCommand(options: ABTestOptions, command: Command): P
     }
 
     // Create A/B test config
-    const abConfig = config.variants ? {
+    const abConfig = (config as any).variants ? {
       id: `test-${Date.now()}`,
       name: options.name,
-      variants: config.variants,
+      variants: (config as any).variants,
       dataset: config.dataset,
       corpus: config.corpus,
       metrics: config.metrics,
@@ -105,7 +104,7 @@ export async function abTestCommand(options: ABTestOptions, command: Command): P
 
     console.log(chalk.blue(`\nTest ID: ${testId}`));
     console.log(chalk.blue(`Variants: ${abConfig.variants.length}`));
-    console.log(chalk.blue(`Strategies: ${[...new Set(abConfig.variants.map(v => v.strategy))].join(', ')}`));
+    console.log(chalk.blue(`Strategies: ${[...new Set(abConfig.variants.map((v: any) => v.strategy))].join(', ')}`));
     console.log(chalk.blue(`Queries: ${testCases.length}\n`));
 
     // Run test
@@ -113,7 +112,7 @@ export async function abTestCommand(options: ABTestOptions, command: Command): P
       testCases,
       documents,
       (variantId, completed, total) => {
-        const variant = abConfig.variants.find(v => v.id === variantId);
+        const variant = abConfig.variants.find((v: any) => v.id === variantId);
         const progress = Math.round((completed / total) * 100);
         process.stdout.write(`\r${variant?.name}: ${completed}/${total} (${progress}%)`);
       }

@@ -8,8 +8,7 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { 
   searchHuggingFaceModels, 
-  getHuggingFaceModelInfo,
-  HuggingFaceModel 
+  getHuggingFaceModelInfo
 } from '../../providers/huggingface';
 import { logger } from '../../utils/logger';
 
@@ -20,7 +19,7 @@ interface HuggingFaceOptions {
   info?: boolean;
 }
 
-export async function huggingfaceCommand(options: HuggingFaceOptions, command: Command): Promise<void> {
+export async function huggingfaceCommand(options: HuggingFaceOptions, _command: Command): Promise<void> {
   try {
     const apiKey = process.env.HUGGINGFACE_API_KEY;
 
