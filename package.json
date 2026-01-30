@@ -23,6 +23,8 @@
     "clean": "rm -rf dist .embedeval",
     "prepublishOnly": "npm run build",
     "preflight": "node scripts/preflight-check.mjs",
+    "matrix": "node scripts/permutation-matrix.js",
+    "matrix:quick": "node scripts/permutation-matrix.js ./data/queries.jsonl ./data/corpus.jsonl",
     "data:create": "node scripts/create-benchmark-data.mjs",
     "evolve": "node scripts/run-hf-evolution.mjs",
     "evolve:quick": "GENERATIONS=3 POPULATION_SIZE=6 node scripts/run-hf-evolution.mjs",

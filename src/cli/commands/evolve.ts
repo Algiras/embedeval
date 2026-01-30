@@ -14,8 +14,6 @@ import chalk from 'chalk';
 import ora from 'ora';
 import {
   EvolutionConfig,
-  StrategyGenome,
-  AgentResponse,
 } from '../../core/types';
 import { runEvolution } from '../../evolution/evolution-engine';
 import { startEvolutionScheduler } from '../../evolution/scheduler';
@@ -28,35 +26,16 @@ interface EvolveRunOptions {
   population?: string;
   generations?: string;
   mutation?: string;
+  mutationRate?: string;
+  fitnessMetric?: string;
+  seedStrategies?: string;
+  autoDeploy?: boolean;
   provider?: string;
   model?: string;
   baseline?: string;
   deployThreshold?: string;
   output?: string;
   outputFormat?: string;
-}
-
-interface ScheduleOptions {
-  queries: string;
-  corpus: string;
-  interval: string;
-  continuous?: boolean;
-  stopOnPlateau?: string;
-  output?: string;
-}
-
-interface ShowOptions {
-  output?: string;
-  limit?: string;
-}
-
-interface CompareOptions {
-  output?: string;
-}
-
-interface ExportOptions {
-  output?: string;
-  format?: string;
 }
 
 /**
@@ -103,15 +82,15 @@ export function registerEvolveCommand(program: Command): void {
 
         // Build evolution config
         const evolutionConfig: Partial<EvolutionConfig> = {
-          populationSize: parseInt(options.population),
-          generations: parseInt(options.generations),
-          mutationRate: parseFloat(options.mutationRate),
-          fitnessMetric: options.fitnessMetric,
-          autoDeployEnabled: options.autoDeploy,
-          autoDeployThreshold: parseFloat(options.deployThreshold),
+          populationSize: parseInt(options.population || '20'),
+          generations: parseInt(options.generations || '10'),
+          mutationRate: parseFloat(options.mutationRate || options.mutation || '0.2'),
+          fitnessMetric: options.fitnessMetric || 'ndcg10',
+          autoDeployEnabled: options.autoDeploy || false,
+          autoDeployThreshold: parseFloat(options.deployThreshold || '0.8'),
         };
 
-        const seedStrategies = options.seedStrategies.split(',').map((s: string) => s.trim());
+        const seedStrategies = (options.seedStrategies || 'baseline,hybrid-bm25').split(',').map((s: string) => s.trim());
 
         spinner.text = `Evolving with population=${evolutionConfig.populationSize}, generations=${evolutionConfig.generations}`;
 
@@ -130,7 +109,7 @@ export function registerEvolveCommand(program: Command): void {
         spinner.succeed('Evolution completed!');
 
         // Save results
-        const outputPath = path.resolve(options.output);
+        const outputPath = path.resolve(options.output || '.embedeval/evolution');
         await fs.ensureDir(outputPath);
         
         await fs.writeJson(
