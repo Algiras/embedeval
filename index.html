@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="EmbedEval v2 - Hamel Husain-style evaluation CLI. Binary evals, trace-centric, error-analysis-first.">
+    <meta name="keywords" content="LLM evaluation, AI evaluation, Hamel Husain, binary evals, trace analysis, error analysis">
+    <title>EmbedEval v2 - Binary Evals, Trace-Centric, Error-Analysis-First</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-card: #1a1a1a;
+            --bg-elevated: #242424;
+            
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            
+            --accent-primary: #22c55e;
+            --accent-secondary: #3b82f6;
+            --accent-warning: #f59e0b;
+            --accent-error: #ef4444;
+            
+            --border-color: #27272a;
+            --border-light: #3f3f46;
+            
+            --font-body: 'Inter', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            --radius: 8px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 100px;
+            font-size: 14px;
+            color: var(--accent-primary);
+            margin-bottom: 24px;
+        }
+
+        .hero-badge::before {
+            content: "●";
+            color: var(--accent-primary);
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 24px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 48px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent-primary);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background: #16a34a;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-elevated);
+            border-color: var(--text-muted);
+        }
+
+        .install-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 16px 24px;
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .install-box code {
+            font-family: var(--font-mono);
+            font-size: 16px;
+            color: var(--accent-primary);
+            flex: 1;
+        }
+
+        .copy-btn {
+            padding: 6px 12px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--border-light);
+            color: var(--text-primary);
+        }
+
+        /* Philosophy Section */
+        .philosophy {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-header h2 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .principle-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .principle-card:hover {
+            border-color: var(--border-light);
+            transform: translateY(-2px);
+        }
+
+        .principle-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .principle-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .principle-card p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        /* Quick Start Section */
+        .quickstart {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .step {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-primary);
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 24px;
+        }
+
+        .step-content h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .step-content p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .code-block {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 16px;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            overflow-x: auto;
+        }
+
+        .code-block .comment {
+            color: var(--text-muted);
+        }
+
+        .code-block .command {
+            color: var(--accent-primary);
+        }
+
+        /* CLI Demo Section */
+        .cli-demo {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .terminal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            overflow: hidden;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .terminal-header {
+            background: var(--bg-elevated);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: #ef4444; }
+        .terminal-dot.yellow { background: #f59e0b; }
+        .terminal-dot.green { background: #22c55e; }
+
+        .terminal-title {
+            margin-left: 8px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .terminal-body {
+            padding: 24px;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .terminal-line {
+            margin-bottom: 4px;
+        }
+
+        .terminal-prompt {
+            color: var(--accent-primary);
+        }
+
+        .terminal-output {
+            color: var(--text-secondary);
+        }
+
+        .terminal-success {
+            color: var(--accent-primary);
+        }
+
+        .terminal-highlight {
+            color: var(--accent-secondary);
+        }
+
+        /* Features Grid */
+        .features {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 16px;
+            padding: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .feature-text h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .feature-text p {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        /* Vercel Section */
+        .vercel-section {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+        }
+
+        .vercel-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 32px;
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .vercel-logo {
+            width: 80px;
+            height: 80px;
+            background: #000;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            flex-shrink: 0;
+        }
+
+        .vercel-content {
+            flex: 1;
+        }
+
+        .vercel-content h3 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .vercel-content p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        /* CI/CD Section */
+        .cicd-section {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cicd-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .cicd-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 24px;
+            text-align: center;
+        }
+
+        .cicd-card h4 {
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .cicd-card p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        /* LLM Section */
+        .llm-section {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .llm-intro {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 48px;
+        }
+
+        .llm-intro p {
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+
+        .mcp-example {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 32px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .mcp-example h4 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: var(--accent-secondary);
+        }
+
+        /* Footer */
+        footer {
+            padding: 48px 0;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .footer-copy {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero-subtitle {
+                font-size: 18px;
+            }
+
+            .principles-grid,
+            .features-grid,
+            .cicd-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .step {
+                flex-direction: column;
+            }
+
+            .vercel-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .principle-card,
+        .feature-item,
+        .step-content {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="container">
+            <div class="hero-badge">v2.0 - Hamel Husain Methodology</div>
+            <h1>EmbedEval</h1>
+            <p class="hero-subtitle">Binary evals. Trace-centric. Error-analysis-first. The evaluation CLI that actually works.</p>
+            
+            <div class="hero-cta">
+                <a href="#quickstart" class="btn btn-primary">Get Started</a>
+                <a href="https://github.com/Algiras/embedeval" class="btn btn-secondary" target="_blank">GitHub</a>
+            </div>
+
+            <div class="install-box">
+                <code>npm install -g embedeval</code>
+                <button class="copy-btn" onclick="navigator.clipboard.writeText('npm install -g embedeval')">Copy</button>
+            </div>
+        </div>
+    </div>
+
+    <section class="philosophy">
+        <div class="container">
+            <div class="section-header">
+                <h2>Built on Hamel Husain's Principles</h2>
+                <p>After studying how the best AI teams evaluate their systems, we rebuilt EmbedEval from scratch</p>
+            </div>
+
+            <div class="principles-grid">
+                <div class="principle-card">
+                    <div class="principle-icon">✓</div>
+                    <h3>Binary Only</h3>
+                    <p>Pass or fail. No 1-5 scales, no debating whether it's a 3 or 4. Clear, fast decisions.</p>
+                </div>
+                
+                <div class="principle-card">
+                    <div class="principle-icon">🔍</div>
+                    <h3>Error Analysis First</h3>
+                    <p>60-80% of your time should be manually looking at traces, not building automated evals.</p>
+                </div>
+                
+                <div class="principle-card">
+                    <div class="principle-icon">📊</div>
+                    <h3>Trace-Centric</h3>
+                    <p>Complete session records with query, response, context, and metadata. Everything you need to understand failures.</p>
+                </div>
+                
+                <div class="principle-card">
+                    <div class="principle-icon">⚡</div>
+                    <h3>Cheap Evals First</h3>
+                    <p>Start with assertions and regex. Use LLM-as-judge sparingly for complex subjective criteria.</p>
+                </div>
+                
+                <div class="principle-card">
+                    <div class="principle-icon">👤</div>
+                    <h3>Benevolent Dictator</h3>
+                    <p>One domain expert owns quality decisions. No committees, no voting, no disagreements on scoring.</p>
+                </div>
+                
+                <div class="principle-card">
+                    <div class="principle-icon">📁</div>
+                    <h3>JSONL Storage</h3>
+                    <p>Simple, grep-friendly, version-control friendly. No databases, no queues, no infrastructure.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="quickstart" id="quickstart">
+        <div class="container">
+            <div class="section-header">
+                <h2>3 Commands to Start</h2>
+                <p>From zero to error analysis in under 5 minutes</p>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Collect Traces</h3>
+                        <p>Import your LLM interaction logs or generate synthetic data</p>
+                        <div class="code-block">
+                            <span class="command">embedeval</span> collect ./production-logs.jsonl --output traces.jsonl
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Annotate Manually</h3>
+                        <p>Spend 30 minutes reviewing 50-100 traces. This is where the magic happens.</p>
+                        <div class="code-block">
+                            <span class="command">embedeval</span> annotate traces.jsonl --user <span class="highlight">"pm@company.com"</span><br><br>
+                            <span class="comment"># Interactive mode:</span><br>
+                            <span class="comment"># p = pass, f = fail, c = category, n = notes, s = save</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Build Taxonomy</h3>
+                        <p>Automatically categorize failures to understand what breaks</p>
+                        <div class="code-block">
+                            <span class="command">embedeval</span> taxonomy build --annotations annotations.jsonl<br><br>
+                            <span class="terminal-success">✓ Taxonomy built!</span><br>
+                            <span class="terminal-highlight">Hallucination: 12 traces (36%)</span><br>
+                            <span class="terminal-highlight">Incomplete: 8 traces (24%)</span><br>
+                            <span class="terminal-highlight">Wrong Format: 5 traces (15%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cli-demo">
+        <div class="container">
+            <div class="section-header">
+                <h2>Complete Workflow</h2>
+                <p>From raw logs to evaluation report</p>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal-header">
+                    <div class="terminal-dot red"></div>
+                    <div class="terminal-dot yellow"></div>
+                    <div class="terminal-dot green"></div>
+                    <span class="terminal-title">terminal</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="command">embedeval</span> collect ./logs.jsonl --limit 100</div>
+                    <div class="terminal-line terminal-output">✅ Collected 100 traces → traces.jsonl</div>
+                    <div class="terminal-line">&nbsp;</div>
+                    <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="command">embedeval</span> annotate traces.jsonl --user "pm@company.com"</div>
+                    <div class="terminal-line terminal-output">Trace 1/100 | Not annotated</div>
+                    <div class="terminal-line terminal-output">Query: What's your refund policy?</div>
+                    <div class="terminal-line terminal-output">Response: We offer full refunds within 30 days...</div>
+                    <div class="terminal-line terminal-output">&nbsp;</div>
+                    <div class="terminal-line terminal-output">Commands: [p]ass [f]ail [c]ategory [n]otes [j]next [s]ave</div>
+                    <div class="terminal-line terminal-output">&nbsp;</div>
+                    <div class="terminal-line terminal-output">Annotating... <span class="terminal-highlight">Progress: 73/100</span></div>
+                    <div class="terminal-line">&nbsp;</div>
+                    <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="command">embedeval</span> taxonomy show</div>
+                    <div class="terminal-line terminal-output">Pass Rate: 73.0% (73 passed, 27 failed)</div>
+                    <div class="terminal-line terminal-output">&nbsp;</div>
+                    <div class="terminal-line terminal-output">Top Failure Categories:</div>
+                    <div class="terminal-line terminal-output">1. Hallucination (44.4%) - LLM invented information</div>
+                    <div class="terminal-line terminal-output">2. Incomplete (29.6%) - Missing required info</div>
+                    <div class="terminal-line terminal-output">3. Wrong Format (18.5%) - Format doesn't match spec</div>
+                    <div class="terminal-line">&nbsp;</div>
+                    <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="command">embedeval</span> eval add</div>
+                    <div class="terminal-line terminal-output">? Eval name: no_hallucination</div>
+                    <div class="terminal-line terminal-output">? Type: llm-judge</div>
+                    <div class="terminal-line terminal-output">? Model: gemini-1.5-flash</div>
+                    <div class="terminal-line terminal-output">? Binary output: yes</div>
+                    <div class="terminal-line terminal-output">✓ Eval added to evals.yaml</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Everything You Need</h2>
+                <p>No complexity. No infrastructure. Just evaluation that works.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">🔍</div>
+                    <div class="feature-text">
+                        <h4>Interactive Annotation</h4>
+                        <p>Terminal UI for fast binary annotation. 50 traces in 30 minutes.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-text">
+                        <h4>Failure Taxonomy</h4>
+                        <p>Auto-categorize failures. Understand what breaks and why.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-text">
+                        <h4>Cheap + Expensive Evals</h4>
+                        <p>Assertions, regex, code checks, and LLM-as-judge. Priority system runs cheap ones first.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">🎲</div>
+                    <div class="feature-text">
+                        <h4>Synthetic Data Generation</h4>
+                        <p>Generate test data using dimensions. Test edge cases systematically.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">📓</div>
+                    <div class="feature-text">
+                        <h4>Jupyter Export</h4>
+                        <p>Export to notebooks for deep statistical analysis and visualization.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">📄</div>
+                    <div class="feature-text">
+                        <h4>HTML Reports</h4>
+                        <p>Generate shareable reports with metrics, charts, and trace browsers.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="vercel-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Deploy Anywhere</h2>
+                <p>One-click deployment to Vercel</p>
+            </div>
+
+            <div class="vercel-card">
+                <div class="vercel-logo">▲</div>
+                <div class="vercel-content">
+                    <h3>Deploy to Vercel</h3>
+                    <p>Host your evaluation dashboard with automatic deployments from GitHub. Share results with your team via URL.</p>
+                    <a href="https://vercel.com/new/clone?repository-url=https://github.com/Algiras/embedeval" class="btn btn-primary" target="_blank">
+                        Deploy to Vercel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cicd-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>CI/CD Integration</h2>
+                <p>Automate evaluation in your pipeline</p>
+            </div>
+
+            <div class="cicd-grid">
+                <div class="cicd-card">
+                    <h4>GitHub Actions</h4>
+                    <p>Run evals on every PR. Block merges on quality regression.</p>
+                    <div class="code-block" style="font-size: 12px; margin-top: 12px;">
+                        uses: embedeval/action@v2
+                    </div>
+                </div>
+
+                <div class="cicd-card">
+                    <h4>GitLab CI</h4>
+                    <p>Integrate with GitLab pipelines. Generate reports as artifacts.</p>
+                    <div class="code-block" style="font-size: 12px; margin-top: 12px;">
+                        image: embedeval/cli:latest
+                    </div>
+                </div>
+
+                <div class="cicd-card">
+                    <h4>Local Testing</h4>
+                    <p>Run locally with Docker. Same results, zero setup.</p>
+                    <div class="code-block" style="font-size: 12px; margin-top: 12px;">
+                        docker run embedeval/cli
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="llm-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Built for AI Agents</h2>
+            </div>
+
+            <div class="llm-intro">
+                <p>EmbedEval is designed to be used by AI agents. Expose it as an MCP tool or use the CLI programmatically.</p>
+            </div>
+
+            <div class="mcp-example">
+                <h4>MCP Server Configuration</h4>
+                <div class="code-block">
+{
+  "mcpServers": {
+    "embedeval": {
+      "command": "npx",
+      "args": ["embedeval", "mcp-server"],
+      "env": {
+        "GEMINI_API_KEY": "your-key"
+      }
+    }
+  }
+}
+                </div>
+                <p style="margin-top: 16px; color: var(--text-secondary);">
+                    Agents can collect traces, annotate, build taxonomies, and run evaluations autonomously.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://github.com/Algiras/embedeval" target="_blank">GitHub</a>
+                <a href="https://www.npmjs.com/package/embedeval" target="_blank">NPM</a>
+                <a href="https://hamel.dev/blog/posts/evals-faq/" target="_blank">Hamel's Eval FAQ</a>
+                <a href="./docs" target="_blank">Documentation</a>
+            </div>
+            <p class="footer-copy">
+                Built with ❤️ following <a href="https://hamel.dev" target="_blank" style="color: var(--accent-primary);">Hamel Husain's</a> principles
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Copy button feedback
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const original = this.textContent;
+                this.textContent = 'Copied!';
+                this.style.background = 'var(--accent-primary)';
+                this.style.color = '#000';
+                setTimeout(() => {
+                    this.textContent = original;
+                    this.style.background = '';
+                    this.style.color = '';
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
