@@ -246,12 +246,12 @@ function generateHTML(data: {
           ${genes.rerankingMethod !== 'none' ? `<span class="gene">🎯 ${genes.rerankingMethod}</span>` : ''}
           <span class="gene">k${genes.retrievalK}</span>
         </div>
-        ${fitnessDetails.correctness ? `
+        ${fitnessDetails.correctness !== undefined ? `
         <div style="font-size: 0.85rem; color: var(--text-muted);">
-          Correctness: ${(fitnessDetails.correctness * 100).toFixed(1)}% |
-          Speed: ${(fitnessDetails.speed * 100).toFixed(1)}% |
-          Cost: ${(fitnessDetails.cost * 100).toFixed(1)}%
-          ${fitnessDetails.llmJudgeScore ? `| LLM Judge: ${(fitnessDetails.llmJudgeScore * 100).toFixed(1)}%` : ''}
+          Correctness: ${((fitnessDetails.correctness || 0) * 100).toFixed(1)}% |
+          Speed: ${((fitnessDetails.speed || 0) * 100).toFixed(1)}% |
+          Cost: ${((fitnessDetails.cost || 0) * 100).toFixed(1)}%
+          ${fitnessDetails.llmJudgeScore !== undefined ? `| LLM Judge: ${(fitnessDetails.llmJudgeScore * 100).toFixed(1)}%` : ''}
         </div>` : ''}
       </div>
 

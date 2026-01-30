@@ -424,8 +424,8 @@ export function genomeToStrategy(genome: StrategyGenome): {
     });
   }
 
-  // Add BM25 if hybrid
-  if (genome.genes.retrievalMethod === 'bm25' || genome.genes.retrievalMethod === 'hybrid') {
+  // Add BM25 if hybrid or bm25
+  if (genome.genes.retrievalMethod === 'bm25' || genome.genes.retrievalMethod === 'hybrid_rrf' || genome.genes.retrievalMethod === 'hybrid_linear') {
     stages.push({
       type: 'bm25',
       name: 'bm25',

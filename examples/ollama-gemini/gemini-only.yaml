@@ -1,0 +1,55 @@
+# Gemini-Only Evaluation
+# Fast, high-quality cloud evaluation using Google Gemini API
+# Requires: GEMINI_API_KEY environment variable
+
+test:
+  name: "Gemini Cloud Evaluation"
+  description: "Fast, high-quality evaluation using Google Gemini API"
+  tags: ["gemini", "google", "cloud", "fast"]
+
+variants:
+  - id: gemini-baseline
+    name: "Gemini Baseline"
+    provider:
+      type: google
+      model: text-embedding-004
+    strategy: baseline
+    description: "Basic embedding + cosine similarity"
+
+  - id: gemini-chunks
+    name: "Gemini + Semantic Chunks"
+    provider:
+      type: google
+      model: text-embedding-004
+    strategy: semantic-chunks
+    description: "Smart chunking for long documents"
+
+  - id: gemini-hybrid
+    name: "Gemini + Hybrid BM25"
+    provider:
+      type: google
+      model: text-embedding-004
+    strategy: hybrid-bm25
+    description: "Embeddings + keyword matching"
+
+dataset: ./examples/data/sample-queries.jsonl
+corpus: ./examples/data/sample-corpus.jsonl
+
+metrics:
+  - ndcg@10
+  - recall@10
+  - mrr@10
+
+output:
+  json: ./results/gemini-only/metrics.json
+  dashboard: ./results/gemini-only/dashboard.html
+  csv: ./results/gemini-only/results.csv
+
+# Cost estimate:
+# - 100 queries × $0.000025 = $0.0025 total
+# - Production: $7.50/month (10k queries/day)
+
+# Expected performance:
+# - NDCG@10: 0.82-0.88 (excellent)
+# - Latency: 100-200ms per query (fast)
+# - Quality: Better than Ollama by 10-15%

@@ -365,7 +365,8 @@ export class SyntheticQueryGenerator {
           
           // Simple heuristic: check if doc contains keywords from hard negative descriptions
           for (const neg of parsed) {
-            if (neg.description && doc.content.toLowerCase().includes(neg.description.toLowerCase().slice(0, 50))) {
+            const negWithDesc = neg as { description?: string };
+            if (negWithDesc.description && doc.content.toLowerCase().includes(negWithDesc.description.toLowerCase().slice(0, 50))) {
               negativeIds.push(doc.id);
               break;
             }

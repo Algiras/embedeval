@@ -1,0 +1,46 @@
+# Ollama-Only Evaluation
+# Free, private, local embedding evaluation
+# Requires: ollama serve + ollama pull nomic-embed-text
+
+test:
+  name: "Ollama Local Evaluation"
+  description: "Free, private embedding evaluation using local Ollama"
+  tags: ["ollama", "local", "free", "private"]
+
+variants:
+  - id: ollama-baseline
+    name: "Ollama Baseline"
+    provider:
+      type: ollama
+      model: nomic-embed-text
+      baseUrl: http://localhost:11434
+    strategy: baseline
+    description: "Basic embedding + cosine similarity"
+
+  - id: ollama-chunks
+    name: "Ollama + Semantic Chunks"
+    provider:
+      type: ollama
+      model: nomic-embed-text
+      baseUrl: http://localhost:11434
+    strategy: semantic-chunks
+    description: "Smart chunking for long documents"
+
+dataset: ./examples/data/sample-queries.jsonl
+corpus: ./examples/data/sample-corpus.jsonl
+
+metrics:
+  - ndcg@10
+  - recall@10
+  - mrr@10
+
+output:
+  json: ./results/ollama-only/metrics.json
+  dashboard: ./results/ollama-only/dashboard.html
+  csv: ./results/ollama-only/results.csv
+
+# Notes:
+# - Requires Ollama running locally
+# - 100% free and private
+# - Slower than cloud (1-3s per query)
+# - Good quality (~0.70-0.75 NDCG)
