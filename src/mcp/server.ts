@@ -382,7 +382,7 @@ class MCPServer {
             },
             serverInfo: {
               name: 'embedeval',
-              version: '2.0.4',
+              version: '2.0.5',
             },
           });
           break;
