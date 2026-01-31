@@ -51,16 +51,20 @@ jobs:
     - name: 🔍 Type check
       run: |
         echo -e "${CYAN}${BOLD}→ Running TypeScript type check...${NC}"
-        npm run typecheck 2>&1 | head -30 || true
+        npm run typecheck
         echo -e "${GREEN}✅ Type check complete${NC}"
-      continue-on-error: true
     
     - name: 🧹 Lint
       run: |
         echo -e "${CYAN}${BOLD}→ Running ESLint...${NC}"
-        npm run lint 2>&1 | head -30 || true
+        npm run lint
         echo -e "${GREEN}✅ Lint complete${NC}"
-      continue-on-error: true
+    
+    - name: 🧪 Run Unit Tests
+      run: |
+        echo -e "${CYAN}${BOLD}→ Running unit tests...${NC}"
+        npm test
+        echo -e "${GREEN}✅ Tests complete${NC}"
     
     - name: 🏗️ Build
       run: |
