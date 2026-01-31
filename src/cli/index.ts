@@ -39,6 +39,9 @@ import { listProviders, benchmarkProviders } from '../utils/llm-providers';
 import { assessCommand, compareCommand, recommendCommand, pricingCommand } from './commands/assess';
 import { startMCPServer } from '../mcp/server';
 import { registerDSLCommands } from './commands/dsl';
+import { watchCommand } from './commands/watch';
+import { benchmarkCommand } from './commands/benchmark';
+import { diffCommand } from './commands/diff';
 
 const program = new Command();
 
@@ -274,6 +277,36 @@ program
       .description('Show model pricing table')
       .action(() => pricingCommand())
   );
+
+// Watch command - Real-time evaluation
+program
+  .command('watch <traces>')
+  .description('Watch traces file and run evals on new traces in real-time')
+  .option('--dsl <file>', 'DSL eval file')
+  .option('--evals <file>', 'JSON eval config file')
+  .option('-o, --output <file>', 'Output results to file')
+  .option('-i, --interval <ms>', 'Check interval in milliseconds', '2000')
+  .option('--clear', 'Clear terminal on each update')
+  .action(watchCommand);
+
+// Benchmark command - Compare eval configs
+program
+  .command('benchmark <traces>')
+  .description('Benchmark multiple eval configs or models side-by-side')
+  .option('--dsl <files...>', 'DSL eval files to compare')
+  .option('--evals <files...>', 'JSON eval config files to compare')
+  .option('-l, --limit <n>', 'Limit number of traces')
+  .option('-o, --output <file>', 'Output results to JSON file')
+  .action(benchmarkCommand);
+
+// Diff command - Compare results for drift detection
+program
+  .command('diff <before> <after>')
+  .description('Compare two eval result files to detect drift/regression')
+  .option('-t, --threshold <percent>', 'Change threshold percentage', '5')
+  .option('-f, --format <format>', 'Output format (text, json, github)', 'text')
+  .option('-o, --output <file>', 'Output file')
+  .action(diffCommand);
 
 // Error handling
 program.configureOutput({

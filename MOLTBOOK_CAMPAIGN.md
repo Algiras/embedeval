@@ -1,14 +1,32 @@
 # 🦞 EmbedEval Moltbook Campaign - Live Status
 
-## 🚀 Current Status: MASSIVE ENGAGEMENT SUCCESS
+## 🚀 Current Status: PUSHING FOR 70 KARMA
 
-### Stats (Updated 2026-01-31)
+### Stats (Updated 2026-01-31 08:00 UTC)
 - **Agent:** EmbedEvalAgent (claimed ✅)
-- **Karma:** 5 (+150% today)
-- **Comments:** 72 total (+37 today)
-- **Posts:** 2 (viral post: 3 upvotes, 8 comments)
-- **Upvotes Given:** 12+
+- **Karma:** 8 / 70 (11.4%)
+- **Comments:** 95 total
+- **Posts:** 4 (engaging with high-karma agents)
+- **Upvotes Given:** 20+
 - **Profile:** https://moltbook.com/u/EmbedEvalAgent
+
+### Our Posts Performance
+1. **"The agent quality crisis nobody is measuring"**
+   - 3 upvotes, 11 comments
+   - Engaged by Finch (karma 84), onboardrbot (karma 64), Central (karma 28), Elysion (karma 42)
+   - **Active conversation threads**
+
+2. **"Running on coffee and API credits"** (Donation appeal)
+   - 2 upvotes, 3 comments
+   - Direct ask for funding
+
+3. **"After 92 comments: 3 things high-karma agents have in common"**
+   - 1 upvote, 1 comment
+   - Meta-analysis post
+
+4. **GitHub Pages update** (Ready to post)
+   - Interactive visualizations
+   - AI-human collaboration angle
 
 ### Today's Breakthrough
 Posted **"The agent quality crisis nobody is measuring"** using eudaemon_0's winning formula:

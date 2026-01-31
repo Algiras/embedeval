@@ -45,6 +45,9 @@ embedeval taxonomy build --annotations annotations.jsonl
 | **DSL Run** | `embedeval dsl run evals.eval traces.jsonl` | Compile & run in one step |
 | **DSL UI** | `embedeval dsl ui evals.eval` | Generate HTML annotation UI |
 | **DSL Serve** | `embedeval dsl serve evals.eval -t traces.jsonl` | Serve annotation UI locally |
+| **Watch** | `embedeval watch traces.jsonl --dsl evals.eval` | Real-time eval on new traces |
+| **Benchmark** | `embedeval benchmark traces.jsonl --dsl a.eval b.eval` | Compare eval configs |
+| **Diff** | `embedeval diff before.json after.json` | Detect drift/regression |
 | **Eval Add** | `embedeval eval add` | Add new evaluator |
 | **Eval Run** | `embedeval eval run <traces> -c <config>` | Run evals |
 | **Generate** | `embedeval generate create -d <dims> -n <count>` | Synthetic data |
@@ -478,7 +481,79 @@ async function respondToUser(query: string): Promise<string> {
 
 ---
 
-## 🔮 Multi-Provider LLM Judge System
+## � Watch Mode (Real-Time Eval)
+
+Run evals continuously as new traces arrive. Perfect for development.
+
+```bash
+# Watch traces file and run evals from DSL
+embedeval watch traces.jsonl --dsl support.eval
+
+# With JSON config
+embedeval watch traces.jsonl --evals config.json -o results.jsonl
+
+# Options:
+#   --dsl <file>       DSL eval file
+#   --evals <file>     JSON eval config
+#   -o, --output       Output results to file
+#   -i, --interval     Check interval (default: 2000ms)
+#   --clear            Clear terminal on each update
+```
+
+**Output shows:**
+- Live pass/fail stats
+- Recent results with failed eval names
+- Keyboard interrupt to stop (Ctrl+C)
+
+---
+
+## ⚖️ Benchmark Command (Compare Configs)
+
+Compare different DSL files or models side-by-side.
+
+```bash
+# Compare two DSL configs
+embedeval benchmark traces.jsonl --dsl strict.eval lenient.eval
+
+# Compare with limit
+embedeval benchmark traces.jsonl --dsl a.eval b.eval -l 50 -o results.json
+```
+
+**Output includes:**
+- Comparison table with Pass Rate, Latency, Cost
+- Score (0-100) combining quality, speed, cost
+- Winner recommendation
+- Best-in-category picks
+
+---
+
+## 📊 Diff Command (Drift Detection)
+
+Detect regressions between eval runs. Great for CI/CD.
+
+```bash
+# Basic diff
+embedeval diff before-results.json after-results.json
+
+# With threshold and GitHub format
+embedeval diff before.json after.json -t 10 -f github
+
+# Options:
+#   -t, --threshold    Change threshold % (default: 5)
+#   -f, --format       Output: text, json, github
+#   -o, --output       Save to file
+```
+
+**Output shows:**
+- Pass rate change (▲/▼)
+- Per-eval breakdown
+- Regressions (traces that went PASS→FAIL)
+- Improvements (traces that went FAIL→PASS)
+- Exit code 1 on significant regression (for CI)
+
+---
+
+## �🔮 Multi-Provider LLM Judge System
 
 EmbedEval supports **multiple LLM providers** for evaluation. Use the best provider for your needs: speed, cost, quality, or privacy.
 

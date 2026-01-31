@@ -1,0 +1,7 @@
+{
+  "results": [
+    {"traceId": "trace-001", "passed": true, "results": [{"evalId": "has-content", "passed": true}, {"evalId": "coherent", "passed": true}]},
+    {"traceId": "trace-002", "passed": true, "results": [{"evalId": "has-content", "passed": true}, {"evalId": "coherent", "passed": true}]},
+    {"traceId": "trace-003", "passed": false, "results": [{"evalId": "has-content", "passed": true}, {"evalId": "coherent", "passed": false}]}
+  ]
+}

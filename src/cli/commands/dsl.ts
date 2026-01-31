@@ -6,7 +6,6 @@
 
 import { Command } from 'commander';
 import * as fs from 'fs';
-import * as path from 'path';
 import { parseEvalSpec, compileSpec, compile, validate } from '../../dsl';
 import { listTemplates, getTemplate, generateFromTemplate } from '../../dsl/templates';
 import { logger } from '../../utils/logger';
