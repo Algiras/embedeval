@@ -5,6 +5,55 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.6] - 2026-01-31
+
+### Added
+
+#### Testing
+- **346+ Tests**: Comprehensive test suite for core modules
+  - 43 tests for eval engine (assertion, regex, code, LLM-judge, registry)
+  - 66 tests for DSL parser (metadata, eval types, priority, patterns)
+  - 40 tests for SDK evaluate module
+  - 35 tests for core storage (TraceStore, AnnotationStore, TaxonomyStore)
+  - 29 tests for CLI collect command
+  - 35 tests for CLI annotate command (temporarily disabled due to stdin mocking)
+  - 20 tests for CLI taxonomy command
+  - 33 tests for CLI eval commands
+  - 26 tests for CLI DSL commands
+  - 63 tests for LLM providers integration
+  - 6 existing auth tests (token refresh)
+
+#### Documentation
+- **GETTING_STARTED.md**: 10-minute tutorial for first-time users
+  - Installation verification
+  - First trace collection, annotation, taxonomy build
+  - Run first eval
+  - Export and next steps
+
+- **TROUBLESHOOTING.md**: Comprehensive troubleshooting guide
+  - Installation issues, JSONL format errors
+  - Authentication problems, evaluation failures
+  - Performance issues, CLI errors, DSL errors
+  - Debug mode and getting help
+
+#### CI/CD
+- **Fixed CI workflows**: Now properly fail on errors
+  - Removed `continue-on-error: true` from typecheck and lint steps
+  - Removed error masking (`|| true`) from npm scripts
+  - Added `npm test` step to CI workflows
+  - Increased Jest timeout to 10000ms
+  - Fixed Jest config JSON formatting
+
+#### Authentication & Setup
+- **Automatic Token Refresh**: OAuth tokens are now automatically refreshed before expiration
+  - `refreshOAuthToken()` function for manual refresh
+  - `getCredential()` now checks expiration and refreshes automatically with 5-minute buffer
+  - Preserves existing refresh tokens if server doesn't provide new ones
+  - Graceful fallback to expired credentials if refresh fails
+  - **`embedeval doctor`**: Environment diagnostics command
+  - Checks Node.js version, installation integrity, API keys, sample data
+  - `--json` flag for programmatic output
+
 ## [Unreleased]
 
 ### Added
