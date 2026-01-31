@@ -42,6 +42,7 @@ import { registerDSLCommands } from './commands/dsl';
 import { watchCommand } from './commands/watch';
 import { benchmarkCommand } from './commands/benchmark';
 import { diffCommand } from './commands/diff';
+import { authCommand } from './commands/auth';
 
 const program = new Command();
 
@@ -307,6 +308,9 @@ program
   .option('-f, --format <format>', 'Output format (text, json, github)', 'text')
   .option('-o, --output <file>', 'Output file')
   .action(diffCommand);
+
+// Auth command - Manage provider authentication
+program.addCommand(authCommand);
 
 // Error handling
 program.configureOutput({
