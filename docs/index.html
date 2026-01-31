@@ -432,6 +432,122 @@
             font-size: 15px;
         }
 
+        /* DSL Demo Section */
+        .dsl-demo {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+        }
+
+        .dsl-showcase {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 32px;
+            margin-bottom: 32px;
+            align-items: start;
+        }
+
+        .dsl-code {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 24px;
+        }
+
+        .dsl-code h4 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        .dsl-code pre {
+            background: var(--bg-primary);
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+
+        .terminal-command {
+            display: inline-block;
+            background: var(--bg-primary);
+            padding: 8px 16px;
+            border-radius: 6px;
+            color: var(--accent-primary);
+            font-family: var(--font-mono);
+            font-size: 14px;
+        }
+
+        .dsl-screenshot {
+            position: relative;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .dsl-screenshot img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .dsl-screenshot a {
+            display: block;
+            position: relative;
+        }
+
+        .screenshot-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            padding: 40px 20px 20px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .dsl-screenshot a:hover .screenshot-overlay {
+            opacity: 1;
+        }
+
+        .screenshot-overlay span {
+            background: var(--accent-primary);
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .dsl-features {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+
+        .dsl-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        .dsl-icon {
+            font-size: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .dsl-showcase {
+                grid-template-columns: 1fr;
+            }
+            .dsl-features {
+                gap: 16px;
+            }
+        }
+
         /* Vercel Section */
         .vercel-section {
             padding: 80px 0;
@@ -821,6 +937,65 @@
                         <h4>HTML Reports</h4>
                         <p>Generate shareable reports with metrics, charts, and trace browsers.</p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DSL & Annotation UI Demo -->
+    <section class="dsl-demo">
+        <div class="container">
+            <div class="section-header">
+                <h2>🎨 DSL-Generated Annotation UI</h2>
+                <p>Define evals in natural language, auto-generate annotation interfaces</p>
+            </div>
+
+            <div class="dsl-showcase">
+                <div class="dsl-code">
+                    <h4>Define evals in DSL</h4>
+                    <pre><code class="language-bash"># support.eval
+name: Customer Support Evals
+domain: support
+
+# Cheap evals (run first)
+must "Has Content": response length > 50
+must "Addresses Query": must contain query keyword
+should "Cites Sources": cites sources
+
+# Expensive evals (LLM judge)
+[expensive] must "Helpful": is helpful
+[expensive] must "No Hallucination": no hallucination</code></pre>
+                    <div style="margin-top: 16px;">
+                        <code class="terminal-command">$ embedeval dsl ui support.eval</code>
+                    </div>
+                </div>
+
+                <div class="dsl-screenshot">
+                    <a href="demo-annotation-ui.html" target="_blank" title="Try the live demo">
+                        <img src="screenshot-annotation-ui.png" alt="Generated Annotation UI" />
+                        <div class="screenshot-overlay">
+                            <span>🔗 Try Live Demo</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="dsl-features">
+                <div class="dsl-feature">
+                    <span class="dsl-icon">📝</span>
+                    <span>Natural language patterns</span>
+                </div>
+                <div class="dsl-feature">
+                    <span class="dsl-icon">⌨️</span>
+                    <span>Keyboard shortcuts (P/F/J/K)</span>
+                </div>
+                <div class="dsl-feature">
+                    <span class="dsl-icon">💾</span>
+                    <span>Auto-save to localStorage</span>
+                </div>
+                <div class="dsl-feature">
+                    <span class="dsl-icon">📤</span>
+                    <span>Export to JSONL</span>
                 </div>
             </div>
         </div>
