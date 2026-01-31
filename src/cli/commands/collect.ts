@@ -99,7 +99,7 @@ export async function collectCommand(source: string, options: CollectOptions): P
  */
 function transformToTrace(rawData: any): Trace {
   // If already in Trace format, use as-is
-  if (rawData.id && rawData.query && rawData.response && rawData.metadata) {
+  if (rawData.id !== undefined && 'query' in rawData && 'response' in rawData && 'metadata' in rawData) {
     return {
       ...rawData,
       timestamp: rawData.timestamp || new Date().toISOString(),
