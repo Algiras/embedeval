@@ -11,6 +11,7 @@ import { SDKEvalConfig } from './types';
 import { EvalRegistry } from '../evals/engine';
 import { createJudge } from '../utils/llm-providers';
 import { getSuggestions } from './suggestions';
+import { logger } from '../utils/logger';
 
 // Built-in eval presets (SDK-friendly config that gets converted)
 const BUILTIN_EVALS: Record<string, SDKEvalConfig> = {
@@ -197,38 +198,49 @@ export async function evaluate(
     stopOnFail: options.stopOnFail,
   });
 
-  // Collect failure categories
-  const failureCategories: string[] = [];
-  for (const result of results) {
+  // Filter out null/undefined results
+  const validResults = results.filter(r => r != null && typeof r === 'object');
+
+  // Collect failure categories (deduplicated)
+  const failureCategoriesSet = new Set<string>();
+  for (const result of validResults) {
     if (!result.passed && result.failureCategory) {
-      failureCategories.push(result.failureCategory);
+      failureCategoriesSet.add(result.failureCategory);
     }
   }
+  const failureCategories = Array.from(failureCategoriesSet);
 
   // Calculate summary
-  const passed = results.filter(r => r.passed).length;
-  const failed = results.length - passed;
+  const passed = validResults.filter(r => r.passed).length;
+  const failed = validResults.length - passed;
   const latency = Date.now() - startTime;
 
   // Get improvement suggestions if there are failures
-  const suggestions = failed > 0
-    ? await getSuggestions(trace, results)
-    : undefined;
+  let suggestions: string[] | undefined;
+  if (failed > 0) {
+    try {
+      const suggestionResults = await getSuggestions(trace, validResults);
+      suggestions = suggestionResults.map(s => s.action);
+    } catch (error) {
+      // Handle suggestions error gracefully - continue without suggestions
+      logger.debug(`Failed to get suggestions: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
 
   return {
     passed: failed === 0,
-    passRate: results.length > 0 ? (passed / results.length) * 100 : 100,
+    passRate: validResults.length > 0 ? (passed / validResults.length) * 100 : 100,
     results,
     latency,
     traceId,
     summary: {
-      total: results.length,
+      total: validResults.length,
       passed,
       failed,
-      passRate: results.length > 0 ? passed / results.length : 1,
+      passRate: validResults.length > 0 ? passed / validResults.length : 1,
     },
     failureCategories: failureCategories.length > 0 ? failureCategories : undefined,
-    suggestions: suggestions?.map(s => s.action),
+    suggestions,
   };
 }
 
