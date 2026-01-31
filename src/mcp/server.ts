@@ -202,6 +202,54 @@ const TOOLS = [
       required: [],
     },
   },
+  {
+    name: 'compile_dsl',
+    description: 'Compile a DSL eval specification string into eval configs.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        dsl: { type: 'string', description: 'DSL specification content (e.g., "must \\"Has Content\\": response length > 50")' },
+      },
+      required: ['dsl'],
+    },
+  },
+  {
+    name: 'run_dsl_evals',
+    description: 'Compile DSL and run evals on a trace in one step.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        dsl: { type: 'string', description: 'DSL specification content' },
+        query: { type: 'string', description: 'User query' },
+        response: { type: 'string', description: 'AI response to evaluate' },
+        context: { type: 'string', description: 'Retrieved context (optional)' },
+      },
+      required: ['dsl', 'query', 'response'],
+    },
+  },
+  {
+    name: 'list_dsl_templates',
+    description: 'List available DSL templates (rag, chatbot, code-assistant, docs, agent, minimal).',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {},
+      required: [],
+    },
+  },
+  {
+    name: 'get_dsl_template',
+    description: 'Get a specific DSL template content.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        template: { 
+          type: 'string', 
+          description: 'Template name: rag, chatbot, code-assistant, docs, agent, minimal' 
+        },
+      },
+      required: ['template'],
+    },
+  },
 ];
 
 // Tool handlers
@@ -329,6 +377,85 @@ async function handleTool(name: string, args: any): Promise<any> {
       const collector = getCollector();
       const stats = collector.getStats();
       return stats;
+    }
+
+    case 'compile_dsl': {
+      const { compile } = await import('../dsl');
+      const configs = compile(args.dsl);
+      return {
+        evalCount: configs.length,
+        evals: configs.map(c => ({
+          id: c.id,
+          name: c.name,
+          type: c.type,
+          priority: c.priority,
+        })),
+      };
+    }
+
+    case 'run_dsl_evals': {
+      const { compile } = await import('../dsl');
+      const { EvalRegistry } = await import('../evals/engine');
+      
+      // Compile DSL
+      const configs = compile(args.dsl);
+      
+      // Create registry
+      const registry = new EvalRegistry();
+      for (const config of configs) {
+        registry.register(config);
+      }
+      
+      // Create trace
+      const trace: Trace = {
+        id: `eval-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        query: args.query,
+        response: args.response,
+        context: args.context ? { raw: args.context } : undefined,
+        metadata: {},
+      };
+      
+      // Run evals
+      const results = await registry.runAll(trace);
+      const passed = results.every(r => r.passed);
+      
+      return {
+        passed,
+        passRate: `${((results.filter(r => r.passed).length / results.length) * 100).toFixed(1)}%`,
+        results: results.map(r => ({
+          evalId: r.evalId,
+          passed: r.passed,
+          explanation: r.explanation,
+        })),
+      };
+    }
+
+    case 'list_dsl_templates': {
+      const { listTemplates } = await import('../dsl/templates');
+      const templates = listTemplates();
+      return {
+        templates: templates.map(t => ({
+          id: t.id,
+          name: t.name,
+          description: t.description,
+          domain: t.domain,
+        })),
+      };
+    }
+
+    case 'get_dsl_template': {
+      const { getTemplate } = await import('../dsl/templates');
+      const template = getTemplate(args.template);
+      if (!template) {
+        throw new Error(`Template not found: ${args.template}`);
+      }
+      return {
+        id: template.id,
+        name: template.name,
+        description: template.description,
+        content: template.content,
+      };
     }
 
     default:
