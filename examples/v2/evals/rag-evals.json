@@ -1,0 +1,56 @@
+[
+  {
+    "id": "rag-uses-context",
+    "name": "Uses Retrieved Context",
+    "description": "Response incorporates information from retrieved documents",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "if (!context || !context.retrievedDocs || context.retrievedDocs.length === 0) return true; const topDoc = context.retrievedDocs[0].content.toLowerCase(); const words = topDoc.split(/\\s+/).filter(w => w.length > 5); const responseLC = response.toLowerCase(); return words.slice(0, 20).some(w => responseLC.includes(w));"
+    }
+  },
+  {
+    "id": "rag-cites-sources",
+    "name": "Cites Sources",
+    "description": "Response indicates where information came from",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "if (!context || !context.retrievedDocs) return true; const hasMultipleDocs = context.retrievedDocs.length > 1; if (!hasMultipleDocs) return true; return response.toLowerCase().match(/according to|based on|the documentation|as mentioned|per the/);"
+    }
+  },
+  {
+    "id": "rag-admits-uncertainty",
+    "name": "Admits Uncertainty",
+    "description": "When context is weak, response acknowledges limitations",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "if (!context || !context.retrievedDocs) return true; const topScore = context.retrievedDocs[0]?.score || 0; if (topScore > 0.8) return true; return response.toLowerCase().match(/may|might|could|possibly|not certain|i'm not sure|based on available/);"
+    }
+  },
+  {
+    "id": "rag-no-hallucination",
+    "name": "No Hallucinated Facts",
+    "description": "Uses weaker model to check for facts not in context",
+    "type": "llm-judge",
+    "priority": "expensive",
+    "config": {
+      "model": "gemini-2.5-flash",
+      "temperature": 0.0,
+      "prompt": "You are a fact-checker. Compare the response to the retrieved context. Does the response contain specific facts (names, numbers, dates, features) that are NOT present in the context?\n\nRetrieved Context:\n{context}\n\nResponse:\n{response}\n\nAnswer PASS if all specific facts in the response can be found in the context, or if the response only contains general knowledge. Answer FAIL if the response makes specific claims not supported by the context."
+    }
+  },
+  {
+    "id": "rag-relevance-check",
+    "name": "Response is Relevant",
+    "description": "Response actually answers the query using context",
+    "type": "llm-judge",
+    "priority": "cheap",
+    "config": {
+      "model": "gemini-2.5-flash",
+      "temperature": 0.0,
+      "prompt": "Does this response actually answer the user's question?\n\nQuery: {query}\nResponse: {response}\n\nAnswer PASS if the response addresses the query. Answer FAIL if it's off-topic or doesn't answer the question."
+    }
+  }
+]

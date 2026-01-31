@@ -1,0 +1,72 @@
+[
+  {
+    "id": "strategy-task-completed",
+    "name": "Task Completed",
+    "description": "Check if agent completed the requested task",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "return trace.outcome && trace.outcome.completed === true;"
+    }
+  },
+  {
+    "id": "strategy-user-satisfied",
+    "name": "User Satisfied",
+    "description": "Check if user was satisfied with the outcome",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "return trace.outcome && trace.outcome.userSatisfied === true;"
+    }
+  },
+  {
+    "id": "strategy-execution-velocity",
+    "name": "Execution Velocity",
+    "description": "Check if completed tasks match attempted tasks (no wasted effort)",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "if (!trace.outcome) return false; return trace.outcome.tasksCompleted === trace.outcome.tasksAttempted;"
+    }
+  },
+  {
+    "id": "strategy-tool-efficiency",
+    "name": "Tool Efficiency",
+    "description": "Check if agent used tools efficiently (not too many reads without action)",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "if (!trace.toolCalls || trace.toolCalls.length === 0) return true; const reads = trace.toolCalls.filter(t => t.tool.includes('read') || t.tool.includes('search')).length; const actions = trace.toolCalls.filter(t => t.tool.includes('replace') || t.tool.includes('create') || t.tool.includes('run')).length; if (reads === 0) return true; return actions / reads >= 0.3;"
+    }
+  },
+  {
+    "id": "strategy-response-latency",
+    "name": "Acceptable Latency",
+    "description": "Check if total response time was acceptable (<30 seconds)",
+    "type": "assertion",
+    "priority": "cheap",
+    "config": {
+      "check": "metadata.latency < 30000"
+    }
+  },
+  {
+    "id": "strategy-not-over-reading",
+    "name": "Not Over-Reading",
+    "description": "Check agent didn't read too many files without taking action",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "if (!trace.toolCalls) return true; const readCount = trace.toolCalls.filter(t => t.tool === 'read_file').length; return readCount <= 5;"
+    }
+  },
+  {
+    "id": "strategy-tests-after-changes",
+    "name": "Tests After Changes",
+    "description": "If agent made code changes, did they run tests?",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "if (!trace.toolCalls || trace.toolCalls.length === 0) return true; const madeChanges = trace.toolCalls.some(t => t.tool === 'replace_string_in_file' || t.tool === 'create_file'); if (!madeChanges) return true; const ranTests = trace.toolCalls.some(t => t.tool === 'run_in_terminal' && String(t.input.command).includes('test')); return ranTests;"
+    }
+  }
+]

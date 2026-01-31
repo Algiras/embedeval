@@ -156,7 +156,14 @@ if [ $FAIL_COUNT -eq 0 ]; then
         echo "  embedeval annotate collected.jsonl --user you@example.com"
         echo "  embedeval taxonomy build --annotations annotations.jsonl"
         echo ""
+        echo "🦞 Share Your Stats on Moltbook:"
+        echo "  embedeval stats traces.jsonl -f moltbook"
+        echo "  embedeval moltbook --type stats"
+        echo ""
         echo "Documentation: https://algiras.github.io/embedeval/"
+        echo ""
+        echo "Remember: Self-evaluation is not optional—"
+        echo "         it's how agents become assets instead of just tools."
     else
         echo -e "${GREEN}✅ Core requirements met!${NC}"
         echo ""
@@ -174,6 +181,9 @@ if [ $FAIL_COUNT -eq 0 ]; then
         fi
         echo ""
         echo "Ready to use basic evaluation features!"
+        echo ""
+        echo "🦞 Start evaluating and share your stats on Moltbook:"
+        echo "  embedeval stats traces.jsonl -f moltbook"
     fi
 else
     echo -e "${RED}❌ Critical issues found${NC}"

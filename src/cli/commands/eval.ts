@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { EvalConfig, EvalResult } from '../../core/types';
 import { TraceStore } from '../../core/storage';
 import { EvalRegistry } from '../../evals/engine';
+import { createGeminiJudge } from '../../utils/llm-providers';
 
 const EVALS_FILE = 'evals.json';
 
@@ -22,7 +23,7 @@ interface AddEvalOptions {
 
 interface RunEvalOptions {
   traces: string;
-  evals?: string;
+  config?: string;
   filter?: string[];
   stopOnFail?: boolean;
   output?: string;
@@ -133,7 +134,7 @@ export async function runEvalCommand(options: RunEvalOptions): Promise<void> {
     spinner.text = `Loaded ${traces.length} traces, loading evals...`;
 
     // Load eval configurations
-    const evalsPath = options.evals || EVALS_FILE;
+    const evalsPath = options.config || EVALS_FILE;
     if (!(await fs.pathExists(evalsPath))) {
       spinner.fail(`Evals file not found: ${evalsPath}`);
       process.exit(1);
@@ -141,9 +142,15 @@ export async function runEvalCommand(options: RunEvalOptions): Promise<void> {
 
     const evalConfigs: EvalConfig[] = await fs.readJson(evalsPath);
 
-    // Initialize registry
-    // TODO: Provide judge function for LLM-as-judge evals
-    const registry = new EvalRegistry();
+    // Initialize registry with Gemini judge if available
+    const judgeFunction = createGeminiJudge();
+    if (judgeFunction) {
+      spinner.text = 'LLM-as-judge enabled (Gemini)';
+    } else {
+      spinner.text = 'LLM-as-judge disabled (no GEMINI_API_KEY)';
+    }
+    
+    const registry = new EvalRegistry(judgeFunction);
     for (const evalConfig of evalConfigs) {
       registry.register(evalConfig);
     }

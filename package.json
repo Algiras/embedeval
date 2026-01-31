@@ -1,6 +1,6 @@
 {
   "name": "embedeval",
-  "version": "2.0.2",
+  "version": "2.0.4",
   "description": "Binary evals, trace-centric, error-analysis-first CLI for LLM evaluation. Built on Hamel Husain's principles.",
   "main": "dist/cli/index.js",
   "bin": {
@@ -54,26 +54,27 @@
   },
   "homepage": "https://algiras.github.io/embedeval",
   "dependencies": {
-    "commander": "^11.1.0",
-    "yaml": "^2.3.4",
+    "@google/generative-ai": "^0.24.1",
     "chalk": "^5.3.0",
-    "fs-extra": "^11.2.0",
-    "uuid": "^9.0.1",
+    "commander": "^11.1.0",
     "dotenv": "^16.3.1",
-    "ora": "^5.4.1"
+    "fs-extra": "^11.2.0",
+    "ora": "^5.4.1",
+    "uuid": "^9.0.1",
+    "yaml": "^2.3.4"
   },
   "devDependencies": {
-    "@types/node": "^20.10.5",
     "@types/fs-extra": "^11.0.4",
-    "@types/uuid": "^9.0.7",
-    "typescript": "^5.3.3",
-    "ts-node": "^10.9.2",
-    "jest": "^29.7.0",
     "@types/jest": "^29.5.11",
-    "ts-jest": "^29.1.1",
-    "eslint": "^8.56.0",
+    "@types/node": "^20.10.5",
+    "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^6.16.0",
-    "@typescript-eslint/parser": "^6.16.0"
+    "@typescript-eslint/parser": "^6.16.0",
+    "eslint": "^8.56.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">=18.0.0"

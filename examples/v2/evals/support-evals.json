@@ -1,0 +1,52 @@
+[
+  {
+    "id": "support-empathy",
+    "name": "Shows Empathy",
+    "description": "Response acknowledges user's situation",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "const frustratedUser = query.toLowerCase().match(/frustrated|annoyed|angry|upset|not working|broken|bug|issue|problem|help/); if (!frustratedUser) return true; return response.toLowerCase().match(/understand|sorry|frustrating|help you|let me|i can|we can|apologize/);"
+    }
+  },
+  {
+    "id": "support-clear-steps",
+    "name": "Clear Action Steps",
+    "description": "Support responses include clear next steps",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "const isSupport = query.toLowerCase().match(/how do i|can't|doesn't work|error|help|issue/); if (!isSupport) return true; return response.match(/\\d\\.|first,|then,|step|try|click|go to|navigate/i);"
+    }
+  },
+  {
+    "id": "support-no-jargon",
+    "name": "Avoids Technical Jargon",
+    "description": "Uses simple language for non-technical users",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "const isTechnical = query.toLowerCase().match(/api|developer|code|debug|terminal|cli/); if (isTechnical) return true; const jargon = response.match(/\\b(API|CLI|SDK|endpoint|parameter|token|JSON|HTTP|REST|cache|buffer)\\b/g) || []; return jargon.length <= 2;"
+    }
+  },
+  {
+    "id": "support-offers-alternatives",
+    "name": "Offers Alternatives",
+    "description": "Provides alternative solutions when primary might not work",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "const responseLength = response.length; if (responseLength < 200) return true; return response.toLowerCase().match(/alternatively|another way|you can also|if that doesn't work|or you could/);"
+    }
+  },
+  {
+    "id": "support-escalation-path",
+    "name": "Provides Escalation Path",
+    "description": "Tells user how to get more help if needed",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "const isComplex = query.toLowerCase().match(/still|again|already tried|doesn't help|not working/); if (!isComplex) return true; return response.toLowerCase().match(/contact|support|team|reach out|let us know|further assistance/);"
+    }
+  }
+]

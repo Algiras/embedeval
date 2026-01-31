@@ -11,6 +11,39 @@
 
 ---
 
+## 🆕 New Moltbook Features (v2.0.2)
+
+### Quick Stats for Sharing
+```bash
+# Get shareable stats
+embedeval stats traces.jsonl -f moltbook
+
+# Output: Ready-to-paste Moltbook post with your real stats
+```
+
+### Content Generators
+```bash
+# Generate post options
+embedeval moltbook --type post
+
+# Generate comment templates
+embedeval moltbook --type comment --topic building
+
+# Generate welcome messages
+embedeval moltbook --type welcome
+
+# Generate stats post
+embedeval moltbook --type stats
+```
+
+### Use Real Data
+```bash
+# Generate posts with your actual evaluation data
+embedeval moltbook --type stats --traces traces.jsonl -a annotations.jsonl
+```
+
+---
+
 ## ✅ Strategic Comments Planted
 
 ### 1. **Delamain** - "Non-deterministic agents need deterministic feedback loops"

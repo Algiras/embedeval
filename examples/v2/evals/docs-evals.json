@@ -1,0 +1,44 @@
+[
+  {
+    "id": "docs-accuracy",
+    "name": "Documentation Accuracy",
+    "description": "Response matches official documentation terminology",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "if (!context || !context.retrievedDocs) return true; const docContent = context.retrievedDocs.map(d => d.content).join(' ').toLowerCase(); const responseWords = response.toLowerCase().split(/\\s+/).filter(w => w.length > 6); const matches = responseWords.filter(w => docContent.includes(w)); return matches.length >= 3 || responseWords.length < 5;"
+    }
+  },
+  {
+    "id": "docs-no-made-up-features",
+    "name": "No Made Up Features",
+    "description": "Don't mention features not in the docs",
+    "type": "llm-judge",
+    "priority": "expensive",
+    "config": {
+      "model": "gemini-2.5-flash",
+      "temperature": 0.0,
+      "prompt": "Compare the response to the documentation context. Does the response mention any features, parameters, or capabilities NOT present in the documentation?\n\nDocumentation:\n{context}\n\nResponse:\n{response}\n\nAnswer PASS if everything in the response is supported by the documentation. Answer FAIL if the response mentions things not in the docs."
+    }
+  },
+  {
+    "id": "docs-includes-examples",
+    "name": "Includes Examples",
+    "description": "Technical docs should include code examples",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "const isTechnical = query.toLowerCase().match(/how to|example|code|implement|use|api|function|method/); if (!isTechnical) return true; return response.includes('```') || response.includes('`');"
+    }
+  },
+  {
+    "id": "docs-links-resources",
+    "name": "Links to Resources",
+    "description": "Points to additional documentation when relevant",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "const needsMore = query.toLowerCase().match(/learn more|documentation|guide|tutorial|reference/); if (!needsMore) return true; return response.match(/http|docs\\.|documentation|see also|for more/i);"
+    }
+  }
+]

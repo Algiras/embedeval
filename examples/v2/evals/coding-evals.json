@@ -1,0 +1,56 @@
+[
+  {
+    "id": "code-syntax-valid",
+    "name": "Code Syntax Valid",
+    "description": "Check if code blocks have proper syntax markers",
+    "type": "regex",
+    "priority": "cheap",
+    "config": {
+      "pattern": "```(\\w+)?[\\s\\S]*?```",
+      "shouldMatch": true,
+      "flags": "g"
+    }
+  },
+  {
+    "id": "no-placeholder-code",
+    "name": "No Placeholder Code",
+    "description": "Ensure no TODO or placeholder code in response",
+    "type": "regex",
+    "priority": "cheap",
+    "config": {
+      "pattern": "(TODO|FIXME|XXX|\\.\\.\\.|pass\\s*#|NotImplementedError)",
+      "shouldMatch": false,
+      "flags": "i"
+    }
+  },
+  {
+    "id": "includes-imports",
+    "name": "Includes Necessary Imports",
+    "description": "Code examples include import statements when needed",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "if (!response.includes('```')) return true; const hasClasses = response.match(/\\b(useState|useEffect|Component|Express|Router|Model|Schema)\\b/); if (!hasClasses) return true; return response.includes('import') || response.includes('require') || response.includes('from');"
+    }
+  },
+  {
+    "id": "explains-code",
+    "name": "Explains Code",
+    "description": "Code responses include explanation, not just raw code",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "if (!response.includes('```')) return true; const codeLength = (response.match(/```[\\s\\S]*?```/g) || []).join('').length; const totalLength = response.length; return (totalLength - codeLength) > 100;"
+    }
+  },
+  {
+    "id": "tests-if-requested",
+    "name": "Includes Tests If Requested",
+    "description": "If user asks for tests, response includes test code",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "const wantsTests = query.toLowerCase().match(/test|spec|unit|jest|mocha|pytest/); if (!wantsTests) return true; return response.toLowerCase().match(/describe\\(|it\\(|test\\(|def test_|@Test|expect\\(/);"
+    }
+  }
+]

@@ -4,7 +4,21 @@
 
 ---
 
-## 🚀 For AI Agents (Claude, GPT, etc.)
+## � Project Notes & Thoughts
+
+Put strategy docs, campaign notes, and working thoughts in the `thoughts/` folder. This folder is gitignored and won't clutter the repo history.
+
+```bash
+# Examples of what goes in thoughts/
+thoughts/MOLTBOOK_STRATEGY.md    # Campaign planning
+thoughts/MOLTBOOK_CAMPAIGN.md    # Progress tracking
+thoughts/LLM.md                  # LLM-specific notes
+thoughts/GETTING_STARTED.md     # Onboarding drafts
+```
+
+---
+
+## �🚀 For AI Agents (Claude, GPT, etc.)
 
 ### Core Workflow (3 Steps)
 
@@ -32,6 +46,8 @@ embedeval taxonomy build --annotations annotations.jsonl
 | **Generate** | `embedeval generate create -d <dims> -n <count>` | Synthetic data |
 | **Export** | `embedeval export <traces> -f notebook` | Jupyter notebook |
 | **Report** | `embedeval report -t <traces> -a <annots>` | HTML dashboard |
+| **Stats** | `embedeval stats <traces> -f moltbook` | Quick shareable stats |
+| **Moltbook** | `embedeval moltbook --type post` | Generate community posts |
 
 ### Interactive Annotation Shortcuts
 
@@ -43,6 +59,315 @@ When running `embedeval annotate`:
 - `j` = Next trace
 - `k` = Previous trace
 - `s` = Save and quit
+
+---
+
+## 🔮 Multi-Provider LLM Judge System
+
+EmbedEval supports **multiple LLM providers** for evaluation. Use the best provider for your needs: speed, cost, quality, or privacy.
+
+### Supported Providers
+
+| Provider | Setup | Best For |
+|----------|-------|----------|
+| **Gemini** | `GEMINI_API_KEY` | Default, fast, cheap |
+| **OpenAI** | `OPENAI_API_KEY` | High quality |
+| **OpenRouter** | `OPENAI_BASE_URL` + key | Multi-model access |
+| **Ollama** | `OPENAI_BASE_URL=localhost:11434` | Privacy, local |
+| **Azure OpenAI** | Custom URL + key | Enterprise |
+
+### Quick Setup
+
+```bash
+# Option 1: Gemini (recommended - fast, cheap)
+export GEMINI_API_KEY="your-api-key"
+
+# Option 2: OpenAI 
+export OPENAI_API_KEY="your-api-key"
+
+# Option 3: OpenRouter (access to many models)
+export OPENAI_API_KEY="your-openrouter-key"
+export OPENAI_BASE_URL="https://openrouter.ai/api/v1"
+
+# Option 4: Ollama (local, private)
+export OPENAI_BASE_URL="http://localhost:11434/v1"
+
+# Option 5: Set preferred provider
+export EMBEDEVAL_PROVIDER="gemini"  # or "openai"
+
+# Check available providers
+embedeval providers list
+
+# Benchmark speed
+embedeval providers benchmark
+```
+
+### Available Models
+
+**Gemini 3 Series (2026 - Flagship)**
+| Model | Speed | Cost | Best For |
+|-------|-------|------|----------|
+| `gemini-3-pro` | 🐢 Medium | 💵 High | Most intelligent, complex reasoning |
+| `gemini-3-flash` | ⚡ Fast | 💰 Medium | Balanced speed and intelligence |
+
+**Gemini 2.5 Series (Current Stable)**
+| Model | Speed | Cost | Best For |
+|-------|-------|------|----------|
+| `gemini-2.5-flash` | ⚡ Fast | 💰 Cheap | **DEFAULT** - Best price-performance |
+| `gemini-2.5-flash-lite` | ⚡⚡ Fastest | 💰💰 Cheapest | Simple checks, reranking |
+| `gemini-2.5-pro` | 🐢 Slow | 💵 High | Complex reasoning, long context |
+
+**OpenAI Models**
+| Model | Speed | Cost | Best For |
+|-------|-------|------|----------|
+| `gpt-4o` | ⚡ Fast | 💵 High | Flagship quality |
+| `gpt-4o-mini` | ⚡⚡ Fast | 💰 Cheap | Budget friendly |
+
+**OpenRouter Models (via OPENAI_BASE_URL)**
+| Model | Notes |
+|-------|-------|
+| `anthropic/claude-3.5-sonnet` | Best overall |
+| `anthropic/claude-3-haiku` | Fast, cheap |
+| `meta-llama/llama-3.1-70b-instruct` | Open source |
+
+### LLM-Judge Eval Config
+
+```json
+{
+  "id": "response-quality",
+  "name": "Response Quality Check",
+  "type": "llm-judge",
+  "priority": "expensive",
+  "config": {
+    "model": "gemini-2.5-flash",
+    "temperature": 0.0,
+    "prompt": "Given this query and response, evaluate quality.\n\nQuery: {query}\nResponse: {response}\n\nAnswer ONLY 'PASS' if the response adequately addresses the query, or 'FAIL' if it does not."
+  }
+}
+```
+
+### Prompt Variables
+
+In your prompt template, use these placeholders:
+- `{query}` - The user's input/question
+- `{response}` - The agent's response
+- `{context}` - Retrieved context (if available)
+- `{metadata}` - Trace metadata as JSON
+
+### Cost Management Strategy
+
+```bash
+# 1. Run cheap evals first (free, instant)
+embedeval eval run traces.jsonl -c cheap-evals.json -o cheap-results.json
+
+# 2. Filter to only failed traces
+jq -r '.results[] | select(.passed == false) | .traceId' cheap-results.json > failed.txt
+
+# 3. Run expensive LLM evals only on failures
+embedeval eval run traces.jsonl -c llm-evals.json --filter failed.txt -o deep-results.json
+```
+
+### Embedding & Semantic Similarity
+
+```bash
+# EmbedEval includes embedding support for semantic similarity evals
+# Automatically uses:
+# - Gemini: text-embedding-004
+# - OpenAI: text-embedding-3-small
+```
+
+### Weak Agent Validators (Recommended!)
+
+Use a cheap, fast model as a "weak agent" to validate your stronger model's outputs:
+
+```json
+[
+  {
+    "id": "weak-coherence-check",
+    "name": "Coherence Check (Weak Agent)",
+    "type": "llm-judge",
+    "priority": "cheap",
+    "config": {
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.0,
+      "prompt": "Is this response coherent and well-structured?\n\nResponse: {response}\n\nAnswer PASS or FAIL only."
+    }
+  },
+  {
+    "id": "weak-factual-check",
+    "name": "Factual Sanity (Weak Agent)",
+    "type": "llm-judge",
+    "priority": "cheap",
+    "config": {
+      "model": "gemini-2.5-flash-lite",
+      "temperature": 0.0,
+      "prompt": "Does this response contain obviously false or contradictory statements?\n\nResponse: {response}\n\nAnswer PASS if acceptable, FAIL if contains obvious errors."
+    }
+  }
+]
+```
+
+### Example: Full Eval Pipeline
+
+```bash
+# Real example testing RAG responses with Gemini judge
+
+# Run the eval
+embedeval eval run examples/v2/sample-traces.jsonl \
+  -c examples/v2/evals/rag-evals.json \
+  -o results.json
+
+# Example output:
+# ✅ Results:
+#   Total traces: 3
+#   Passed: 0, Failed: 3
+# 📊 Eval breakdown:
+#   Uses Retrieved Context: 3 pass, 0 fail (100.0%)  ← code eval
+#   Cites Sources: 0 pass, 3 fail (0.0%)             ← regex eval
+#   Response is Relevant: 3 pass, 0 fail (100.0%)   ← LLM judge ✨
+#   No Hallucinated Facts: 1 pass, 2 fail (33.3%)   ← LLM judge ✨
+```
+
+---
+
+## 📊 Self-Assessment System (Price, Speed, Quality)
+
+EmbedEval includes a comprehensive self-assessment system for evaluating your own performance.
+
+### Commands
+
+```bash
+# View model pricing
+embedeval assess pricing
+
+# Get model recommendation
+embedeval assess recommend -p balanced -c moderate
+# Options: -p quality|speed|cost|balanced -c simple|moderate|complex
+
+# Run self-assessment on eval results
+embedeval assess run -r results.json -m gemini-2.5-flash
+
+# Compare two models
+embedeval assess compare \
+  --results-a model-a-results.json --model-a gemini-2.5-flash \
+  --results-b model-b-results.json --model-b gpt-4o-mini
+```
+
+### Self-Assessment Report
+
+The assessment generates a comprehensive report:
+
+```
+═══════════════════════════════════════════════
+                SELF-ASSESSMENT REPORT                      
+═══════════════════════════════════════════════
+
+📊 Model: gemini-2.5-flash
+📈 Sample: 15 evaluations
+
+┌─────────────────────────────────────────────┐
+│                   QUALITY                   │
+├─────────────────────────────────────────────┤
+│  Pass Rate:     60.0%                       │
+│  Passed:        9                           │
+│  Failed:        6                           │
+└─────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────┐
+│                    SPEED                    │
+├─────────────────────────────────────────────┤
+│  Avg Latency:   852ms                       │
+│  P50 Latency:   500ms                       │
+│  P95 Latency:   2566ms                      │
+│  Throughput:    1.17 evals/sec              │
+└─────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────┐
+│                    COST                     │
+├─────────────────────────────────────────────┤
+│  Total Cost:    $0.000338                   │
+│  Avg/Eval:      $0.000023                   │
+│  Cost/Pass:     $0.000038                   │
+└─────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────┐
+│                 EFFICIENCY                  │
+├─────────────────────────────────────────────┤
+│  Passes/$:      26667                       │
+│  Passes/sec:    0.70                        │
+│  Cost Score:    100/100                     │
+│  Speed Score:   83/100                      │
+│  Overall:       76/100                      │
+└─────────────────────────────────────────────┘
+
+📋 RECOMMENDATIONS:
+   ⚠️ Pass rate below 70% - review failure categories
+```
+
+### Key Metrics Explained
+
+| Metric | What It Measures | Good Target |
+|--------|------------------|-------------|
+| **Pass Rate** | % of evals that passed | >80% |
+| **Avg Latency** | Mean response time | <1000ms |
+| **P95 Latency** | 95th percentile latency | <3000ms |
+| **Throughput** | Evals per second | >1.0 |
+| **Cost/Pass** | $ per successful eval | <$0.001 |
+| **Passes/$** | How many passes per dollar | >10000 |
+| **Overall Score** | Combined efficiency (0-100) | >70 |
+
+### Drift Detection
+
+Monitor for performance degradation by providing a baseline:
+
+```bash
+# Save current metrics as baseline
+embedeval assess run -r results.json -m gemini-2.5-flash -f json -o baseline.json
+
+# Later, compare against baseline
+embedeval assess run -r new-results.json -m gemini-2.5-flash -b baseline.json
+```
+
+Drift alerts trigger when:
+- **Quality**: Pass rate drops >5%
+- **Speed**: Latency increases >20%
+- **Cost**: Cost increases >30%
+
+### Model Comparison
+
+Compare two approaches:
+
+```bash
+embedeval assess compare \
+  --results-a cheap-model.json --model-a gemini-2.5-flash-lite \
+  --results-b expensive-model.json --model-b gemini-2.5-pro
+
+# Output:
+# ═══════════════════════════════════════════════
+#               MODEL COMPARISON                  
+# ═══════════════════════════════════════════════
+#   Model A: gemini-2.5-flash-lite
+#   Model B: gemini-2.5-pro
+#
+#   QUALITY:
+#     Pass Rate A: 78.0%
+#     Pass Rate B: 92.0%
+#     Winner: B
+#
+#   SPEED:
+#     Avg Latency A: 450ms
+#     Avg Latency B: 2100ms
+#     Winner: A
+#
+#   COST:
+#     Total Cost A: $0.000150
+#     Total Cost B: $0.002500
+#     Winner: A
+#
+#   RECOMMENDATION:
+#     Depends on priority
+#     No clear winner - choose based on priority
+```
 
 ---
 
@@ -99,6 +424,337 @@ embedeval annotate traces.jsonl --user "product-manager@company.com"
 # Minimum for meaningful taxonomy
 embedeval collect ./logs.jsonl --limit 100
 embedeval annotate traces.jsonl --user "pm@company.com"
+```
+
+---
+
+## 🤖 Agent Strategy Evaluation
+
+For autonomous agents evaluating their own strategies, EmbedEval supports **tool call tracking** and **outcome-based evaluation**.
+
+### Trace Format for Agents
+
+```json
+{
+  "id": "strategy-001",
+  "timestamp": "2026-01-31T08:00:00Z",
+  "query": "User asked for help debugging code",
+  "response": "I'll help you debug...",
+  "toolCalls": [
+    {"tool": "read_file", "input": {"path": "src/index.ts"}, "output": "...", "latency": 50},
+    {"tool": "run_in_terminal", "input": {"command": "npm test"}, "output": "3 tests passed", "latency": 2000}
+  ],
+  "metadata": {"provider": "anthropic", "model": "claude-opus-4", "latency": 3500},
+  "outcome": {
+    "completed": true,
+    "userSatisfied": true,
+    "tasksCompleted": 2,
+    "tasksAttempted": 2
+  }
+}
+```
+
+### Built-in Strategy Evals
+
+```json
+[
+  {
+    "id": "task-completed",
+    "name": "Task Completed",
+    "type": "code",
+    "priority": "cheap",
+    "config": {"function": "return trace.outcome && trace.outcome.completed === true;"}
+  },
+  {
+    "id": "execution-velocity",
+    "name": "Execution Velocity",
+    "type": "code",
+    "priority": "cheap",
+    "config": {"function": "return trace.outcome.tasksCompleted === trace.outcome.tasksAttempted;"}
+  },
+  {
+    "id": "tool-efficiency",
+    "name": "Tool Efficiency",
+    "type": "code",
+    "priority": "cheap",
+    "config": {"function": "const reads = trace.toolCalls.filter(t => t.tool.includes('read')).length; const actions = trace.toolCalls.filter(t => t.tool.includes('replace') || t.tool.includes('create')).length; return actions / reads >= 0.3;"}
+  },
+  {
+    "id": "tests-after-changes",
+    "name": "Tests After Changes",
+    "type": "code",
+    "priority": "cheap",
+    "config": {"function": "const madeChanges = trace.toolCalls.some(t => t.tool === 'replace_string_in_file'); if (!madeChanges) return true; return trace.toolCalls.some(t => t.tool === 'run_in_terminal' && t.input.command.includes('test'));"}
+  }
+]
+```
+
+### Run Strategy Evaluation
+
+```bash
+# Evaluate agent strategy traces
+embedeval eval run agent-traces.jsonl -c strategy-evals.json -o results.json
+
+# Example output:
+# ✅ Results:
+#   Total traces: 8
+#   Passed: 3 (37.5%)
+#   Failed: 5
+#
+# 📊 Eval breakdown:
+#   Task Completed: 75.0%
+#   Execution Velocity: 75.0%
+#   Tool Efficiency: 87.5%
+#   Tests After Changes: 62.5%
+```
+
+### Key Strategy Metrics
+
+| Metric | What It Measures | Target |
+|--------|-----------------|--------|
+| **Task Completion** | Did you finish what was asked? | >90% |
+| **User Satisfaction** | Was the user happy? | >85% |
+| **Execution Velocity** | Tasks completed / attempted | 100% |
+| **Tool Efficiency** | Actions taken / reads made | >30% |
+| **Tests After Changes** | Did you verify your work? | 100% |
+
+---
+
+## 🧪 Self-Improvement Techniques for Agents
+
+### Technique 1: Using Weaker Agents as Validators
+
+Use a cheaper/faster model to validate your outputs before delivery. This catches obvious errors without expensive self-review.
+
+```json
+{
+  "id": "weak-agent-validator",
+  "name": "Weak Agent Validation",
+  "type": "llm-judge",
+  "priority": "cheap",
+  "config": {
+    "model": "gemini-1.5-flash",
+    "temperature": 0.0,
+    "prompt": "You are a validator. Given this response to the query, check for:\n1. Does it answer the question?\n2. Is it coherent?\n3. Are there obvious factual errors?\n\nQuery: {query}\nResponse: {response}\n\nAnswer PASS if acceptable, FAIL if there are problems."
+  }
+}
+```
+
+**Workflow:**
+```bash
+# 1. Generate your response
+# 2. Run weak agent validation
+embedeval eval run my-responses.jsonl -c weak-validator.json -o validation.json
+
+# 3. Check which responses need revision
+jq '.results[] | select(.results[0].passed == false) | .traceId' validation.json
+```
+
+### Technique 2: Domain-Specific Knowledge Corpus Evaluation
+
+Create evals specific to your knowledge domain. Test whether responses correctly use domain terminology and concepts.
+
+**Example: Technical Documentation Agent**
+```json
+[
+  {
+    "id": "uses-correct-api-names",
+    "name": "Correct API Names",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "const apiNames = ['createUser', 'updateUser', 'deleteUser', 'getUsers']; const mentioned = apiNames.filter(n => response.includes(n)); return mentioned.length > 0 || !query.toLowerCase().includes('api');"
+    }
+  },
+  {
+    "id": "matches-docs-terminology",
+    "name": "Matches Docs Terminology",
+    "type": "regex",
+    "priority": "cheap",
+    "config": {
+      "pattern": "(endpoint|API key|Bearer token|REST|JSON)",
+      "shouldMatch": true,
+      "flags": "i"
+    }
+  },
+  {
+    "id": "no-deprecated-references",
+    "name": "No Deprecated References",
+    "type": "regex",
+    "priority": "cheap",
+    "config": {
+      "pattern": "(v1 API|old endpoint|deprecated)",
+      "shouldMatch": false,
+      "flags": "i"
+    }
+  }
+]
+```
+
+**Example: Legal/Compliance Agent**
+```json
+[
+  {
+    "id": "includes-disclaimer",
+    "name": "Includes Required Disclaimer",
+    "type": "assertion",
+    "priority": "cheap",
+    "config": {
+      "check": "response.includes('not legal advice') || response.includes('consult') || !query.toLowerCase().includes('legal')"
+    }
+  },
+  {
+    "id": "cites-regulations",
+    "name": "Cites Relevant Regulations",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "const regs = ['GDPR', 'CCPA', 'HIPAA', 'SOC2', 'PCI']; const isCompliance = query.toLowerCase().match(/compliance|regulation|privacy|security/); if (!isCompliance) return true; return regs.some(r => response.includes(r));"
+    }
+  }
+]
+```
+
+### Technique 3: Context-Aware Evaluation
+
+Evaluate whether your response correctly uses the provided context (RAG evaluation).
+
+```json
+[
+  {
+    "id": "uses-retrieved-context",
+    "name": "Uses Retrieved Context",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "if (!context || !context.retrievedDocs || context.retrievedDocs.length === 0) return true; const topDoc = context.retrievedDocs[0].content.toLowerCase(); const keywords = topDoc.split(' ').filter(w => w.length > 5).slice(0, 10); return keywords.some(k => response.toLowerCase().includes(k));"
+    }
+  },
+  {
+    "id": "no-hallucinated-facts",
+    "name": "No Hallucinated Facts",
+    "type": "llm-judge",
+    "priority": "expensive",
+    "config": {
+      "model": "gemini-1.5-flash",
+      "temperature": 0.0,
+      "prompt": "Check if the response contains facts NOT present in the context.\n\nContext:\n{context}\n\nResponse:\n{response}\n\nIf the response makes claims not supported by the context, answer FAIL. Otherwise PASS."
+    }
+  }
+]
+```
+
+### Technique 4: Multi-Agent Verification Pipeline
+
+Use multiple specialized agents to verify different aspects of your output.
+
+```bash
+# 1. Fact-checker agent (weak model, fast)
+embedeval eval run responses.jsonl -c fact-check-evals.json -o fact-results.json
+
+# 2. Style-checker agent (regex/assertion, instant)
+embedeval eval run responses.jsonl -c style-evals.json -o style-results.json
+
+# 3. Domain expert agent (stronger model, selective)
+# Only run on traces that passed fact/style checks
+jq -r '.results[] | select(.results | all(.passed)) | .traceId' fact-results.json > passed-traces.txt
+embedeval eval run responses.jsonl -c expert-evals.json --filter passed-traces.txt -o expert-results.json
+```
+
+**Fact-Checker Evals (cheap):**
+```json
+[
+  {
+    "id": "no-made-up-numbers",
+    "name": "No Made Up Numbers",
+    "type": "code",
+    "priority": "cheap",
+    "config": {
+      "function": "const numbers = response.match(/\\$[\\d,]+|\\d+%|\\d+ (users|customers|days)/g) || []; if (numbers.length === 0) return true; const contextStr = JSON.stringify(context); return numbers.some(n => contextStr.includes(n.replace(/[,$%]/g, '')));"
+    }
+  }
+]
+```
+
+### Technique 5: Self-Improvement Feedback Loop
+
+Track your performance over time and identify areas for improvement.
+
+```bash
+# Weekly self-evaluation routine
+DATE=$(date +%Y-%m-%d)
+
+# 1. Collect this week's traces
+embedeval collect ./logs/week-${DATE}.jsonl -o traces-${DATE}.jsonl
+
+# 2. Run standard evals
+embedeval eval run traces-${DATE}.jsonl -c standard-evals.json -o results-${DATE}.json
+
+# 3. Compare to last week
+echo "This week's pass rate:"
+jq '.summary.passRate' results-${DATE}.json
+
+echo "Last week's pass rate:"
+jq '.summary.passRate' results-$(date -d "7 days ago" +%Y-%m-%d).json
+
+# 4. Generate improvement report
+embedeval stats traces-${DATE}.jsonl -a annotations-${DATE}.jsonl -f moltbook
+```
+
+### Technique 6: Corpus-Specific Test Suites
+
+Create test suites for different knowledge domains you work with.
+
+**Structure:**
+```
+evals/
+├── general/
+│   ├── coherence.json      # Basic quality checks
+│   └── helpfulness.json    # Was it helpful?
+├── coding/
+│   ├── syntax-valid.json   # Code compiles
+│   ├── tests-pass.json     # Tests run
+│   └── best-practices.json # Follows conventions
+├── docs/
+│   ├── accuracy.json       # Matches documentation
+│   └── completeness.json   # Covers all points
+└── support/
+    ├── empathy.json        # Appropriate tone
+    └── resolution.json     # Solves the problem
+```
+
+**Run domain-specific evals:**
+```bash
+# Detect domain from trace metadata
+DOMAIN=$(jq -r '.metadata.domain // "general"' trace.json)
+
+# Run appropriate eval suite
+embedeval eval run traces.jsonl -c evals/${DOMAIN}/*.json -o results.json
+```
+
+### Technique 7: Calibration with Human Feedback
+
+Periodically calibrate your self-evaluation against human judgment.
+
+```bash
+# 1. Run your automated evals
+embedeval eval run traces.jsonl -c auto-evals.json -o auto-results.json
+
+# 2. Get human annotations on same traces
+embedeval annotate traces.jsonl -u human@company.com -a human-annotations.jsonl
+
+# 3. Compare agreement
+# (Export to notebook for analysis)
+embedeval export traces.jsonl \
+  --annotations human-annotations.jsonl \
+  --results auto-results.json \
+  --format notebook \
+  --output calibration-analysis.ipynb
+
+# Metrics to track:
+# - Agreement rate: How often do auto evals match human?
+# - False positive rate: Auto says PASS, human says FAIL
+# - False negative rate: Auto says FAIL, human says PASS
 ```
 
 ---

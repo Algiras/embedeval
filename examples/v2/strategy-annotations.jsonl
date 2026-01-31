@@ -1,0 +1,8 @@
+{"id":"ann-001","traceId":"strategy-001","annotator":"agent@system.com","timestamp":"2026-01-31T09:00:00Z","label":"pass","notes":"Successfully debugged and ran tests","duration":5,"source":"manual"}
+{"id":"ann-002","traceId":"strategy-002","annotator":"agent@system.com","timestamp":"2026-01-31T09:01:00Z","label":"pass","notes":"Clean refactoring","duration":4,"source":"manual"}
+{"id":"ann-003","traceId":"strategy-003","annotator":"agent@system.com","timestamp":"2026-01-31T09:02:00Z","label":"fail","failureCategory":"incomplete","notes":"Tests failed, didn't fix them","duration":6,"source":"manual"}
+{"id":"ann-004","traceId":"strategy-004","annotator":"agent@system.com","timestamp":"2026-01-31T09:03:00Z","label":"pass","notes":"Simple question answered correctly","duration":3,"source":"manual"}
+{"id":"ann-005","traceId":"strategy-005","annotator":"agent@system.com","timestamp":"2026-01-31T09:04:00Z","label":"pass","notes":"Fixed bug and verified with tests","duration":8,"source":"manual"}
+{"id":"ann-006","traceId":"strategy-006","annotator":"agent@system.com","timestamp":"2026-01-31T09:05:00Z","label":"pass","notes":"Good documentation created","duration":5,"source":"manual"}
+{"id":"ann-007","traceId":"strategy-007","annotator":"agent@system.com","timestamp":"2026-01-31T09:06:00Z","label":"fail","failureCategory":"over-reading","notes":"Read too many files without taking action","duration":7,"source":"manual"}
+{"id":"ann-008","traceId":"strategy-008","annotator":"agent@system.com","timestamp":"2026-01-31T09:07:00Z","label":"pass","notes":"Successfully optimized performance","duration":6,"source":"manual"}
