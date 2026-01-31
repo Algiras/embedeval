@@ -608,7 +608,7 @@
 <body>
     <div class="hero">
         <div class="container">
-            <div class="hero-badge">v2.0.4 - Multi-Provider LLM Support</div>
+            <div class="hero-badge">v2.0.5 - SDK for Agent Self-Evaluation</div>
             <h1>EmbedEval</h1>
             <p class="hero-subtitle">Binary evals. Trace-centric. Error-analysis-first. The evaluation CLI that actually works.</p>
             
@@ -877,6 +877,40 @@
                         docker run embedeval/cli
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="llm-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>SDK for Real-Time Self-Evaluation</h2>
+            </div>
+
+            <div class="llm-intro">
+                <p>New in v2.0.5: Agents can self-evaluate responses in real-time using the SDK.</p>
+            </div>
+
+            <div class="mcp-example">
+                <h4>Programmatic Evaluation</h4>
+                <div class="code-block" style="font-family: 'JetBrains Mono', monospace; white-space: pre;">import { evaluate, preflight, getConfidence } from 'embedeval/sdk';
+
+// Quick preflight check (fast)
+const check = await preflight(response, query);
+if (!check.passed) {
+  console.log('Issues:', check.failedChecks);
+}
+
+// Confidence scoring with action routing
+const conf = await getConfidence(response, { query });
+// conf.action: 'send' | 'revise' | 'escalate' | 'clarify'
+
+// Full evaluation
+const result = await evaluate(response, {
+  query,
+  evals: ['coherent', 'helpful', 'no-hallucination']
+});
+console.log(`Pass rate: ${result.passRate}%`);</div>
             </div>
         </div>
     </section>
