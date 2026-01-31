@@ -45,6 +45,7 @@ import { benchmarkCommand } from './commands/benchmark';
 import { diffCommand } from './commands/diff';
 import { authCommand } from './commands/auth';
 import { doctorCommand } from './commands/doctor';
+import { demoCommand } from './commands/demo';
 
 const program = new Command();
 
@@ -319,6 +320,9 @@ program.addCommand(doctorCommand);
 
 // Init command - Project scaffolding
 program.addCommand(initCommand);
+
+// Demo command - Complete workflow demonstration
+program.addCommand(demoCommand);
 
 // Error handling
 program.configureOutput({
