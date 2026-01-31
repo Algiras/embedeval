@@ -101,7 +101,7 @@ export async function annotateCommand(tracesPath: string, options: AnnotateOptio
         console.log('');
         console.log(chalk.blue('Retrieved Documents:'));
         trace.context.retrievedDocs.forEach((doc, idx) => {
-          console.log(chalk.gray(`  [${idx + 1}] Score: ${doc.score.toFixed(3)} | ${doc.content.substring(0, 80)}...`));
+          console.log(chalk.gray(`  [${idx + 1}] Score: ${doc.score?.toFixed(3) ?? 'N/A'} | ${doc.content.substring(0, 80)}...`));
         });
       }
 

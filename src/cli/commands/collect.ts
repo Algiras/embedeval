@@ -83,8 +83,8 @@ export async function collectCommand(source: string, options: CollectOptions): P
       const sample = traces[0];
       console.log(`   ID: ${sample.id}`);
       console.log(`   Query: ${sample.query.substring(0, 80)}...`);
-      console.log(`   Provider: ${sample.metadata.provider}`);
-      console.log(`   Model: ${sample.metadata.model}`);
+      console.log(`   Provider: ${sample.metadata?.provider ?? 'unknown'}`);
+      console.log(`   Model: ${sample.metadata?.model ?? 'unknown'}`);
     }
 
   } catch (error) {

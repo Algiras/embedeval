@@ -134,10 +134,11 @@ function calculateStats(
 
   const byProvider: Record<string, number> = {};
   for (const trace of traces) {
-    byProvider[trace.metadata.provider] = (byProvider[trace.metadata.provider] || 0) + 1;
+    const provider = trace.metadata?.provider ?? 'unknown';
+    byProvider[provider] = (byProvider[provider] || 0) + 1;
   }
 
-  const avgLatency = traces.reduce((sum, t) => sum + t.metadata.latency, 0) / traces.length;
+  const avgLatency = traces.reduce((sum, t) => sum + (t.metadata?.latency ?? 0), 0) / traces.length;
 
   return {
     totalTraces: traces.length,

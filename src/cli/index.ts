@@ -37,13 +37,14 @@ import { statsCommand } from './commands/stats';
 import { moltbookCommand } from './commands/moltbook';
 import { listProviders, benchmarkProviders } from '../utils/llm-providers';
 import { assessCommand, compareCommand, recommendCommand, pricingCommand } from './commands/assess';
+import { startMCPServer } from '../mcp/server';
 
 const program = new Command();
 
 program
   .name('embedeval')
   .description('Hamel Husain-style evaluation CLI - binary evals, trace-centric, error-analysis-first')
-  .version('2.0.4');
+  .version('2.0.5');
 
 // Collect command - Import traces
 program
@@ -215,6 +216,14 @@ program
         console.log('');
       })
   );
+
+// MCP Server command
+program
+  .command('mcp-server')
+  .description('Start MCP server for AI agent integration')
+  .action(async () => {
+    await startMCPServer();
+  });
 
 // Assess command - Self-assessment for price, speed, quality
 program

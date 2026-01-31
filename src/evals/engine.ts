@@ -206,7 +206,7 @@ export class LLMJudgeEval implements EvalRunner {
     if (!context || !context.retrievedDocs) return 'No context available';
     
     return context.retrievedDocs
-      .map((doc, i) => `[${i + 1}] ${doc.content.substring(0, 200)}... (score: ${doc.score.toFixed(3)})`)
+      .map((doc, i) => `[${i + 1}] ${doc.content.substring(0, 200)}... (score: ${doc.score?.toFixed(3) ?? 'N/A'})`)
       .join('\n\n');
   }
 }

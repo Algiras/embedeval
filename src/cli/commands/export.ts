@@ -146,9 +146,9 @@ async function exportToNotebook(
     response: t.response,
     query_length: t.query.length,
     response_length: t.response.length,
-    provider: t.metadata.provider,
-    model: t.metadata.model,
-    latency: t.metadata.latency,
+    provider: t.metadata?.provider ?? 'unknown',
+    model: t.metadata?.model ?? 'unknown',
+    latency: t.metadata?.latency ?? 0,
   }));
 
   cells.push({
@@ -198,8 +198,8 @@ async function exportToNotebook(
       cell_type: 'markdown',
       source: [
         `### Trace ${i + 1}: ${trace.id}\n`,
-        `**Provider:** ${trace.metadata.provider} | **Model:** ${trace.metadata.model}\n`,
-        `**Latency:** ${trace.metadata.latency}ms\n`,
+        `**Provider:** ${trace.metadata?.provider ?? 'unknown'} | **Model:** ${trace.metadata?.model ?? 'unknown'}\n`,
+        `**Latency:** ${trace.metadata?.latency ?? 0}ms\n`,
         annotation ? `**Status:** ${annotation.label.toUpperCase()}\n` : '',
         annotation?.failureCategory ? `**Category:** ${annotation.failureCategory}\n` : '',
       ],
@@ -270,9 +270,9 @@ async function exportToMarkdown(
 
   // Summary statistics
   lines.push('## Summary\n');
-  const providers = new Set(traces.map(t => t.metadata.provider));
-  const models = new Set(traces.map(t => t.metadata.model));
-  const avgLatency = traces.reduce((sum, t) => sum + t.metadata.latency, 0) / traces.length;
+  const providers = new Set(traces.map(t => t.metadata?.provider ?? 'unknown'));
+  const models = new Set(traces.map(t => t.metadata?.model ?? 'unknown'));
+  const avgLatency = traces.reduce((sum, t) => sum + (t.metadata?.latency ?? 0), 0) / traces.length;
 
   lines.push(`- **Unique Providers:** ${providers.size}\n`);
   lines.push(`- **Unique Models:** ${models.size}\n`);
@@ -283,7 +283,8 @@ async function exportToMarkdown(
   lines.push('### By Provider\n');
   const providerCounts: Record<string, number> = {};
   for (const trace of traces) {
-    providerCounts[trace.metadata.provider] = (providerCounts[trace.metadata.provider] || 0) + 1;
+    const provider = trace.metadata?.provider ?? 'unknown';
+    providerCounts[provider] = (providerCounts[provider] || 0) + 1;
   }
   for (const [provider, count] of Object.entries(providerCounts)) {
     lines.push(`- ${provider}: ${count}\n`);
@@ -300,9 +301,9 @@ async function exportToMarkdown(
     lines.push(`### Trace ${i + 1}\n`);
     lines.push(`**ID:** \`${trace.id}\`\n`);
     lines.push(`**Timestamp:** ${trace.timestamp}\n`);
-    lines.push(`**Provider:** ${trace.metadata.provider}\n`);
-    lines.push(`**Model:** ${trace.metadata.model}\n`);
-    lines.push(`**Latency:** ${trace.metadata.latency}ms\n`);
+    lines.push(`**Provider:** ${trace.metadata?.provider ?? 'unknown'}\n`);
+    lines.push(`**Model:** ${trace.metadata?.model ?? 'unknown'}\n`);
+    lines.push(`**Latency:** ${trace.metadata?.latency ?? 0}ms\n`);
 
     if (annotation) {
       const statusIcon = annotation.label === 'pass' ? '✅' : '❌';

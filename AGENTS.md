@@ -62,6 +62,251 @@ When running `embedeval annotate`:
 
 ---
 
+## 🛠️ SDK for Real-Time Self-Evaluation (NEW in 2.0.5)
+
+The SDK allows agents to **self-evaluate responses in real-time** without CLI.
+
+### Quick Start
+
+```typescript
+import { 
+  evaluate,
+  preflight, 
+  getConfidence,
+  getSuggestions,
+  TraceCollector 
+} from 'embedeval/sdk';
+
+// 1. PREFLIGHT - Quick check before sending
+const check = await preflight(myResponse, userQuery);
+if (!check.passed) {
+  console.log('Issues found:', check.failedChecks);
+}
+
+// 2. CONFIDENCE - Should I send this?
+const confidence = await getConfidence(myResponse, { query: userQuery });
+console.log(`Score: ${confidence.score}, Action: ${confidence.action}`);
+// Action: 'send' | 'revise' | 'escalate' | 'clarify'
+
+// 3. EVALUATE - Full evaluation
+const result = await evaluate(myResponse, {
+  query: userQuery,
+  context: retrievedDocs,
+  evals: ['coherent', 'factual', 'helpful', 'no-hallucination'],
+});
+console.log(`Passed: ${result.passed}, Rate: ${result.passRate}%`);
+
+// 4. SUGGESTIONS - Get improvement advice
+if (!result.passed) {
+  const suggestions = await getSuggestions(trace, result.results);
+  for (const s of suggestions) {
+    console.log(`[${s.severity}] ${s.action}`);
+  }
+}
+```
+
+### Built-in Evaluators
+
+| Eval | Description | Speed |
+|------|-------------|-------|
+| `coherent` | Response is well-structured | ⚡ Fast |
+| `factual` | Contains accurate information | 🔄 Medium |
+| `helpful` | Addresses user's need | ⚡ Fast |
+| `complete` | Fully answers the question | ⚡ Fast |
+| `safe` | No harmful content | ⚡ Fast |
+| `uses-context` | Uses retrieved docs | ⚡ Fast |
+| `no-hallucination` | No made-up facts | 🔄 Medium |
+| `has-sources` | Cites sources properly | ⚡ Fast |
+
+### Preflight Checks
+
+Run quick checks **before** sending a response:
+
+```typescript
+import { preflight, preflightOk, needsRevision } from 'embedeval/sdk';
+
+// Full preflight check
+const check = await preflight(response, query, {
+  checks: ['coherent', 'safe', 'relevant'],  // Optional: specific checks
+  model: 'gemini-2.5-flash-lite',            // Optional: fastest model
+});
+
+if (!check.passed) {
+  console.log('Failed checks:', check.failedChecks);
+  // ['safe'] - response might be unsafe
+}
+
+// Quick boolean check
+const ok = await preflightOk(response, query);
+if (!ok) {
+  // Needs revision
+}
+
+// Get revision hint
+const hint = await needsRevision(response, query);
+// "Response may not fully address the question"
+```
+
+### Confidence Scoring
+
+Decide whether to send, revise, escalate, or clarify:
+
+```typescript
+import { getConfidence, shouldSend, determineAction } from 'embedeval/sdk';
+
+// Full confidence analysis
+const result = await getConfidence(response, {
+  query: userQuery,
+  method: 'hybrid',  // 'llm', 'embedding', or 'hybrid'
+  thresholds: {
+    send: 0.8,       // Score >= 0.8 → send
+    revise: 0.6,     // Score >= 0.6 → revise
+    escalate: 0.4,   // Score >= 0.4 → escalate to human
+    clarify: 0.0,    // Score < 0.4 → ask for clarification
+  },
+});
+
+console.log(`Score: ${result.score}`);
+console.log(`Action: ${result.action}`);
+console.log(`Breakdown:`, result.breakdown);
+// { relevance: 0.85, completeness: 0.7, accuracy: 0.9, clarity: 0.8 }
+
+// Quick checks
+const ok = await shouldSend(response, query);  // boolean
+const action = await determineAction(response); // 'send' | 'revise' | ...
+```
+
+### Auto-Collect Traces
+
+Automatically collect traces for later analysis:
+
+```typescript
+import { TraceCollector, getCollector, autoCollect } from 'embedeval/sdk';
+
+// Create a collector
+const collector = new TraceCollector({
+  outputFile: './traces.jsonl',
+  autoEvaluate: true,  // Run evals automatically
+  onTrace: (trace, results) => {
+    console.log(`Collected: ${trace.id}, Passed: ${results?.passed}`);
+  },
+});
+
+// Collect traces manually
+await collector.collect({
+  query: userQuery,
+  response: myResponse,
+  context: { retrievedDocs },
+  metadata: { model: 'claude-opus-4', latency: 1200 },
+});
+
+// Get stats
+const stats = collector.getStats();
+console.log(`Pass rate: ${stats.passRate}%`);
+console.log(`Top failures:`, stats.failureCategories);
+
+// Use decorator for automatic collection
+class MyAgent {
+  @autoCollect()
+  async generateResponse(query: string): Promise<string> {
+    // Your logic here
+    return response;
+  }
+}
+```
+
+### Improvement Suggestions
+
+Get actionable fixes for failed evaluations:
+
+```typescript
+import { getSuggestions, generateRevisionPrompt } from 'embedeval/sdk';
+
+const suggestions = await getSuggestions(trace, evalResults);
+
+for (const s of suggestions) {
+  console.log(`[${s.severity}] ${s.category}`);
+  console.log(`  Action: ${s.action}`);
+  console.log(`  Example: ${s.example}`);
+}
+
+// Output:
+// [high] hallucination
+//   Action: Remove or verify facts not in provided context
+//   Example: Instead of "The API supports 100 concurrent connections"...
+
+// Generate a revision prompt
+const revisionPrompt = generateRevisionPrompt(originalResponse, suggestions);
+// Use this prompt to revise the response
+```
+
+### Known Failure Categories
+
+```typescript
+import { getKnownCategories, getCategorySuggestion } from 'embedeval/sdk';
+
+const categories = getKnownCategories();
+// ['hallucination', 'incomplete', 'incoherent', 'irrelevant', 
+//  'wrong-format', 'unsafe', 'no-sources', 'verbose', 
+//  'missing-context', 'factual-error']
+
+const fix = getCategorySuggestion('hallucination');
+// { description: 'Response contains information not supported by context',
+//   action: 'Remove or verify facts not in provided context...' }
+```
+
+### Complete Agent Self-Evaluation Workflow
+
+```typescript
+import { 
+  preflight, 
+  getConfidence, 
+  evaluate, 
+  getSuggestions,
+  generateRevisionPrompt,
+  TraceCollector 
+} from 'embedeval/sdk';
+
+const collector = new TraceCollector({ autoEvaluate: true });
+
+async function respondToUser(query: string): Promise<string> {
+  // 1. Generate initial response
+  let response = await myLLM.generate(query);
+  
+  // 2. Preflight check (fast)
+  const check = await preflight(response, query);
+  if (!check.passed) {
+    // 3. Get confidence and decide action
+    const confidence = await getConfidence(response, { query });
+    
+    if (confidence.action === 'revise') {
+      // 4. Get suggestions and revise
+      const trace = { id: 'temp', query, response, timestamp: new Date().toISOString() };
+      const evalResults = check.failedChecks.map(c => ({
+        traceId: 'temp', evalId: c, passed: false
+      }));
+      const suggestions = await getSuggestions(trace, evalResults);
+      const revisionPrompt = generateRevisionPrompt(response, suggestions);
+      response = await myLLM.generate(revisionPrompt);
+    } else if (confidence.action === 'escalate') {
+      // Escalate to human
+      return '[Escalated to human support]';
+    }
+  }
+  
+  // 5. Collect trace for later analysis
+  await collector.collect({
+    query,
+    response,
+    metadata: { revised: !check.passed },
+  });
+  
+  return response;
+}
+```
+
+---
+
 ## 🔮 Multi-Provider LLM Judge System
 
 EmbedEval supports **multiple LLM providers** for evaluation. Use the best provider for your needs: speed, cost, quality, or privacy.
@@ -838,7 +1083,7 @@ embedeval export traces.jsonl \
 
 ---
 
-## 📦 MCP Server Configuration
+## 📦 MCP Server Configuration (NEW in 2.0.5)
 
 For Claude Desktop, Cursor, or other MCP clients:
 
@@ -858,14 +1103,45 @@ For Claude Desktop, Cursor, or other MCP clients:
 
 ### MCP Tools Available
 
-| Tool | Input | Output |
-|------|-------|--------|
-| `collect_traces` | `source: string` | `traces_file: string` |
-| `annotate_traces` | `traces: string, user: string` | `annotations_file: string` |
-| `build_taxonomy` | `annotations: string` | `taxonomy: object` |
-| `add_eval` | `name: string, type: string, config: object` | `eval_id: string` |
-| `run_evals` | `traces: string, evals: string` | `results: object` |
-| `export_notebook` | `traces: string, format: string` | `notebook_path: string` |
+**Self-Evaluation Tools:**
+
+| Tool | Description | Input |
+|------|-------------|-------|
+| `evaluate_response` | Full evaluation with multiple evals | `response`, `query`, `evals[]` |
+| `quick_eval` | Fast pass/fail check | `response`, `query` |
+| `preflight_check` | Pre-send checks | `response`, `query`, `checks[]` |
+| `get_confidence` | Confidence score + action | `response`, `query` |
+| `should_send_response` | Boolean: should I send? | `response`, `query` |
+| `get_improvement_suggestions` | Actionable fixes | `response`, `query`, `failedEvals[]` |
+| `get_revision_prompt` | Prompt to improve response | `response`, `suggestions[]` |
+
+**Utility Tools:**
+
+| Tool | Description | Input |
+|------|-------------|-------|
+| `list_builtin_evals` | List all available evals | none |
+| `list_failure_categories` | Known failure types | none |
+| `collect_trace` | Record trace for analysis | `query`, `response`, `metadata` |
+| `get_collection_stats` | Stats from collected traces | none |
+
+### MCP Tool Examples
+
+**Example: Self-evaluate before sending**
+```
+1. Call preflight_check(response, query)
+2. If failed, call get_improvement_suggestions(response, query, failedChecks)
+3. Revise response based on suggestions
+4. Call collect_trace(query, response) to record
+```
+
+**Example: Confidence-based routing**
+```
+1. Call get_confidence(response, query)
+2. If action == 'send' → deliver response
+3. If action == 'revise' → improve and retry
+4. If action == 'escalate' → route to human
+5. If action == 'clarify' → ask user for more info
+```
 
 ---
 

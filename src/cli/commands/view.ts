@@ -73,11 +73,11 @@ export async function viewCommand(tracesPath: string, options: ViewOptions): Pro
       if (trace.context?.retrievedDocs) {
         console.log(chalk.blue('\nRetrieved Documents:'));
         trace.context.retrievedDocs.forEach((doc, idx) => {
-          console.log(chalk.gray(`  [${idx + 1}] Score: ${doc.score.toFixed(3)} | ${doc.content.substring(0, 100)}...`));
+          console.log(chalk.gray(`  [${idx + 1}] Score: ${doc.score?.toFixed(3) ?? 'N/A'} | ${doc.content.substring(0, 100)}...`));
         });
       }
 
-      console.log(chalk.gray(`\nMetadata: ${trace.metadata.provider} | ${trace.metadata.model} | ${trace.metadata.latency}ms`));
+      console.log(chalk.gray(`\nMetadata: ${trace.metadata?.provider ?? 'unknown'} | ${trace.metadata?.model ?? 'unknown'} | ${trace.metadata?.latency ?? 0}ms`));
       
       if (annotation?.notes) {
         console.log(chalk.blue('\nNotes:'));
