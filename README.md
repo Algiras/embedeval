@@ -74,6 +74,34 @@ Top Failure Categories:
 
 ---
 
+## Video Tutorial
+
+### 📹 Full Workflow Walkthrough
+
+Watch a complete 5-minute tutorial covering the entire EmbedEval workflow:
+
+```bash
+# View the tutorial video
+open embedeval-promo/out/embedeval-tutorial-full-v3.mp4
+```
+
+**What's Covered:**
+- ✅ Installation verification
+- ✅ First trace collection
+- ✅ Interactive annotation (keyboard shortcuts)
+- ✅ Building failure taxonomy
+- ✅ Running evaluations
+- ✅ Understanding Hamel Husain's principles
+
+**Why Watch?**
+The video shows the complete workflow from zero to first evaluation. Seeing it in action makes the documentation come alive and helps you understand:
+- How the annotation UI works
+- Keyboard shortcuts in practice
+- What a failure taxonomy looks like
+- How evals are configured and run
+
+---
+
 ## Development (Contributors)
 
 If you're developing or contributing to EmbedEval, use the `embedeval-dev` script:
