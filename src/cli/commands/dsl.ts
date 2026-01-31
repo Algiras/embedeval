@@ -181,14 +181,16 @@ export function registerDSLCommands(program: Command): void {
         const dslContent = fs.readFileSync(evalFile, 'utf-8');
         const configs = compile(dslContent);
         
-        // Write temp config
-        const tempConfig = path.join(process.cwd(), '.embedeval-temp-config.json');
-        fs.writeFileSync(tempConfig, JSON.stringify(configs, null, 2));
-        
         logger.info(`Compiled ${configs.length} evals from DSL`);
         
         // Import and run eval engine
-        const { runEvals } = await import('../../evals/engine');
+        const { EvalRegistry } = await import('../../evals/engine');
+        
+        // Create registry and register evals
+        const registry = new EvalRegistry();
+        for (const config of configs) {
+          registry.register(config);
+        }
         
         // Read traces
         const traceContent = fs.readFileSync(traceFile, 'utf-8');
@@ -197,8 +199,18 @@ export function registerDSLCommands(program: Command): void {
           .split('\n')
           .map(line => JSON.parse(line));
         
-        // Run evals
-        const results = await runEvals(traces, configs);
+        // Run evals on each trace
+        const allResults: any[] = [];
+        for (const trace of traces) {
+          const traceResults = await registry.runAll(trace);
+          allResults.push({
+            traceId: trace.id,
+            passed: traceResults.every(r => r.passed),
+            results: traceResults,
+          });
+        }
+        
+        const results = { results: allResults };
         
         // Output
         const output = JSON.stringify(results, null, 2);
@@ -209,15 +221,124 @@ export function registerDSLCommands(program: Command): void {
           console.log(output);
         }
         
-        // Cleanup
-        fs.unlinkSync(tempConfig);
-        
         // Summary
         const passed = results.results.filter((r: { passed: boolean }) => r.passed).length;
         const total = results.results.length;
         const rate = total > 0 ? ((passed / total) * 100).toFixed(1) : '0';
         
         console.log(`\n✅ Results: ${passed}/${total} passed (${rate}%)`);
+        
+      } catch (e: any) {
+        logger.error(`Failed: ${e.message}`);
+        process.exit(1);
+      }
+    });
+
+  // dsl ui - Generate annotation UI from DSL
+  dsl
+    .command('ui <evalFile>')
+    .description('Generate interactive HTML annotation UI from DSL spec')
+    .option('-o, --output <file>', 'Output HTML file', 'annotation-ui.html')
+    .option('-a, --annotations <file>', 'Annotations output filename', 'annotations.jsonl')
+    .option('--theme <theme>', 'UI theme (light, dark)', 'dark')
+    .option('--no-shortcuts', 'Disable keyboard shortcuts')
+    .option('--no-context', 'Hide retrieved context')
+    .option('--no-metadata', 'Hide trace metadata')
+    .action(async (evalFile: string, options) => {
+      try {
+        const dslContent = fs.readFileSync(evalFile, 'utf-8');
+        const spec = parseEvalSpec(dslContent);
+        
+        const { generateAnnotationUI } = await import('../../dsl/ui-generator');
+        
+        const html = generateAnnotationUI(spec, '', options.annotations, {
+          theme: options.theme,
+          showContext: options.context !== false,
+          showMetadata: options.metadata !== false,
+          keyboardShortcuts: options.shortcuts !== false,
+        });
+        
+        fs.writeFileSync(options.output, html);
+        logger.success(`Generated annotation UI: ${options.output}`);
+        
+        console.log('\n📝 Next steps:');
+        console.log(`   1. Open ${options.output} in a browser`);
+        console.log('   2. Load your traces.jsonl file');
+        console.log('   3. Annotate traces using the checklist');
+        console.log('   4. Click "Export Annotations" when done');
+        console.log(`   5. Use annotations with: embedeval taxonomy build -a ${options.annotations}`);
+        
+        // Try to open in browser
+        const openCommand = process.platform === 'darwin' ? 'open' : 
+                           process.platform === 'win32' ? 'start' : 'xdg-open';
+        console.log(`\n💡 Tip: Run \`${openCommand} ${options.output}\` to open in browser`);
+        
+      } catch (e: any) {
+        logger.error(`Failed: ${e.message}`);
+        process.exit(1);
+      }
+    });
+
+  // dsl serve - Serve annotation UI locally
+  dsl
+    .command('serve <evalFile>')
+    .description('Start local server for annotation UI')
+    .option('-p, --port <port>', 'Port number', '3456')
+    .option('-t, --traces <file>', 'Pre-load traces file')
+    .option('--theme <theme>', 'UI theme (light, dark)', 'dark')
+    .action(async (evalFile: string, options) => {
+      try {
+        const dslContent = fs.readFileSync(evalFile, 'utf-8');
+        const spec = parseEvalSpec(dslContent);
+        
+        const { generateAnnotationUI } = await import('../../dsl/ui-generator');
+        
+        // Generate HTML with embedded traces if provided
+        let html = generateAnnotationUI(spec, options.traces || '', 'annotations.jsonl', {
+          theme: options.theme,
+        });
+        
+        // If traces file provided, embed it
+        if (options.traces && fs.existsSync(options.traces)) {
+          const tracesContent = fs.readFileSync(options.traces, 'utf-8');
+          const traces = tracesContent.trim().split('\n').map(line => JSON.parse(line));
+          
+          // Inject traces into HTML
+          html = html.replace(
+            '<div id="fileUpload" class="file-upload">',
+            `<script>
+              const preloadedTraces = ${JSON.stringify(traces)};
+              window.addEventListener('load', () => {
+                traces = preloadedTraces;
+                document.getElementById('fileUpload').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'grid';
+                updateDisplay();
+                updateStats();
+              });
+            </script>
+            <div id="fileUpload" class="file-upload" style="display:none;">`
+          );
+        }
+        
+        // Simple HTTP server
+        const http = await import('http');
+        const port = parseInt(options.port);
+        
+        const server = http.createServer((_req, res) => {
+          res.writeHead(200, { 'Content-Type': 'text/html' });
+          res.end(html);
+        });
+        
+        server.listen(port, () => {
+          logger.success(`Annotation server running at http://localhost:${port}`);
+          console.log('\n📝 Open your browser to start annotating');
+          console.log('   Press Ctrl+C to stop the server');
+          
+          // Try to open browser
+          const openCommand = process.platform === 'darwin' ? 'open' : 
+                             process.platform === 'win32' ? 'start' : 'xdg-open';
+          require('child_process').exec(`${openCommand} http://localhost:${port}`);
+        });
         
       } catch (e: any) {
         logger.error(`Failed: ${e.message}`);

@@ -43,6 +43,8 @@ embedeval taxonomy build --annotations annotations.jsonl
 | **Taxonomy** | `embedeval taxonomy build` | Categorize failures |
 | **DSL Init** | `embedeval dsl init <template>` | Create .eval file from template |
 | **DSL Run** | `embedeval dsl run evals.eval traces.jsonl` | Compile & run in one step |
+| **DSL UI** | `embedeval dsl ui evals.eval` | Generate HTML annotation UI |
+| **DSL Serve** | `embedeval dsl serve evals.eval -t traces.jsonl` | Serve annotation UI locally |
 | **Eval Add** | `embedeval eval add` | Add new evaluator |
 | **Eval Run** | `embedeval eval run <traces> -c <config>` | Run evals |
 | **Generate** | `embedeval generate create -d <dims> -n <count>` | Synthetic data |
@@ -154,6 +156,62 @@ embedeval dsl compile my-evals.eval -o evals.json
 
 # Compile and run in one step
 embedeval dsl run my-evals.eval traces.jsonl -o results.json
+
+# Generate annotation UI (NEW!)
+embedeval dsl ui my-evals.eval -o annotation.html
+
+# Serve annotation UI with hot-reload (NEW!)
+embedeval dsl serve my-evals.eval -t traces.jsonl
+```
+
+### Generate Annotation UI from DSL (NEW!)
+
+The DSL can generate an **interactive HTML annotation interface** based on your eval criteria. This enables human evaluation using the exact same checks defined in your DSL.
+
+```bash
+# Generate standalone HTML annotation UI
+embedeval dsl ui my-evals.eval -o annotation-ui.html --theme dark
+
+# Options:
+#   -o, --output <file>      Output HTML file (default: annotation-ui.html)
+#   -a, --annotations <file> Annotations output filename (default: annotations.jsonl)
+#   --theme <theme>          UI theme: light or dark (default: dark)
+#   --no-shortcuts           Disable keyboard shortcuts
+#   --no-context             Hide retrieved context section
+#   --no-metadata            Hide trace metadata section
+```
+
+**Workflow:**
+1. Define evals in DSL → `my-evals.eval`
+2. Generate UI → `embedeval dsl ui my-evals.eval`
+3. Open HTML → Load your `traces.jsonl`
+4. Annotate → Check evals, add notes, mark Pass/Fail
+5. Export → Download `annotations.jsonl`
+6. Analyze → `embedeval taxonomy build -a annotations.jsonl`
+
+**Keyboard Shortcuts in UI:**
+- `P` = Mark as PASS
+- `F` = Mark as FAIL
+- `S` = Skip trace
+- `←`/`K` = Previous trace
+- `→`/`J` = Next trace
+- `1-9` = Toggle eval checklist items
+
+### Serve Annotation UI Locally
+
+For teams or easier workflow, serve the UI with a local server:
+
+```bash
+# Start annotation server (opens browser automatically)
+embedeval dsl serve my-evals.eval -p 3456
+
+# Pre-load traces file
+embedeval dsl serve my-evals.eval -t traces.jsonl --theme light
+
+# Options:
+#   -p, --port <port>  Port number (default: 3456)
+#   -t, --traces <file> Pre-load traces file
+#   --theme <theme>    UI theme: light or dark
 ```
 
 ### Example: RAG Eval File
