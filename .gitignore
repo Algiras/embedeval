@@ -39,6 +39,9 @@ Thumbs.db
 coverage/
 .nyc_output/
 
+# Thoughts/notes (not for git history)
+thoughts/
+
 # Temporary files
 *.tmp
 *.temp
@@ -48,3 +51,10 @@ temp/
 # CI artifacts
 ci-results/
 test-results/
+
+# Campaign tracking (internal strategy, not for public)
+metrics/
+campaign/
+strategy/
+*.campaign.md
+MOLTBOOK_*.md
