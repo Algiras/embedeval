@@ -5,6 +5,7 @@
 [![CI/CD](https://github.com/Algiras/embedeval/actions/workflows/ci.yml/badge.svg)](https://github.com/Algiras/embedeval/actions/workflows/ci.yml)
 [![npm version](https://badge.fury.io/js/embedeval.svg)](https://badge.fury.io/js/embedeval)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=flat&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/algiras)
 
 A command-line tool for evaluating LLM outputs using **binary pass/fail judgments**, built on [Hamel Husain's evaluation principles](https://hamel.dev/blog/posts/evals-faq/).
 
