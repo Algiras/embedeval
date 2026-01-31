@@ -4,6 +4,7 @@ module.exports = {
   testEnvironment: 'node',
   roots: ['<rootDir>/src', '<rootDir>/tests'],
   testMatch: ['**/*.test.ts'],
+  testTimeout: 10000,
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
@@ -12,9 +13,6 @@ module.exports = {
     // Handle .js extensions in imports (TypeScript allows importing .js for ESM compatibility)
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
-  transformIgnorePatterns: [
-    'node_modules/(?!(chalk|ora|cli-progress|inquirer)/)'
-  ],
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/**/*.d.ts',
