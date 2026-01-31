@@ -944,67 +944,67 @@
         </div>
     </section>
 
-    <section class="setup-commands" style="background: #f8fafc; padding: 4em 0;">
+    <section class="setup-commands" style="background: var(--bg-secondary); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 5em 0;">
         <div class="container">
             <div class="section-header">
-                <h2>🚀 Easy Setup Commands</h2>
-                <p>Get started in seconds with built-in setup and diagnostic tools.</p>
+                <h2 style="color: var(--text-primary);">🚀 Easy Setup Commands</h2>
+                <p style="color: var(--text-secondary);">Get started in seconds with built-in setup and diagnostic tools.</p>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2em; margin-bottom: 2em;">
-                <div class="terminal">
-                    <div class="terminal-header">
-                        <div class="terminal-dot red"></div>
-                        <div class="terminal-dot yellow"></div>
-                        <div class="terminal-dot green"></div>
-                        <span class="terminal-title">embedeval doctor</span>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2em; margin-bottom: 2em;">
+                <div class="terminal" style="border-color: var(--border-light);">
+                    <div class="terminal-header" style="background: var(--bg-elevated); border-color: var(--border-light);">
+                        <div class="terminal-dot" style="background: #ff5f56;"></div>
+                        <div class="terminal-dot" style="background: #ffbd2e;"></div>
+                        <div class="terminal-dot" style="background: #27ca40;"></div>
+                        <span class="terminal-title" style="color: var(--text-muted);">embedeval doctor</span>
                     </div>
-                    <div class="terminal-body">
-                        <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="command">embedeval</span> doctor</div>
-                        <div class="terminal-line terminal-output">🔧 EmbedEval Doctor</div>
-                        <div class="terminal-line terminal-output">Checking your environment...</div>
+                    <div class="terminal-body" style="background: var(--bg-card);">
+                        <div class="terminal-line"><span class="terminal-prompt" style="color: var(--accent-primary);">$</span> <span class="command" style="color: var(--text-primary);">embedeval</span> doctor</div>
+                        <div class="terminal-line terminal-output" style="color: var(--text-secondary);">🔧 EmbedEval Doctor</div>
+                        <div class="terminal-line terminal-output" style="color: var(--text-muted);">Checking your environment...</div>
                         <div class="terminal-line">&nbsp;</div>
-                        <div class="terminal-line terminal-output">  ✓ Node.js Version    Node.js v20.11.0</div>
-                        <div class="terminal-line terminal-output">  ✓ Installation       embedeval v2.0.5</div>
-                        <div class="terminal-line terminal-output">  ✓ LLM Providers      4 provider(s) configured</div>
-                        <div class="terminal-line terminal-output">  ✓ Sample Data        Sample traces available</div>
-                        <div class="terminal-line terminal-output">  ✓ Operating System   darwin arm64</div>
+                        <div class="terminal-line terminal-output" style="color: var(--accent-primary);">  ✓ Node.js Version    Node.js v20.11.0</div>
+                        <div class="terminal-line terminal-output" style="color: var(--accent-primary);">  ✓ Installation       embedeval v2.0.5</div>
+                        <div class="terminal-line terminal-output" style="color: var(--accent-primary);">  ✓ LLM Providers      4 provider(s) configured</div>
+                        <div class="terminal-line terminal-output" style="color: var(--accent-primary);">  ✓ Sample Data        Sample traces available</div>
+                        <div class="terminal-line terminal-output" style="color: var(--accent-primary);">  ✓ Operating System   darwin arm64</div>
                         <div class="terminal-line">&nbsp;</div>
-                        <div class="terminal-line terminal-output">✅ All checks passed! Ready to go.</div>
+                        <div class="terminal-line terminal-output" style="color: var(--accent-primary);">✅ All checks passed! Ready to go.</div>
                     </div>
                 </div>
                 
-                <div class="terminal">
-                    <div class="terminal-header">
-                        <div class="terminal-dot red"></div>
-                        <div class="terminal-dot yellow"></div>
-                        <div class="terminal-dot green"></div>
-                        <span class="terminal-title">embedeval init</span>
+                <div class="terminal" style="border-color: var(--border-light);">
+                    <div class="terminal-header" style="background: var(--bg-elevated); border-color: var(--border-light);">
+                        <div class="terminal-dot" style="background: #ff5f56;"></div>
+                        <div class="terminal-dot" style="background: #ffbd2e;"></div>
+                        <div class="terminal-dot" style="background: #27ca40;"></div>
+                        <span class="terminal-title" style="color: var(--text-muted);">embedeval init</span>
                     </div>
-                    <div class="terminal-body">
-                        <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="command">embedeval</span> init my-project</div>
-                        <div class="terminal-line terminal-output">🚀 Creating embedeval project: my-project</div>
+                    <div class="terminal-body" style="background: var(--bg-card);">
+                        <div class="terminal-line"><span class="terminal-prompt" style="color: var(--accent-primary);">$</span> <span class="command" style="color: var(--text-primary);">embedeval</span> init my-project</div>
+                        <div class="terminal-line terminal-output" style="color: var(--text-secondary);">🚀 Creating embedeval project: my-project</div>
                         <div class="terminal-line">&nbsp;</div>
-                        <div class="terminal-line terminal-output">  ✓ Created directory structure</div>
-                        <div class="terminal-line terminal-output">  ✓ Copied sample traces</div>
-                        <div class="terminal-line terminal-output">  ✓ Created rag.eval template</div>
-                        <div class="terminal-line terminal-output">  ✓ Created .env file</div>
-                        <div class="terminal-line terminal-output">  ✓ Created README.md</div>
+                        <div class="terminal-line terminal-output" style="color: var(--accent-primary);">  ✓ Created directory structure</div>
+                        <div class="terminal-line terminal-output" style="color: var(--accent-primary);">  ✓ Copied sample traces</div>
+                        <div class="terminal-line terminal-output" style="color: var(--accent-primary);">  ✓ Created rag.eval template</div>
+                        <div class="terminal-line terminal-output" style="color: var(--accent-primary);">  ✓ Created .env file</div>
+                        <div class="terminal-line terminal-output" style="color: var(--accent-primary);">  ✓ Created README.md</div>
                         <div class="terminal-line">&nbsp;</div>
-                        <div class="terminal-line terminal-output">✅ Project created successfully!</div>
+                        <div class="terminal-line terminal-output" style="color: var(--accent-primary);">✅ Project created successfully!</div>
                         <div class="terminal-line">&nbsp;</div>
-                        <div class="terminal-line terminal-output">Next: cd my-project && embedeval doctor</div>
+                        <div class="terminal-line terminal-output" style="color: var(--text-secondary);">Next: cd my-project && embedeval doctor</div>
                     </div>
                 </div>
             </div>
             
-            <div class="feature-text">
-                <h4>New Setup Features</h4>
-                <ul>
-                    <li>🔧 <b>Doctor command</b> - Diagnose environment issues before starting</li>
-                    <li>🏗️ <b>Init command</b> - Scaffold new projects with templates in seconds</li>
-                    <li>📋 <b>6 built-in templates</b> - rag, chatbot, code-assistant, docs, agent, minimal</li>
-                    <li>⚙️ <b>Auto .env creation</b> - Interactive API key setup</li>
+            <div class="feature-text" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 2em;">
+                <h4 style="color: var(--accent-primary); margin-bottom: 1em;">New Setup Features</h4>
+                <ul style="color: var(--text-secondary);">
+                    <li style="margin-bottom: 0.75em;">🔧 <strong style="color: var(--text-primary);">Doctor command</strong> - Diagnose environment issues before starting</li>
+                    <li style="margin-bottom: 0.75em;">🏗️ <strong style="color: var(--text-primary);">Init command</strong> - Scaffold new projects with templates in seconds</li>
+                    <li style="margin-bottom: 0.75em;">📋 <strong style="color: var(--text-primary);">6 built-in templates</strong> - rag, chatbot, code-assistant, docs, agent, minimal</li>
+                    <li>⚙️ <strong style="color: var(--text-primary);">Auto .env creation</strong> - Interactive API key setup</li>
                 </ul>
             </div>
         </div>
@@ -1266,47 +1266,47 @@ export OPENAI_BASE_URL="http://localhost:11434/v1"
         </div>
     </section>
 
-    <section class="skills-index" style="background: #f8fafc; padding: 4em 0; border-top: 1px solid var(--border-color);">
+    <section class="skills-index" style="background: var(--bg-primary); padding: 5em 0; border-top: 1px solid var(--border-color);">
         <div class="container">
             <div class="section-header">
-                <h2>🎯 Skills Index</h2>
-                <p>Navigate EmbedEval capabilities as actionable skills. Tell agents: "Use the [skill] skill"</p>
+                <h2 style="color: var(--text-primary);">🎯 Skills Index</h2>
+                <p style="color: var(--text-secondary);">Navigate EmbedEval capabilities as actionable skills. Tell agents: "Use the [skill] skill"</p>
             </div>
             
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5em;">
                 <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.5em;">
                     <h4 style="margin-bottom: 0.75em; color: var(--accent-primary);">🔧 Setup Skills</h4>
                     <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9em;">
-                        <li style="margin-bottom: 0.5em;"><code>embedeval doctor</code> - Environment check</li>
-                        <li style="margin-bottom: 0.5em;"><code>embedeval init</code> - Project scaffolding</li>
-                        <li><code>embedeval auth login</code> - Configure providers</li>
+                        <li style="margin-bottom: 0.5em; color: var(--text-secondary);"><code style="color: var(--accent-secondary); background: var(--bg-elevated); padding: 2px 6px; border-radius: 4px;">embedeval doctor</code> - Environment check</li>
+                        <li style="margin-bottom: 0.5em; color: var(--text-secondary);"><code style="color: var(--accent-secondary); background: var(--bg-elevated); padding: 2px 6px; border-radius: 4px;">embedeval init</code> - Project scaffolding</li>
+                        <li style="color: var(--text-secondary);"><code style="color: var(--accent-secondary); background: var(--bg-elevated); padding: 2px 6px; border-radius: 4px;">embedeval auth login</code> - Configure providers</li>
                     </ul>
                 </div>
                 
                 <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.5em;">
                     <h4 style="margin-bottom: 0.75em; color: var(--accent-primary);">📊 Core Workflow</h4>
                     <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9em;">
-                        <li style="margin-bottom: 0.5em;"><code>embedeval collect</code> - Import traces</li>
-                        <li style="margin-bottom: 0.5em;"><code>embedeval annotate</code> - Binary annotation</li>
-                        <li><code>embedeval taxonomy build</code> - Failure categories</li>
+                        <li style="margin-bottom: 0.5em; color: var(--text-secondary);"><code style="color: var(--accent-secondary); background: var(--bg-elevated); padding: 2px 6px; border-radius: 4px;">embedeval collect</code> - Import traces</li>
+                        <li style="margin-bottom: 0.5em; color: var(--text-secondary);"><code style="color: var(--accent-secondary); background: var(--bg-elevated); padding: 2px 6px; border-radius: 4px;">embedeval annotate</code> - Binary annotation</li>
+                        <li style="color: var(--text-secondary);"><code style="color: var(--accent-secondary); background: var(--bg-elevated); padding: 2px 6px; border-radius: 4px;">embedeval taxonomy build</code> - Failure categories</li>
                     </ul>
                 </div>
                 
                 <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.5em;">
                     <h4 style="margin-bottom: 0.75em; color: var(--accent-primary);">🎨 DSL Templates</h4>
                     <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9em;">
-                        <li style="margin-bottom: 0.5em;"><code>dsl init rag</code> - RAG evaluation</li>
-                        <li style="margin-bottom: 0.5em;"><code>dsl init chatbot</code> - Support bots</li>
-                        <li><code>dsl init agent</code> - Autonomous agents</li>
+                        <li style="margin-bottom: 0.5em; color: var(--text-secondary);"><code style="color: var(--accent-secondary); background: var(--bg-elevated); padding: 2px 6px; border-radius: 4px;">dsl init rag</code> - RAG evaluation</li>
+                        <li style="margin-bottom: 0.5em; color: var(--text-secondary);"><code style="color: var(--accent-secondary); background: var(--bg-elevated); padding: 2px 6px; border-radius: 4px;">dsl init chatbot</code> - Support bots</li>
+                        <li style="color: var(--text-secondary);"><code style="color: var(--accent-secondary); background: var(--bg-elevated); padding: 2px 6px; border-radius: 4px;">dsl init agent</code> - Autonomous agents</li>
                     </ul>
                 </div>
                 
                 <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.5em;">
                     <h4 style="margin-bottom: 0.75em; color: var(--accent-primary);">⚡ Automation</h4>
                     <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9em;">
-                        <li style="margin-bottom: 0.5em;"><code>embedeval dsl run</code> - Run evaluations</li>
-                        <li style="margin-bottom: 0.5em;"><code>embedeval watch</code> - Real-time eval</li>
-                        <li><code>embedeval eval add</code> - Add evaluators</li>
+                        <li style="margin-bottom: 0.5em; color: var(--text-secondary);"><code style="color: var(--accent-secondary); background: var(--bg-elevated); padding: 2px 6px; border-radius: 4px;">embedeval dsl run</code> - Run evaluations</li>
+                        <li style="margin-bottom: 0.5em; color: var(--text-secondary);"><code style="color: var(--accent-secondary); background: var(--bg-elevated); padding: 2px 6px; border-radius: 4px;">embedeval watch</code> - Real-time eval</li>
+                        <li style="color: var(--text-secondary);"><code style="color: var(--accent-secondary); background: var(--bg-elevated); padding: 2px 6px; border-radius: 4px;">embedeval eval add</code> - Add evaluators</li>
                     </ul>
                 </div>
             </div>
