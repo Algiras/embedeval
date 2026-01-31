@@ -9,6 +9,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+#### Testing
+- **184+ Tests**: Comprehensive test suite for core modules
+  - 43 tests for eval engine (assertion, regex, code, LLM-judge, registry)
+  - 66 tests for DSL parser (metadata, eval types, priority, patterns)
+  - 40 tests for SDK evaluate module
+  - 35 tests for core storage (TraceStore, AnnotationStore, TaxonomyStore)
+  - 29 tests for CLI collect command
+  - 26 tests for CLI annotate command
+  - 20 tests for CLI taxonomy command
+  - 33 tests for CLI eval commands
+  - 26 tests for CLI DSL commands
+  - 63 tests for LLM providers integration
+  - 6 existing auth tests (token refresh)
+  
+#### Documentation
+- **GETTING_STARTED.md**: 10-minute tutorial for first-time users
+  - Installation verification
+  - First trace collection, annotation, taxonomy build
+  - Run first eval
+  - Export and next steps
+  
+- **TROUBLESHOOTING.md**: Comprehensive troubleshooting guide
+  - Installation issues, JSONL format errors
+  - Authentication problems, evaluation failures
+  - Performance issues, CLI errors, DSL errors
+  - Debug mode and getting help
+
 #### Authentication & Setup
 - **Automatic Token Refresh**: OAuth tokens are now automatically refreshed before expiration
   - `refreshOAuthToken()` function for manual refresh
