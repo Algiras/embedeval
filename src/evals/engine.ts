@@ -6,6 +6,13 @@
 
 import { Trace, EvalConfig, EvalResult } from '../core/types';
 import { logger } from '../utils/logger';
+import {
+  JsonSchemaEval,
+  SafetyEval,
+  SemanticSimilarityEval,
+  MultiTurnEval,
+  ReasoningEval,
+} from './advanced';
 
 export interface EvalRunner {
   run(trace: Trace, config: EvalConfig): Promise<EvalResult>;
@@ -222,6 +229,11 @@ export class EvalRegistry {
     this.runners.set('assertion', new AssertionEval());
     this.runners.set('regex', new RegexEval());
     this.runners.set('code', new CodeEval());
+    this.runners.set('json-schema', new JsonSchemaEval());
+    this.runners.set('safety', new SafetyEval());
+    this.runners.set('semantic', new SemanticSimilarityEval());
+    this.runners.set('multi-turn', new MultiTurnEval());
+    this.runners.set('reasoning', new ReasoningEval());
     
     // Register expensive eval runner
     if (judgeFunction) {

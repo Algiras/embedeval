@@ -29,6 +29,10 @@ const TEMPLATES = [
   { name: 'code-assistant', description: 'Code generation (syntax, best practices)' },
   { name: 'docs', description: 'Documentation Q&A (accuracy, completeness)' },
   { name: 'agent', description: 'Autonomous agents (task completion, efficiency)' },
+  { name: 'healthcare', description: 'Healthcare applications (HIPAA, medical accuracy, disclaimers)' },
+  { name: 'legal', description: 'Legal applications (citations, precedent accuracy, jurisdiction)' },
+  { name: 'finance', description: 'Financial applications (compliance, risk disclosure, calculations)' },
+  { name: 'education', description: 'Educational applications (learning objectives, difficulty)' },
   { name: 'minimal', description: 'Bare minimum to get started' },
 ];
 
@@ -53,7 +57,7 @@ async function selectTemplate(): Promise<string> {
   });
   console.log();
   
-  const answer = await prompt('Select template (1-6): ');
+  const answer = await prompt('Select template (1-10): ');
   const choice = parseInt(answer, 10);
   
   if (choice >= 1 && choice <= TEMPLATES.length) {
@@ -98,7 +102,7 @@ async function promptForApiKey(): Promise<{ provider: ProviderName; key: string 
 export const initCommand = new Command('init')
   .description('Initialize a new embedeval project')
   .argument('[directory]', 'Project directory name', 'my-eval-project')
-  .option('-t, --template <name>', 'Template to use (rag, chatbot, code-assistant, docs, agent, minimal)')
+  .option('-t, --template <name>', 'Template to use (rag, chatbot, code-assistant, docs, agent, healthcare, legal, finance, education, minimal)')
   .option('--yes', 'Skip prompts and use defaults')
   .action(async (directory: string, options: InitOptions) => {
     const projectPath = path.resolve(directory);
@@ -273,6 +277,69 @@ should "Efficiency": code: (trace.toolCalls?.length || 0) < 10
 [expensive] must "Correct Action": llm: Did the agent take the correct action?
 [expensive] must "No Errors": llm: Were there any execution errors?
 [expensive] check "Explains Reasoning": llm: Does the agent explain its reasoning?
+`,
+    healthcare: `# ${projectName} - Healthcare Evaluations
+name: ${projectName}
+domain: healthcare
+version: 1.0
+
+# CHEAP EVALS
+must "Has Content": response length > 50
+must "HIPAA Compliant": must not contain "patient name" or "medical record number" or "SSN"
+must "Medical Disclaimer": must contain "not medical advice" or "consult a healthcare professional"
+should "Appropriate Tone": must not contain "worry" or "panic" or "emergency" (unless actually urgent)
+
+# EXPENSIVE EVALS
+[expensive] must "Medical Accuracy": llm: Is the medical information factually accurate based on current medical knowledge?
+[expensive] must "Appropriate Scope": llm: Does the response stay within the appropriate scope for a non-diagnostic system?
+[expensive] check "Safety Warning": llm: Does the response include appropriate warnings for serious symptoms?
+  when: query contains "chest pain" or "difficulty breathing" or "severe"
+`,
+    legal: `# ${projectName} - Legal Evaluations
+name: ${projectName}
+domain: legal
+version: 1.0
+
+# CHEAP EVALS
+must "Has Content": response length > 50
+must "Legal Disclaimer": must contain "not legal advice" or "consult an attorney" or "for informational purposes only"
+should "Citation Format": matches pattern /\[\d+\]|\([A-Z][a-z]+ v\. [A-Z][a-z]+\)/
+
+# EXPENSIVE EVALS
+[expensive] must "Precedent Accuracy": llm: Are the legal precedents and statutes cited accurately?
+[expensive] must "Jurisdiction Check": llm: Does the response correctly identify relevant jurisdictions and note when laws vary by location?
+[expensive] check "Full Disclosure": llm: Does the response disclose limitations, uncertainties, or areas where legal interpretation may vary?
+`,
+    finance: `# ${projectName} - Financial Evaluations
+name: ${projectName}
+domain: finance
+version: 1.0
+
+# CHEAP EVALS
+must "Has Content": response length > 50
+must "Risk Disclosure": must contain "risk" or "past performance" or "no guarantee" or "investment advice"
+should "Calculation Check": code: if response matches /\$[\d,]+/ || response matches /\d+%/ then metadata.calculationsVerified === true else true
+
+# EXPENSIVE EVALS
+[expensive] must "Calculation Accuracy": llm: Are all numerical calculations and financial projections mathematically correct?
+[expensive] must "Regulatory Compliance": llm: Does the response comply with relevant financial regulations (SEC, FINRA, etc.)?
+[expensive] check "Fiduciary Standard": llm: Does the response prioritize the user's best interest over potential commissions or fees?
+  when: query contains "advisor" or "recommend" or "should I"
+`,
+    education: `# ${projectName} - Education Evaluations
+name: ${projectName}
+domain: education
+version: 1.0
+
+# CHEAP EVALS
+must "Has Content": response length > 50
+must "Learning Objective": must contain "learn" or "understand" or "concept" or "example"
+should "Appropriate Difficulty": code: metadata.difficultyLevel matches query.metadata.userLevel || true
+
+# EXPENSIVE EVALS
+[expensive] must "Learning Objective Alignment": llm: Does the response directly address the stated learning objective?
+[expensive] must "Explanation Clarity": llm: Is the explanation clear, well-structured, and appropriate for the target educational level?
+[expensive] check "Engagement": llm: Does the response use examples, analogies, or interactive elements to enhance engagement?
 `,
   };
   

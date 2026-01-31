@@ -8,11 +8,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+#### Authentication & Setup
 - **Automatic Token Refresh**: OAuth tokens are now automatically refreshed before expiration
   - `refreshOAuthToken()` function for manual refresh
   - `getCredential()` now checks expiration and refreshes automatically with 5-minute buffer
   - Preserves existing refresh tokens if server doesn't provide new ones
   - Graceful fallback to expired credentials if refresh fails
+- **`embedeval doctor`**: Environment diagnostics command
+  - Checks Node.js version, installation integrity, API keys, sample data
+  - `--json` flag for programmatic output
+  - `--fix` flag for interactive setup fixes
+  - `--validate-keys` flag to test API keys with actual calls
+- **`embedeval init`**: Project scaffolding command
+  - Interactive project creation with 10 templates
+  - Generates directory structure, .env file, README.md
+  - API key configuration wizard
+- **`embedeval demo`**: Complete workflow demonstration
+  - Runs full evaluation workflow on sample data in seconds
+  - Generates HTML report automatically
+  - Perfect for onboarding new users
+
+#### Advanced Evaluation Types (World-Class Features)
+- **JSON Schema Validation**: New `json-schema` eval type using Ajv
+  - Validates responses against JSON schemas
+  - Supports validating response, metadata, context, or toolCalls
+  - Configurable strict mode and string parsing
+- **Safety & Security Suite**: New `safety` eval type
+  - Prompt injection detection (25+ patterns)
+  - Jailbreak attempt detection (15+ patterns)
+  - PII leakage detection (SSN, credit cards, emails, phones)
+  - Configurable check types: injection, jailbreak, pii, toxicity, all
+- **Semantic Similarity**: New `semantic` eval type
+  - Embedding-based comparison to reference text
+  - Configurable similarity threshold
+  - Foundation for embedding-based evals
+- **Multi-Turn Conversation**: New `multi-turn` eval type
+  - Validates consistency across conversation turns
+  - Checks context retention
+  - Detects contradictions with previous responses
+- **Reasoning Validation**: New `reasoning` eval type
+  - Validates step-by-step reasoning quality
+  - Checks for citations in reasoning
+  - Configurable minimum steps requirement
+
+#### Enterprise Templates (10 Total)
+Added 4 new enterprise-focused templates:
+- **healthcare**: Medical accuracy, HIPAA compliance, disclaimer checks, PHI handling
+- **legal**: Citation format, precedent accuracy, jurisdiction correctness, legal disclaimers
+- **finance**: Compliance checks, risk disclosure, calculation accuracy, regulatory requirements
+- **education**: Learning objective alignment, difficulty appropriateness, misconception detection
+
+#### Developer Experience
+- **Skills Index**: New documentation system
+  - `skills/SKILL_INDEX.md`: Human-readable skill navigation
+  - `skills/skill-manifest.json`: Machine-readable skill definitions
+  - 17 skills documented across categories
+- **GitHub Pages Improvements**
+  - Setup Commands section with terminal demos
+  - Skills Index section with quick navigation
+  - Consistent dark theme colors throughout
 
 ### Planned
 - Grid search for optimal chunking parameters
