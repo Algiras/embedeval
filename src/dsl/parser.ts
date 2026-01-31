@@ -85,10 +85,8 @@ export function parseEvalSpec(content: string): EvalSpec {
   };
   
   let currentEval: Partial<EvalDefinition> | null = null;
-  let lineNum = 0;
   
   for (const rawLine of lines) {
-    lineNum++;
     const line = rawLine.trim();
     
     // Skip empty lines and comments

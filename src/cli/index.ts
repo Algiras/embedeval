@@ -162,8 +162,9 @@ program
 
 // Export command - Export to notebooks
 program
-  .command('export <traces>')
+  .command('export')
   .description('Export traces to various formats')
+  .requiredOption('-t, --traces <file>', 'Traces file')
   .option('-f, --format <format>', 'Export format (notebook, markdown, json)', 'notebook')
   .option('-a, --annotations <file>', 'Include annotations')
   .option('-o, --output <file>', 'Output file')

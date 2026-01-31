@@ -105,7 +105,7 @@ must "Explains Code": llm: Does the response explain what the code does?
   -> Code should come with explanation
 
 # Quality
-should "No Deprecated": does not match pattern /\.then\(.*\.catch\)|var\s+\w+\s*=/
+should "No Deprecated": does not match pattern /.then(.*.catch)|var +[a-zA-Z_]+ =/
   -> Avoids deprecated patterns
 
 should "Has Error Handling": llm: Does the code include appropriate error handling?

@@ -522,7 +522,7 @@ class MCPServer {
           this.sendResult(id, { tools: TOOLS });
           break;
 
-        case 'tools/call':
+        case 'tools/call': {
           const { name, arguments: args } = params;
           const result = await handleTool(name, args || {});
           this.sendResult(id, {
@@ -534,6 +534,7 @@ class MCPServer {
             ],
           });
           break;
+        }
 
         case 'ping':
           this.sendResult(id, {});

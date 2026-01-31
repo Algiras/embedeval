@@ -114,7 +114,7 @@ export async function validateApiKey(
             error: 'Invalid API key',
           };
         }
-        let details: HealthCheckResult['details'] = {};
+        const details: HealthCheckResult['details'] = {};
         const modelsData = await modelsResponse.json() as { data?: unknown[] };
         details.models = modelsData.data?.length || 0;
         if (authResponse.ok) {
