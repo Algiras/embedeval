@@ -30,7 +30,8 @@ import { viewCommand } from './commands/view';
 import { annotateCommand } from './commands/annotate';
 import { taxonomyCommand } from './commands/taxonomy';
 import { addEvalCommand, listEvalsCommand, runEvalCommand, reportEvalCommand } from './commands/eval';
-import { initCommand, createCommand } from './commands/generate';
+import { initCommand as generateInitCommand, createCommand } from './commands/generate';
+import { initCommand } from './commands/init';
 import { exportCommand } from './commands/export';
 import { reportCommand } from './commands/report';
 import { statsCommand } from './commands/stats';
@@ -43,6 +44,7 @@ import { watchCommand } from './commands/watch';
 import { benchmarkCommand } from './commands/benchmark';
 import { diffCommand } from './commands/diff';
 import { authCommand } from './commands/auth';
+import { doctorCommand } from './commands/doctor';
 
 const program = new Command();
 
@@ -145,7 +147,7 @@ program
     new Command('init')
       .description('Create dimensions.yaml template')
       .option('-o, --output <file>', 'Output file', 'dimensions.yaml')
-      .action(initCommand)
+      .action(generateInitCommand)
   )
   .addCommand(
     new Command('create')
@@ -311,6 +313,12 @@ program
 
 // Auth command - Manage provider authentication
 program.addCommand(authCommand);
+
+// Doctor command - Environment diagnostics
+program.addCommand(doctorCommand);
+
+// Init command - Project scaffolding
+program.addCommand(initCommand);
 
 // Error handling
 program.configureOutput({

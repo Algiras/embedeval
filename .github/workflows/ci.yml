@@ -130,6 +130,42 @@ jobs:
           examples/v2/
         retention-days: 5
 
+  deploy-pages:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    
+    - name: 📄 Verify documentation
+      run: |
+        echo -e "${BLUE}${BOLD}╔════════════════════════════════════════╗${NC}"
+        echo -e "${BLUE}${BOLD}║   📄 Verifying Documentation          ║${NC}"
+        echo -e "${BLUE}${BOLD}╚════════════════════════════════════════╝${NC}"
+        echo ""
+        
+        echo -e "${CYAN}${BOLD}→ Checking docs structure...${NC}"
+        ls -la docs/
+        echo -e "${GREEN}✅ Documentation ready${NC}"
+        echo ""
+        
+        echo -e "${CYAN}${BOLD}→ Verifying index.html...${NC}"
+        head -20 docs/index.html
+        echo -e "${GREEN}✅ index.html verified${NC}"
+    
+    - name: 🚀 Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
+        publish_branch: gh-pages
+
   publish-npm:
     runs-on: ubuntu-latest
     needs: build

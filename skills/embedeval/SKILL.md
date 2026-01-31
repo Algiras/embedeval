@@ -859,13 +859,25 @@ embedeval generate create \
   --output synthetic-traces.jsonl
 ```
 
+## Skills Index (NEW)
+
+Navigate EmbedEval capabilities as actionable skills:
+
+- **Skill Index**: `./skills/SKILL_INDEX.md` - Quick navigation by skill
+- **Skill Manifest**: `./skills/skill-manifest.json` - Machine-readable skill definitions
+- **Core Skills**: setup, collect, annotate, taxonomy, dsl, eval, analysis
+- **Templates**: rag, chatbot, code-assistant, docs, agent, minimal
+- **Workflows**: understand_failures, add_evaluation, self_evaluate, quickstart
+
+**Usage**: Tell agents "Use the [Skill Name] skill" for instant access.
+
 ## Resources
 
 - **GitHub**: https://github.com/Algiras/embedeval
 - **NPM**: https://www.npmjs.com/package/embedeval
-- **GitHub Pages**: https://algiras.github.io/embedeval/
+- **GitHub Pages**: https://algimas.github.io/embedeval/
 - **Hamel's FAQ**: https://hamel.dev/blog/posts/evals-faq/
-- **Full Docs**: https://algiras.github.io/embedeval/LLM.md
+- **Full Docs**: https://algimas.github.io/embedeval/AGENTS.md
 
 ## Installation via shareAI-skills
 

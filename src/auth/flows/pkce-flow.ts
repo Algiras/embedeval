@@ -256,6 +256,66 @@ export async function runPKCEFlow(config: PKCEConfig): Promise<Credential> {
 }
 
 /**
+ * Refresh OAuth token using refresh token
+ */
+export async function refreshOAuthToken(
+  provider: ProviderName,
+  refreshToken: string
+): Promise<Credential> {
+  const config = PROVIDERS[provider];
+  
+  if (!config.tokenUrl) {
+    throw new Error(`Provider ${provider} does not support token refresh`);
+  }
+
+  const params = new URLSearchParams({
+    grant_type: 'refresh_token',
+    refresh_token: refreshToken,
+  });
+
+  const response = await fetch(config.tokenUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: params.toString(),
+  });
+
+  const data = await response.json() as TokenResponse;
+
+  if (!response.ok) {
+    throw new Error(data.error_description || data.error || 'Token refresh failed');
+  }
+
+  const apiKey = data.key || data.api_key || data.access_token;
+  if (!apiKey) {
+    throw new Error('No API key in refresh response');
+  }
+
+  const now = new Date().toISOString();
+  const credential: Credential = {
+    provider,
+    apiKey,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  // Update refresh token if a new one was provided
+  if (data.refresh_token) {
+    credential.refreshToken = data.refresh_token;
+  } else {
+    credential.refreshToken = refreshToken;
+  }
+
+  if (data.expires_in) {
+    const expiresAt = new Date(Date.now() + data.expires_in * 1000);
+    credential.expiresAt = expiresAt.toISOString();
+  }
+
+  return credential;
+}
+
+/**
  * OpenRouter-specific PKCE flow
  */
 export async function openRouterPKCEFlow(): Promise<Credential> {

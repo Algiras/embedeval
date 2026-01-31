@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Automatic Token Refresh**: OAuth tokens are now automatically refreshed before expiration
+  - `refreshOAuthToken()` function for manual refresh
+  - `getCredential()` now checks expiration and refreshes automatically with 5-minute buffer
+  - Preserves existing refresh tokens if server doesn't provide new ones
+  - Graceful fallback to expired credentials if refresh fails
+
 ### Planned
 - Grid search for optimal chunking parameters
 - Synthetic data generation module

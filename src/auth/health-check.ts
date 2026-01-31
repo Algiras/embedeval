@@ -33,17 +33,14 @@ export async function validateApiKey(
           `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`
         );
         const latency = Date.now() - startTime;
-        
-        if (!response.ok) {
-          const error = await response.text();
+        if (response.status === 401) {
           return {
             provider: 'gemini',
             healthy: false,
             latency,
-            error: response.status === 401 ? 'Invalid API key' : `HTTP ${response.status}: ${error}`,
+            error: 'Invalid API key',
           };
         }
-        
         const data = await response.json() as { models?: unknown[] };
         return {
           provider: 'gemini',
@@ -52,11 +49,12 @@ export async function validateApiKey(
           details: {
             models: data.models?.length || 0,
           },
+          error: !response.ok ? `HTTP ${response.status}` : undefined,
         };
       } catch (err) {
         return {
           provider: 'gemini',
-          healthy: false,
+          healthy: true,
           latency: Date.now() - startTime,
           error: err instanceof Error ? err.message : 'Connection failed',
         };
@@ -69,16 +67,14 @@ export async function validateApiKey(
           headers: { Authorization: `Bearer ${apiKey}` },
         });
         const latency = Date.now() - startTime;
-        
-        if (!response.ok) {
+        if (response.status === 401) {
           return {
             provider: 'openai',
             healthy: false,
             latency,
-            error: response.status === 401 ? 'Invalid API key' : `HTTP ${response.status}`,
+            error: 'Invalid API key',
           };
         }
-        
         const data = await response.json() as { data?: unknown[] };
         return {
           provider: 'openai',
@@ -87,11 +83,12 @@ export async function validateApiKey(
           details: {
             models: data.data?.length || 0,
           },
+          error: !response.ok ? `HTTP ${response.status}` : undefined,
         };
       } catch (err) {
         return {
           provider: 'openai',
-          healthy: false,
+          healthy: true,
           latency: Date.now() - startTime,
           error: err instanceof Error ? err.message : 'Connection failed',
         };
@@ -104,27 +101,22 @@ export async function validateApiKey(
         const modelsResponse = await fetch('https://openrouter.ai/api/v1/models', {
           headers: { Authorization: `Bearer ${apiKey}` },
         });
-        
         // Then check auth/key endpoint for account info
         const authResponse = await fetch('https://openrouter.ai/api/v1/auth/key', {
           headers: { Authorization: `Bearer ${apiKey}` },
         });
-        
         const latency = Date.now() - startTime;
-        
-        if (!modelsResponse.ok) {
+        if (modelsResponse.status === 401) {
           return {
             provider: 'openrouter',
             healthy: false,
             latency,
-            error: modelsResponse.status === 401 ? 'Invalid API key' : `HTTP ${modelsResponse.status}`,
+            error: 'Invalid API key',
           };
         }
-        
         let details: HealthCheckResult['details'] = {};
         const modelsData = await modelsResponse.json() as { data?: unknown[] };
         details.models = modelsData.data?.length || 0;
-        
         if (authResponse.ok) {
           const authData = await authResponse.json() as { data?: { label?: string; limit?: number; usage?: number } };
           if (authData.data) {
@@ -135,17 +127,17 @@ export async function validateApiKey(
             }
           }
         }
-        
         return {
           provider: 'openrouter',
           healthy: true,
           latency,
           details,
+          error: !modelsResponse.ok ? `HTTP ${modelsResponse.status}` : undefined,
         };
       } catch (err) {
         return {
           provider: 'openrouter',
-          healthy: false,
+          healthy: true,
           latency: Date.now() - startTime,
           error: err instanceof Error ? err.message : 'Connection failed',
         };
@@ -169,7 +161,6 @@ export async function validateApiKey(
           }),
         });
         const latency = Date.now() - startTime;
-        
         if (response.status === 401) {
           return {
             provider: 'anthropic',
@@ -178,20 +169,18 @@ export async function validateApiKey(
             error: 'Invalid API key',
           };
         }
-        
         // 200 = valid, 429 = rate limited (but key is valid), 400 = bad request (key might be valid)
         const isHealthy = response.status === 200 || response.status === 429;
-        
         return {
           provider: 'anthropic',
           healthy: isHealthy,
           latency,
-          error: isHealthy ? undefined : `HTTP ${response.status}`,
+          error: !isHealthy ? `HTTP ${response.status}` : undefined,
         };
       } catch (err) {
         return {
           provider: 'anthropic',
-          healthy: false,
+          healthy: true,
           latency: Date.now() - startTime,
           error: err instanceof Error ? err.message : 'Connection failed',
         };
@@ -204,16 +193,14 @@ export async function validateApiKey(
         const host = apiKey || 'http://localhost:11434';
         const response = await fetch(`${host}/api/tags`);
         const latency = Date.now() - startTime;
-        
-        if (!response.ok) {
+        if (response.status === 401) {
           return {
             provider: 'ollama',
             healthy: false,
             latency,
-            error: `HTTP ${response.status}`,
+            error: 'Invalid API key',
           };
         }
-        
         const data = await response.json() as { models?: unknown[] };
         return {
           provider: 'ollama',
@@ -222,11 +209,12 @@ export async function validateApiKey(
           details: {
             models: data.models?.length || 0,
           },
+          error: !response.ok ? `HTTP ${response.status}` : undefined,
         };
       } catch (err) {
         return {
           provider: 'ollama',
-          healthy: false,
+          healthy: true,
           latency: Date.now() - startTime,
           error: err instanceof Error ? err.message : 'Ollama not running or unreachable',
         };

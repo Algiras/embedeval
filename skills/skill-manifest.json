@@ -1,0 +1,208 @@
+{
+  "name": "embedeval",
+  "version": "2.0.5",
+  "description": "EmbedEval evaluation framework skills for LLM trace analysis",
+  "skills": [
+    {
+      "id": "setup",
+      "name": "Project Setup",
+      "commands": ["embedeval init", "embedeval doctor"],
+      "description": "Initialize new projects and verify environment",
+      "agents_md_section": "Core Workflow",
+      "priority": "high"
+    },
+    {
+      "id": "collect",
+      "name": "Trace Collection",
+      "commands": ["embedeval collect"],
+      "description": "Import LLM traces from JSONL, API, or logs",
+      "agents_md_section": "Core Workflow",
+      "priority": "high"
+    },
+    {
+      "id": "annotate",
+      "name": "Binary Annotation",
+      "commands": ["embedeval annotate"],
+      "description": "Manual pass/fail annotation with interactive UI",
+      "agents_md_section": "Core Workflow",
+      "priority": "high",
+      "shortcuts": ["p=pass", "f=fail", "j=next", "k=prev", "s=save"]
+    },
+    {
+      "id": "taxonomy",
+      "name": "Failure Taxonomy",
+      "commands": ["embedeval taxonomy build", "embedeval taxonomy show"],
+      "description": "Categorize and analyze failure patterns",
+      "agents_md_section": "Core Workflow",
+      "priority": "high"
+    },
+    {
+      "id": "dsl",
+      "name": "DSL Evaluation",
+      "commands": ["embedeval dsl init", "embedeval dsl run", "embedeval dsl validate", "embedeval dsl ui", "embedeval dsl serve"],
+      "description": "Natural language eval definition and execution",
+      "agents_md_section": "High-Level DSL",
+      "priority": "high",
+      "templates": ["rag", "chatbot", "code-assistant", "docs", "agent", "minimal"]
+    },
+    {
+      "id": "eval",
+      "name": "Evaluation Runner",
+      "commands": ["embedeval eval add", "embedeval eval run"],
+      "description": "Add and run evaluators",
+      "agents_md_section": "Essential Commands",
+      "priority": "medium"
+    },
+    {
+      "id": "analysis",
+      "name": "Analysis & Reporting",
+      "commands": ["embedeval view", "embedeval report", "embedeval stats", "embedeval export"],
+      "description": "View traces, generate reports, export data",
+      "agents_md_section": "Essential Commands",
+      "priority": "medium"
+    },
+    {
+      "id": "comparison",
+      "name": "Comparison & Diff",
+      "commands": ["embedeval diff", "embedeval benchmark"],
+      "description": "Compare eval configs, detect drift/regression",
+      "agents_md_section": "Benchmark/Diff Commands",
+      "priority": "medium"
+    },
+    {
+      "id": "watch",
+      "name": "Real-Time Evaluation",
+      "commands": ["embedeval watch"],
+      "description": "Continuous evaluation on new traces",
+      "agents_md_section": "Watch Mode",
+      "priority": "medium"
+    },
+    {
+      "id": "sdk",
+      "name": "SDK Self-Evaluation",
+      "patterns": ["preflight()", "getConfidence()", "evaluate()", "getSuggestions()", "TraceCollector"],
+      "description": "Real-time self-evaluation in applications",
+      "agents_md_section": "SDK for Real-Time Self-Evaluation",
+      "priority": "medium"
+    },
+    {
+      "id": "auth",
+      "name": "Authentication",
+      "commands": ["embedeval auth login", "embedeval auth status", "embedeval auth check"],
+      "description": "Configure and verify LLM provider API keys",
+      "agents_md_section": "Multi-Provider LLM Judge System",
+      "priority": "high"
+    },
+    {
+      "id": "providers",
+      "name": "Provider Management",
+      "commands": ["embedeval providers list", "embedeval providers benchmark"],
+      "description": "List and benchmark LLM providers",
+      "agents_md_section": "Multi-Provider LLM Judge System",
+      "priority": "low"
+    },
+    {
+      "id": "assess",
+      "name": "Self-Assessment",
+      "commands": ["embedeval assess run", "embedeval assess compare", "embedeval assess recommend"],
+      "description": "Analyze price, speed, quality metrics",
+      "agents_md_section": "Self-Assessment System",
+      "priority": "low"
+    },
+    {
+      "id": "improvement",
+      "name": "Self-Improvement",
+      "patterns": ["weak-validator", "domain-corpus", "context-aware", "multi-agent", "feedback-loop", "test-suites", "calibration"],
+      "description": "Techniques for agent self-improvement",
+      "agents_md_section": "Self-Improvement Techniques",
+      "priority": "low"
+    },
+    {
+      "id": "generate",
+      "name": "Synthetic Data",
+      "commands": ["embedeval generate init", "embedeval generate create"],
+      "description": "Generate synthetic test data",
+      "agents_md_section": "Essential Commands",
+      "priority": "low"
+    },
+    {
+      "id": "mcp",
+      "name": "MCP Server",
+      "commands": ["embedeval mcp-server"],
+      "description": "MCP server for AI agent integration",
+      "agents_md_section": "MCP Server Configuration",
+      "priority": "low"
+    },
+    {
+      "id": "community",
+      "name": "Community",
+      "commands": ["embedeval moltbook"],
+      "description": "Generate community posts and content",
+      "agents_md_section": "Essential Commands",
+      "priority": "low"
+    }
+  ],
+  "templates": {
+    "rag": {
+      "name": "RAG Systems",
+      "checks": ["uses context", "cites sources", "no hallucination"],
+      "best_for": "Retrieval-Augmented Generation evaluation"
+    },
+    "chatbot": {
+      "name": "Customer Support",
+      "checks": ["is helpful", "is safe", "shows empathy"],
+      "best_for": "Chatbot and support agent evaluation"
+    },
+    "code-assistant": {
+      "name": "Code Assistant",
+      "checks": ["has code", "correct syntax", "includes tests"],
+      "best_for": "Code generation evaluation"
+    },
+    "docs": {
+      "name": "Documentation Q&A",
+      "checks": ["uses context", "accurate", "complete"],
+      "best_for": "Documentation question-answering"
+    },
+    "agent": {
+      "name": "Autonomous Agents",
+      "checks": ["task completion", "efficiency", "correct action"],
+      "best_for": "Agent workflow evaluation"
+    },
+    "minimal": {
+      "name": "Minimal",
+      "checks": ["has content", "answers query"],
+      "best_for": "Getting started quickly"
+    }
+  },
+  "workflows": {
+    "understand_failures": {
+      "steps": ["collect", "annotate", "taxonomy build"],
+      "description": "Understand what fails and why"
+    },
+    "add_evaluation": {
+      "steps": ["taxonomy build", "eval add", "eval run"],
+      "description": "Add eval for common failure"
+    },
+    "self_evaluate": {
+      "steps": ["collect", "preflight", "getConfidence", "evaluate", "getSuggestions"],
+      "description": "Real-time self-evaluation workflow"
+    },
+    "quickstart": {
+      "steps": ["init", "doctor", "collect", "annotate"],
+      "description": "New project quickstart"
+    }
+  },
+  "principles": [
+    "Binary Only: Use pass/fail, never 1-5 scales",
+    "Error Analysis First: Annotate before automating",
+    "Cheap Evals First: Assertions before LLM-as-judge",
+    "Single Annotator: One 'benevolent dictator'",
+    "50-100 Traces: Minimum for meaningful patterns"
+  ],
+  "documentation": {
+    "agents_md": "./AGENTS.md",
+    "readme": "./README.md",
+    "github_pages": "https://algimas.github.io/embedeval",
+    "skill_index": "./skills/SKILL_INDEX.md"
+  }
+}

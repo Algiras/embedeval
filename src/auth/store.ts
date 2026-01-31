@@ -11,6 +11,7 @@ import { Credential, CredentialStore, ProviderName } from './types.js';
 import { KeychainStore } from './keychain-store.js';
 import { FileStore } from './file-store.js';
 import { logger } from '../utils/logger.js';
+import { refreshOAuthToken } from './flows/pkce-flow.js';
 
 let _store: CredentialStore | null = null;
 
@@ -43,8 +44,25 @@ export async function getStore(): Promise<CredentialStore> {
 }
 
 /**
+ * Check if credential is expired (with 5-minute buffer)
+ */
+function isCredentialExpired(credential: Credential): boolean {
+  if (!credential.expiresAt) {
+    return false;
+  }
+  
+  const expiresAt = new Date(credential.expiresAt);
+  const now = new Date();
+  // Add 5-minute buffer to refresh before actual expiration
+  const bufferMs = 5 * 60 * 1000;
+  
+  return now.getTime() >= (expiresAt.getTime() - bufferMs);
+}
+
+/**
  * Get credential for a provider
  * Checks store first, then environment variables
+ * Automatically refreshes expired OAuth tokens
  */
 export async function getCredential(provider: ProviderName): Promise<Credential | null> {
   const store = await getStore();
@@ -52,6 +70,23 @@ export async function getCredential(provider: ProviderName): Promise<Credential 
   // Check store first
   const stored = await store.get(provider);
   if (stored) {
+    // Check if credential is expired and can be refreshed
+    if (isCredentialExpired(stored) && stored.refreshToken) {
+      logger.debug(`Token for ${provider} is expired, attempting refresh...`);
+      
+      try {
+        const refreshed = await refreshOAuthToken(provider, stored.refreshToken);
+        await store.set(refreshed);
+        logger.info(`Successfully refreshed token for ${provider}`);
+        return refreshed;
+      } catch (err) {
+        logger.error(`Failed to refresh token for ${provider}:`, err);
+        // Return the expired credential - let the caller handle the failure
+        // This allows them to prompt for re-authentication if needed
+        return stored;
+      }
+    }
+    
     return stored;
   }
 
