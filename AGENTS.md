@@ -41,6 +41,8 @@ embedeval taxonomy build --annotations annotations.jsonl
 | **Annotate** | `embedeval annotate <traces> -u <email>` | Binary pass/fail annotation |
 | **View** | `embedeval view <traces>` | Read-only trace viewer |
 | **Taxonomy** | `embedeval taxonomy build` | Categorize failures |
+| **DSL Init** | `embedeval dsl init <template>` | Create .eval file from template |
+| **DSL Run** | `embedeval dsl run evals.eval traces.jsonl` | Compile & run in one step |
 | **Eval Add** | `embedeval eval add` | Add new evaluator |
 | **Eval Run** | `embedeval eval run <traces> -c <config>` | Run evals |
 | **Generate** | `embedeval generate create -d <dims> -n <count>` | Synthetic data |
@@ -62,7 +64,118 @@ When running `embedeval annotate`:
 
 ---
 
-## 🛠️ SDK for Real-Time Self-Evaluation (NEW in 2.0.5)
+## � High-Level DSL for Easy Eval Definition (NEW)
+
+Define evals in natural language with `.eval` files. Based on Hamel Husain's principles: binary, cheap-first, error-analysis-driven.
+
+### Quick Start
+
+```bash
+# 1. Create from template
+embedeval dsl init rag -o my-evals.eval
+
+# 2. Edit the file (natural language!)
+# 3. Validate
+embedeval dsl validate my-evals.eval
+
+# 4. Compile & Run in one step
+embedeval dsl run my-evals.eval traces.jsonl -o results.json
+```
+
+### DSL Syntax
+
+```bash
+# Metadata
+name: My Evals
+domain: rag
+version: 1.0
+
+# CHEAP EVALS (fast, deterministic, run first)
+must "Has Content": response length > 50
+must "Uses Context": uses context
+must-not "No Secrets": must not contain "api_key"
+should "Cites Sources": cites sources
+
+# EXPENSIVE EVALS (LLM-as-judge, run selectively)  
+[expensive] must "No Hallucination": no hallucination
+[expensive] check "Empathetic": llm: Is the response empathetic?
+  when: query contains "frustrated"
+
+# CUSTOM CODE
+check "Fast": code: metadata.latency < 3000
+```
+
+### Natural Language Patterns
+
+| Pattern | Example | Compiled To |
+|---------|---------|-------------|
+| `response length > N` | `response length > 50` | Assertion |
+| `must contain "X"` | `must contain "refund"` | Regex (shouldMatch) |
+| `must not contain "X"` | `must not contain "debug"` | Regex (!shouldMatch) |
+| `matches pattern /X/` | `matches pattern /\d{3}-\d{4}/` | Regex |
+| `uses context` | `uses context` | Code check |
+| `cites sources` | `cites sources` | Code check |
+| `is coherent` | `is coherent` | LLM judge |
+| `is helpful` | `is helpful` | LLM judge |
+| `is safe` | `is safe` | LLM judge |
+| `no hallucination` | `no hallucination` | LLM judge |
+| `answers the question` | `answers the question` | LLM judge |
+| `code: expr` | `code: response.length < 500` | Custom code |
+| `llm: prompt` | `llm: Is this professional?` | Custom LLM judge |
+
+### Available Templates
+
+| Template | Description |
+|----------|-------------|
+| `rag` | RAG systems (context usage, hallucination) |
+| `chatbot` | Customer support bots (helpfulness, safety) |
+| `code-assistant` | Code generation (syntax, best practices) |
+| `docs` | Documentation Q&A (accuracy, completeness) |
+| `agent` | Autonomous agents (task completion, efficiency) |
+| `minimal` | Bare minimum to get started |
+
+### DSL Commands
+
+```bash
+# List templates
+embedeval dsl templates
+
+# Create from template  
+embedeval dsl init rag -o my-evals.eval
+
+# Validate syntax
+embedeval dsl validate my-evals.eval
+
+# Preview compiled evals
+embedeval dsl preview my-evals.eval
+
+# Compile to JSON (for manual inspection)
+embedeval dsl compile my-evals.eval -o evals.json
+
+# Compile and run in one step
+embedeval dsl run my-evals.eval traces.jsonl -o results.json
+```
+
+### Example: RAG Eval File
+
+```bash
+# my-rag-evals.eval
+name: RAG Evals
+domain: rag
+
+# Cheap evals - run on every trace
+must "Uses Context": uses context
+must "Answers Query": answers the question
+
+# Expensive - run selectively
+[expensive] must "No Hallucination": no hallucination
+[expensive] check "Uncertainty": llm: Does response admit uncertainty when context is weak?
+  when: context.retrievedDocs[0]?.score < 0.7
+```
+
+---
+
+## �🛠️ SDK for Real-Time Self-Evaluation (NEW in 2.0.5)
 
 The SDK allows agents to **self-evaluate responses in real-time** without CLI.
 

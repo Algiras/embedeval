@@ -38,6 +38,7 @@ import { moltbookCommand } from './commands/moltbook';
 import { listProviders, benchmarkProviders } from '../utils/llm-providers';
 import { assessCommand, compareCommand, recommendCommand, pricingCommand } from './commands/assess';
 import { startMCPServer } from '../mcp/server';
+import { registerDSLCommands } from './commands/dsl';
 
 const program = new Command();
 
@@ -224,6 +225,9 @@ program
   .action(async () => {
     await startMCPServer();
   });
+
+// DSL commands - High-level eval definition language
+registerDSLCommands(program);
 
 // Assess command - Self-assessment for price, speed, quality
 program

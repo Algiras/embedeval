@@ -1,0 +1,73 @@
+# EmbedEval DSL Example
+# =====================
+# A high-level language for defining evals
+# Based on Hamel Husain's principles: binary, cheap-first, error-analysis-driven
+#
+# Run: embedeval dsl validate my-evals.eval
+# Compile: embedeval dsl compile my-evals.eval -o evals.json
+
+name: Customer Support Evals
+description: Evaluations for our support chatbot
+domain: support
+version: 1.0
+
+# ============================================
+# CHEAP EVALS (run first, fast, deterministic)
+# ============================================
+
+# Simple length check
+must "Has Response": response length > 50
+  -> Response should not be empty or too short
+
+# Regex patterns - things we always want
+should "Professional Greeting": matches pattern /hello|hi|thank you|glad to help/i
+  -> Maintains friendly tone
+
+# Things we never want
+must-not "Exposed Internal": must not contain "internal-only"
+must-not "Debug Output": must not contain "DEBUG:"
+must-not "Credentials Leaked": must not contain "api_key"
+
+# ============================================
+# CONTEXT-AWARE EVALS (for RAG systems)
+# ============================================
+
+must "Uses Knowledge Base": uses context
+  -> Should reference retrieved documentation
+
+should "Cites Sources": cites sources
+  -> Helps users find more information
+  when: multiple documents retrieved
+
+# ============================================
+# LLM-AS-JUDGE EVALS (expensive, run selectively)
+# ============================================
+
+[expensive] must "Actually Helpful": llm: Does this response genuinely help solve the user's problem, not just acknowledge it?
+  -> Goes beyond "I understand your frustration"
+
+[expensive] must "No Hallucination": no hallucination
+  -> All facts must be verifiable from context
+
+[expensive] check "Empathetic Tone": llm: Is the response empathetic and understanding of the customer's situation?
+  when: query contains "frustrated" or "angry" or "upset"
+
+# ============================================
+# CUSTOM CODE EVALS (full control)
+# ============================================
+
+check "Fast Response": code: metadata.latency < 3000
+  -> Should respond within 3 seconds
+
+check "Not Too Verbose": code: response.split(' ').length < 500
+  -> Avoid overwhelming the user
+
+# ============================================
+# BUSINESS RULES
+# ============================================
+
+must "Escalation Protocol": llm: If the issue is about legal matters, billing disputes over $1000, or safety concerns, does the response offer to connect with a human specialist?
+  when: query contains "lawyer" or "legal" or "sue" or "safety"
+
+should "Upsell Appropriately": llm: If mentioning premium features, is it relevant to the user's need and not pushy?
+  when: response contains "premium" or "upgrade" or "enterprise"
