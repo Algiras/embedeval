@@ -1,6 +1,6 @@
 {
   "name": "embedeval",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Binary evals, trace-centric, error-analysis-first CLI for LLM evaluation. Built on Hamel Husain's principles.",
   "main": "dist/cli/index.js",
   "bin": {
