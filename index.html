@@ -8,6 +8,13 @@
     <title>EmbedEval v2 - Binary Evals, Trace-Centric, Error-Analysis-First</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -601,7 +608,7 @@
 <body>
     <div class="hero">
         <div class="container">
-            <div class="hero-badge">v2.0 - Hamel Husain Methodology</div>
+            <div class="hero-badge">v2.0.4 - Multi-Provider LLM Support</div>
             <h1>EmbedEval</h1>
             <p class="hero-subtitle">Binary evals. Trace-centric. Error-analysis-first. The evaluation CLI that actually works.</p>
             
@@ -752,7 +759,7 @@
                     <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="command">embedeval</span> eval add</div>
                     <div class="terminal-line terminal-output">? Eval name: no_hallucination</div>
                     <div class="terminal-line terminal-output">? Type: llm-judge</div>
-                    <div class="terminal-line terminal-output">? Model: gemini-1.5-flash</div>
+                    <div class="terminal-line terminal-output">? Model: gemini-2.5-flash</div>
                     <div class="terminal-line terminal-output">? Binary output: yes</div>
                     <div class="terminal-line terminal-output">✓ Eval added to evals.yaml</div>
                 </div>
@@ -877,31 +884,48 @@
     <section class="llm-section">
         <div class="container">
             <div class="section-header">
-                <h2>Built for AI Agents</h2>
+                <h2>Multi-Provider LLM Support</h2>
             </div>
 
             <div class="llm-intro">
-                <p>EmbedEval is designed to be used by AI agents. Expose it as an MCP tool or use the CLI programmatically.</p>
+                <p>Use any LLM provider as a judge: Gemini, OpenAI, OpenRouter, Ollama, or your own local models.</p>
             </div>
 
             <div class="mcp-example">
-                <h4>MCP Server Configuration</h4>
-                <div class="code-block">
-{
+                <h4>Provider Configuration</h4>
+                <div class="code-block" style="font-family: 'JetBrains Mono', monospace; white-space: pre;"># Gemini (recommended - fast, cheap)
+export GEMINI_API_KEY="your-api-key"
+
+# OpenAI
+export OPENAI_API_KEY="your-api-key"
+
+# OpenRouter (access to many models)
+export OPENAI_API_KEY="your-openrouter-key"
+export OPENAI_BASE_URL="https://openrouter.ai/api/v1"
+
+# Ollama (local, private)
+export OPENAI_BASE_URL="http://localhost:11434/v1"
+
+# Check providers: embedeval providers list
+# Benchmark: embedeval providers benchmark</div>
+                <p style="margin-top: 16px; color: var(--text-secondary);">
+                    Self-assessment: <code style="color: var(--accent-primary);">embedeval assess run</code> for price, speed, quality metrics.
+                </p>
+            </div>
+
+            <div class="mcp-example" style="margin-top: 24px;">
+                <h4>MCP Server for AI Agents</h4>
+                <div class="code-block" style="font-family: 'JetBrains Mono', monospace; white-space: pre;">{
   "mcpServers": {
     "embedeval": {
       "command": "npx",
       "args": ["embedeval", "mcp-server"],
       "env": {
-        "GEMINI_API_KEY": "your-key"
+        "GEMINI_API_KEY": "your-api-key"
       }
     }
   }
-}
-                </div>
-                <p style="margin-top: 16px; color: var(--text-secondary);">
-                    Agents can collect traces, annotate, build taxonomies, and run evaluations autonomously.
-                </p>
+}</div>
             </div>
         </div>
     </section>
@@ -912,7 +936,8 @@
                 <a href="https://github.com/Algiras/embedeval" target="_blank">GitHub</a>
                 <a href="https://www.npmjs.com/package/embedeval" target="_blank">NPM</a>
                 <a href="https://hamel.dev/blog/posts/evals-faq/" target="_blank">Hamel's Eval FAQ</a>
-                <a href="./docs" target="_blank">Documentation</a>
+                <a href="https://github.com/Algiras/embedeval/blob/main/AGENTS.md" target="_blank">Agent Guide</a>
+                <a href="https://buymeacoffee.com/algiras" target="_blank" style="color: var(--accent-warning);">☕ Buy Me a Coffee</a>
             </div>
             <p class="footer-copy">
                 Built with ❤️ following <a href="https://hamel.dev" target="_blank" style="color: var(--accent-primary);">Hamel Husain's</a> principles
