@@ -15,10 +15,10 @@
     "build": "tsc",
     "dev": "ts-node src/cli/index.ts",
     "start": "node dist/cli/index.js",
-    "test": "jest --passWithNoTests 2>&1 | head -20 || true",
+    "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
-    "lint": "eslint src/**/*.ts 2>&1 | head -50 || true",
-    "typecheck": "tsc --noEmit 2>&1 | head -50 || true",
+    "lint": "eslint src/**/*.ts",
+    "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build"
   },
