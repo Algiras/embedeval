@@ -886,19 +886,17 @@
 
             <div class="mcp-example">
                 <h4>MCP Server Configuration</h4>
-                <div class="code-block">
-{
+                <div class="code-block" style="font-family: 'JetBrains Mono', monospace; white-space: pre;">{
   "mcpServers": {
     "embedeval": {
       "command": "npx",
       "args": ["embedeval", "mcp-server"],
       "env": {
-        "GEMINI_API_KEY": "your-key"
+        "GEMINI_API_KEY": "your-api-key-here"
       }
     }
   }
-}
-                </div>
+}</div>
                 <p style="margin-top: 16px; color: var(--text-secondary);">
                     Agents can collect traces, annotate, build taxonomies, and run evaluations autonomously.
                 </p>
@@ -912,7 +910,7 @@
                 <a href="https://github.com/Algiras/embedeval" target="_blank">GitHub</a>
                 <a href="https://www.npmjs.com/package/embedeval" target="_blank">NPM</a>
                 <a href="https://hamel.dev/blog/posts/evals-faq/" target="_blank">Hamel's Eval FAQ</a>
-                <a href="./docs" target="_blank">Documentation</a>
+                <a href="https://github.com/Algiras/embedeval/blob/main/LLM.md" target="_blank">Documentation</a>
             </div>
             <p class="footer-copy">
                 Built with ❤️ following <a href="https://hamel.dev" target="_blank" style="color: var(--accent-primary);">Hamel Husain's</a> principles
