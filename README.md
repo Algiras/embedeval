@@ -33,11 +33,17 @@ EmbedEval fixes this with Hamel Husain's proven approach:
 
 ### Install
 
+**Option 1: Quick Install (Recommended)**
+```bash
+curl -fsSL https://raw.githubusercontent.com/Algiras/embedeval/main/install.sh | bash
+```
+
+**Option 2: npm (Global)**
 ```bash
 npm install -g embedeval
 ```
 
-Or use without installing:
+**Option 3: npx (No Install)**
 ```bash
 npx embedeval <command>
 ```
@@ -63,6 +69,39 @@ Top Failure Categories:
 1. Hallucination: 12 traces (44%)
 2. Incomplete: 8 traces (30%)
 3. Wrong Format: 5 traces (19%)
+```
+
+---
+
+## Development (Contributors)
+
+If you're developing or contributing to EmbedEval, use the `embedeval-dev` script:
+
+```bash
+# Clone the repository
+git clone https://github.com/Algiras/embedeval.git
+cd embedeval
+
+# Check your dev environment
+./embedeval-dev --doctor
+
+# Install dependencies
+./embedeval-dev --install-deps
+
+# Build TypeScript
+./embedeval-dev --build
+
+# Run CLI commands (no global install needed)
+./embedeval-dev collect examples/v2/sample-traces.jsonl
+./embedeval-dev view test-traces.jsonl
+./embedeval-dev annotate test-traces.jsonl --user "dev@local"
+
+# Development utilities
+./embedeval-dev --watch     # Watch mode for auto-rebuild
+./embedeval-dev --test      # Run test suite
+./embedeval-dev --lint      # Run ESLint
+./embedeval-dev --types     # TypeScript type check
+./embedeval-dev --clean     # Clean build artifacts
 ```
 
 ---

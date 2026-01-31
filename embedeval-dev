@@ -1,0 +1,240 @@
+#!/bin/bash
+# EmbedEval Development Script
+# Usage: ./embedeval-dev <command> [options]
+# 
+# This script runs the CLI directly from the source directory
+# without needing to install globally or build the TypeScript.
+# Perfect for development and testing.
+
+set -e
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+BOLD='\033[1m'
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$SCRIPT_DIR"
+
+# Check if we're in the right directory
+if [ ! -f "$PROJECT_ROOT/package.json" ]; then
+    echo -e "${RED}Error: Cannot find package.json${NC}"
+    echo "   Please run this script from the embedeval project root"
+    exit 1
+fi
+
+# Check if Node.js is available
+if ! command -v node &> /dev/null; then
+    echo -e "${RED}Error: Node.js not found${NC}"
+    echo "   Please install Node.js 18+ from https://nodejs.org/"
+    exit 1
+fi
+
+# Check Node version
+NODE_VERSION=$(node -v | cut -d'v' -f2 | cut -d'.' -f1)
+if [ "$NODE_VERSION" -lt 18 ]; then
+    echo -e "${RED}Error: Node.js 18+ required. Current: $(node -v)${NC}"
+    exit 1
+fi
+
+# Function to check if dependencies are installed
+check_deps() {
+    if [ ! -d "$PROJECT_ROOT/node_modules" ]; then
+        echo -e "${YELLOW}⚠️  Dependencies not installed${NC}"
+        echo -e "${CYAN}→ Running npm install...${NC}"
+        cd "$PROJECT_ROOT"
+        npm install
+        echo -e "${GREEN}✅ Dependencies installed${NC}"
+    fi
+}
+
+# Function to check if build exists
+check_build() {
+    if [ ! -d "$PROJECT_ROOT/dist" ]; then
+        echo -e "${YELLOW}⚠️  Build not found${NC}"
+        echo -e "${CYAN}→ Running npm run build...${NC}"
+        cd "$PROJECT_ROOT"
+        npm run build
+        echo -e "${GREEN}✅ Build complete${NC}"
+    fi
+}
+
+# Parse command line arguments
+if [ $# -eq 0 ]; then
+    echo -e "${BLUE}${BOLD}╔════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${BLUE}${BOLD}║      🚀 EmbedEval Development Mode                         ║${NC}"
+    echo -e "${BLUE}${BOLD}╚════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "${CYAN}Usage:${NC}"
+    echo "  ./embedeval-dev <command> [options]"
+    echo ""
+    echo -e "${CYAN}Examples:${NC}"
+    echo "  ./embedeval-dev collect examples/v2/sample-traces.jsonl"
+    echo "  ./embedeval-dev view test-traces.jsonl"
+    echo "  ./embedeval-dev annotate test-traces.jsonl --user dev@local"
+    echo "  ./embedeval-dev taxonomy build --annotations annotations.jsonl"
+    echo ""
+    echo -e "${CYAN}Development Commands:${NC}"
+    echo "  ./embedeval-dev --build    # Force rebuild TypeScript"
+    echo "  ./embedeval-dev --test     # Run test suite"
+    echo "  ./embedeval-dev --watch    # Watch mode for development"
+    echo "  ./embedeval-dev --lint     # Run ESLint"
+    echo "  ./embedeval-dev --types    # Run TypeScript type check"
+    echo ""
+    echo -e "${CYAN}Help:${NC}"
+    echo "  ./embedeval-dev --help     # Show this help"
+    echo "  ./embedeval-dev --version  # Show version"
+    echo ""
+    exit 0
+fi
+
+# Handle special dev commands
+case "$1" in
+    --build|-b)
+        echo -e "${CYAN}${BOLD}→ Building TypeScript...${NC}"
+        check_deps
+        cd "$PROJECT_ROOT"
+        npm run build
+        echo -e "${GREEN}✅ Build complete${NC}"
+        exit 0
+        ;;
+    
+    --test|-t)
+        echo -e "${CYAN}${BOLD}→ Running tests...${NC}"
+        check_deps
+        cd "$PROJECT_ROOT"
+        npm test
+        exit 0
+        ;;
+    
+    --watch|-w)
+        echo -e "${CYAN}${BOLD}→ Starting watch mode...${NC}"
+        check_deps
+        cd "$PROJECT_ROOT"
+        npm run build -- --watch &
+        BUILD_PID=$!
+        echo -e "${GREEN}✅ TypeScript compiler watching for changes (PID: $BUILD_PID)${NC}"
+        echo -e "${YELLOW}ℹ️  Press Ctrl+C to stop watching${NC}"
+        wait $BUILD_PID
+        exit 0
+        ;;
+    
+    --lint|-l)
+        echo -e "${CYAN}${BOLD}→ Running ESLint...${NC}"
+        check_deps
+        cd "$PROJECT_ROOT"
+        npm run lint
+        exit 0
+        ;;
+    
+    --types|--typecheck)
+        echo -e "${CYAN}${BOLD}→ Running TypeScript type check...${NC}"
+        check_deps
+        cd "$PROJECT_ROOT"
+        npm run typecheck
+        exit 0
+        ;;
+    
+    --clean|-c)
+        echo -e "${CYAN}${BOLD}→ Cleaning build artifacts...${NC}"
+        if [ -d "$PROJECT_ROOT/dist" ]; then
+            rm -rf "$PROJECT_ROOT/dist"
+            echo -e "${GREEN}✅ dist/ removed${NC}"
+        fi
+        if [ -d "$PROJECT_ROOT/node_modules" ]; then
+            echo -e "${YELLOW}ℹ️  To remove node_modules, run: rm -rf node_modules${NC}"
+        fi
+        exit 0
+        ;;
+    
+    --install-deps|-i)
+        echo -e "${CYAN}${BOLD}→ Installing dependencies...${NC}"
+        cd "$PROJECT_ROOT"
+        npm install
+        echo -e "${GREEN}✅ Dependencies installed${NC}"
+        exit 0
+        ;;
+    
+    --doctor|-d)
+        echo -e "${BLUE}${BOLD}╔════════════════════════════════════════════════════════════╗${NC}"
+        echo -e "${BLUE}${BOLD}║      🏥 EmbedEval Dev Environment Check                   ║${NC}"
+        echo -e "${BLUE}${BOLD}╚════════════════════════════════════════════════════════════╝${NC}"
+        echo ""
+        
+        echo -e "${CYAN}Node.js:${NC}"
+        echo "  Version: $(node -v)"
+        echo "  Path: $(which node)"
+        echo ""
+        
+        echo -e "${CYAN}npm:${NC}"
+        echo "  Version: $(npm -v)"
+        echo "  Path: $(which npm)"
+        echo ""
+        
+        echo -e "${CYAN}Project:${NC}"
+        echo "  Root: $PROJECT_ROOT"
+        echo "  Package: $(cat "$PROJECT_ROOT/package.json" | grep '"name"' | head -1 | cut -d'"' -f4)"
+        echo "  Version: $(cat "$PROJECT_ROOT/package.json" | grep '"version"' | head -1 | cut -d'"' -f4)"
+        echo ""
+        
+        echo -e "${CYAN}Dependencies:${NC}"
+        if [ -d "$PROJECT_ROOT/node_modules" ]; then
+            echo -e "  ${GREEN}✅ node_modules installed${NC}"
+            echo "  Packages: $(ls "$PROJECT_ROOT/node_modules" | wc -l)"
+        else
+            echo -e "  ${RED}❌ node_modules not found${NC}"
+            echo "   Run: ./embedeval-dev --install-deps"
+        fi
+        echo ""
+        
+        echo -e "${CYAN}Build:${NC}"
+        if [ -d "$PROJECT_ROOT/dist" ]; then
+            echo -e "  ${GREEN}✅ dist/ exists${NC}"
+            echo "  Files: $(find "$PROJECT_ROOT/dist" -name '*.js' | wc -l) JS files"
+            echo "  Last modified: $(stat -c '%y' "$PROJECT_ROOT/dist" 2>/dev/null || stat -f '%Sm' "$PROJECT_ROOT/dist")"
+        else
+            echo -e "  ${RED}❌ dist/ not found${NC}"
+            echo "   Run: ./embedeval-dev --build"
+        fi
+        echo ""
+        
+        echo -e "${CYAN}CLI Status:${NC}"
+        if [ -f "$PROJECT_ROOT/dist/cli/index.js" ]; then
+            echo -e "  ${GREEN}✅ CLI built${NC}"
+            echo "  Version: $(node "$PROJECT_ROOT/dist/cli/index.js" --version 2>/dev/null || echo 'N/A')"
+        else
+            echo -e "  ${RED}❌ CLI not built${NC}"
+        fi
+        echo ""
+        
+        echo -e "${BLUE}${BOLD}Quick Commands:${NC}"
+        echo "  ./embedeval-dev --install-deps  # Install npm packages"
+        echo "  ./embedeval-dev --build          # Build TypeScript"
+        echo "  ./embedeval-dev collect ...      # Run CLI command"
+        echo ""
+        exit 0
+        ;;
+    
+    --version|-v)
+        VERSION=$(cat "$PROJECT_ROOT/package.json" | grep '"version"' | head -1 | cut -d'"' -f4)
+        echo "embedeval-dev v$VERSION (development mode)"
+        exit 0
+        ;;
+    
+    --help|-h)
+        exec "$0"  # Re-run with no args to show help
+        ;;
+esac
+
+# Regular CLI command - ensure deps and build exist
+check_deps
+check_build
+
+# Run the actual CLI
+echo -e "${CYAN}${BOLD}→ Running: embedeval $@${NC}"
+echo ""
+exec node "$PROJECT_ROOT/dist/cli/index.js" "$@"
