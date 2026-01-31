@@ -186,12 +186,12 @@ export class LLMJudgeEval implements EvalRunner {
       );
 
       // Parse binary response (PASS/FAIL)
-      const output = judgeResponse.trim().toUpperCase();
-      const passed = output.startsWith('PASS');
+      const trimmedResponse = judgeResponse.trim();
+      const passed = trimmedResponse.toUpperCase().startsWith('PASS');
       
       // Extract explanation (everything after PASS/FAIL)
-      const explanation = output.replace(/^(PASS|FAIL)\s*/i, '').trim() || 
-        `LLM judge returned: ${output}`;
+      const explanation = trimmedResponse.replace(/^(PASS|FAIL)\s*/i, '').trim() || 
+        `LLM judge returned: ${trimmedResponse}`;
 
       return {
         evalId: config.id,
