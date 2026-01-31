@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Support Evals</title>
+  <style>
+    :root {
+      
+      --bg: #1a1a2e;
+      --bg-secondary: #16213e;
+      --bg-tertiary: #0f3460;
+      --text: #eee;
+      --text-muted: #888;
+      --border: #333;
+      --accent: #e94560;
+      --success: #4ade80;
+      --fail: #f87171;
+      --warning: #fbbf24;
+      
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+    
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .header h1 { font-size: 1.5rem; }
+    .progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .progress-bar {
+      width: 200px;
+      height: 8px;
+      background: var(--bg-tertiary);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.3s;
+    }
+    .progress-text { font-size: 0.875rem; color: var(--text-muted); }
+    
+    /* Main layout */
+    .main {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 24px;
+    }
+    
+    /* Trace display */
+    .trace-panel {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid var(--border);
+    }
+    .trace-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .trace-id {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      font-family: monospace;
+    }
+    .trace-nav {
+      display: flex;
+      gap: 8px;
+    }
+    .trace-nav button {
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      background: var(--bg-tertiary);
+      color: var(--text);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .trace-nav button:hover { background: var(--accent); }
+    .trace-nav button:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .section {
+      margin-bottom: 20px;
+    }
+    .section-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .query-box, .response-box, .context-box {
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .response-box {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .context-box {
+      font-size: 0.8125rem;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .context-doc {
+      padding: 8px;
+      margin-bottom: 8px;
+      background: var(--bg-secondary);
+      border-radius: 4px;
+    }
+    .context-score {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    
+    /* Metadata */
+    .metadata {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 0.8125rem;
+    }
+    .metadata-item {
+      background: var(--bg-tertiary);
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+    .metadata-label { color: var(--text-muted); }
+    
+    /* Eval panel */
+    .eval-panel {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      position: sticky;
+      top: 20px;
+    }
+    .eval-panel h2 {
+      font-size: 1rem;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .eval-section {
+      margin-bottom: 20px;
+    }
+    .eval-section-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    
+    .eval-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px;
+      margin-bottom: 6px;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .eval-item:hover { background: var(--bg); }
+    .eval-item.checked { border-left: 3px solid var(--success); }
+    .eval-item.failed { border-left: 3px solid var(--fail); }
+    
+    .eval-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 12px;
+    }
+    .eval-item.checked .eval-checkbox {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+    .eval-item.failed .eval-checkbox {
+      background: var(--fail);
+      border-color: var(--fail);
+      color: white;
+    }
+    
+    .eval-content { flex: 1; }
+    .eval-name { font-size: 0.875rem; font-weight: 500; }
+    .eval-condition {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .eval-type {
+      font-size: 0.625rem;
+      padding: 2px 6px;
+      background: var(--bg);
+      border-radius: 3px;
+      text-transform: uppercase;
+    }
+    
+    /* Action buttons */
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .btn {
+      flex: 1;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-pass {
+      background: var(--success);
+      color: white;
+    }
+    .btn-pass:hover { filter: brightness(1.1); }
+    .btn-fail {
+      background: var(--fail);
+      color: white;
+    }
+    .btn-fail:hover { filter: brightness(1.1); }
+    .btn-skip {
+      background: var(--bg-tertiary);
+      color: var(--text);
+    }
+    
+    /* Notes */
+    .notes-section {
+      margin-top: 16px;
+    }
+    .notes-input {
+      width: 100%;
+      padding: 10px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.875rem;
+      resize: vertical;
+      min-height: 60px;
+    }
+    .notes-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    /* Keyboard shortcuts */
+    .shortcuts {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .shortcut {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+    }
+    kbd {
+      background: var(--bg-tertiary);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      gap: 20px;
+      padding: 12px 16px;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 0.875rem;
+    }
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .stat-value { font-weight: 600; }
+    .stat-pass { color: var(--success); }
+    .stat-fail { color: var(--fail); }
+    
+    /* Toast notifications */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s;
+      z-index: 100;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .toast.success { border-color: var(--success); }
+    .toast.error { border-color: var(--fail); }
+    
+    /* Loading state */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+    }
+    
+    /* File upload */
+    .file-upload {
+      text-align: center;
+      padding: 60px;
+      background: var(--bg-secondary);
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      margin: 40px 0;
+    }
+    .file-upload input {
+      display: none;
+    }
+    .file-upload label {
+      display: inline-block;
+      padding: 12px 24px;
+      background: var(--accent);
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .file-upload p {
+      margin-top: 12px;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>📝 Customer Support Evals</h1>
+      <div class="progress">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        <span class="progress-text" id="progressText">0 / 0</span>
+      </div>
+    </header>
+    
+    <div class="stats-bar" id="statsBar">
+      <div class="stat">
+        <span class="stat-label">Total:</span>
+        <span class="stat-value" id="statTotal">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Pass:</span>
+        <span class="stat-value stat-pass" id="statPass">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Fail:</span>
+        <span class="stat-value stat-fail" id="statFail">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Remaining:</span>
+        <span class="stat-value" id="statRemaining">0</span>
+      </div>
+    </div>
+    
+    <script>
+      // Demo mode: preload sample traces
+      const demoTraces = [
+        {"id":"trace-001","timestamp":"2026-01-30T10:00:00Z","query":"What's your refund policy?","response":"We offer full refunds within 30 days of purchase with no questions asked. After 30 days, refunds are processed on a case-by-case basis depending on usage. To request a refund, go to your account settings and click 'Request Refund' or contact our support team at support@example.com.","context":{"retrievedDocs":[{"id":"doc-refund-policy","content":"Our refund policy allows full refunds within 30 days of purchase. No questions asked. Contact support for requests.","score":0.94},{"id":"doc-account-settings","content":"Account settings can be accessed from the main menu. Look for 'Billing' to manage subscriptions and refunds.","score":0.78}]},"metadata":{"provider":"google","model":"gemini-1.5-flash","latency":180,"cost":0.0001,"sessionId":"session-abc123"}},
+        {"id":"trace-002","timestamp":"2026-01-30T10:01:00Z","query":"How do I integrate with your API?","response":"To integrate with our API, you'll need an API key. You can generate one from your dashboard under Settings > API Keys. Our API uses REST endpoints with JSON responses. Authentication is done via Bearer tokens. We also offer SDKs for Python, JavaScript, and Ruby to make integration easier.","context":{"retrievedDocs":[{"id":"doc-api-intro","content":"Our REST API allows programmatic access to all platform features. Generate API keys from your dashboard.","score":0.91},{"id":"doc-authentication","content":"Authentication is via Bearer token. Include 'Authorization: Bearer YOUR_API_KEY' in all requests.","score":0.85}]},"metadata":{"provider":"ollama","model":"nomic-embed-text","latency":3200,"cost":0,"sessionId":"session-abc123"}},
+        {"id":"trace-003","timestamp":"2026-01-30T10:02:00Z","query":"What's the pricing for enterprise?","response":"Our enterprise pricing starts at $999/month for up to 100 users. This includes priority support, custom integrations, and dedicated account management. For larger teams, we offer custom pricing based on your specific needs. Contact our sales team at sales@example.com for a personalized quote.","context":{"retrievedDocs":[{"id":"doc-enterprise","content":"Enterprise plans start at $999/month for 100 users. Includes priority support and custom integrations.","score":0.96},{"id":"doc-contact-sales","content":"For custom enterprise quotes, contact sales@example.com with your requirements.","score":0.88}]},"metadata":{"provider":"google","model":"gemini-1.5-flash","latency":150,"cost":0.00008,"sessionId":"session-def456"}}
+      ];
+      window.addEventListener('load', () => {
+        traces = demoTraces;
+        document.getElementById('fileUpload').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'grid';
+        updateDisplay();
+        updateStats();
+      });
+    </script>
+    
+    <div id="fileUpload" class="file-upload" style="display: none;">
+      <input type="file" id="tracesInput" accept=".jsonl,.json">
+      <label for="tracesInput">📂 Load Traces File</label>
+      <p>Upload your traces.jsonl file to start annotating</p>
+    </div>
+    
+    <div class="main" id="mainContent" style="display: none;">
+      <div class="trace-panel">
+        <div class="trace-header">
+          <span class="trace-id" id="traceId">trace-001</span>
+          <div class="trace-nav">
+            <button id="prevBtn" onclick="prevTrace()">← Prev</button>
+            <button id="nextBtn" onclick="nextTrace()">Next →</button>
+          </div>
+        </div>
+        
+        <div class="section">
+          <div class="section-label">Query</div>
+          <div class="query-box" id="queryBox"></div>
+        </div>
+        
+        <div class="section">
+          <div class="section-label">Response</div>
+          <div class="response-box" id="responseBox"></div>
+        </div>
+        
+        
+        <div class="section" id="contextSection">
+          <div class="section-label">Retrieved Context</div>
+          <div class="context-box" id="contextBox"></div>
+        </div>
+        
+        
+        
+        <div class="section">
+          <div class="section-label">Metadata</div>
+          <div class="metadata" id="metadataBox"></div>
+        </div>
+        
+      </div>
+      
+      <div class="eval-panel">
+        <h2>Evaluation Checklist</h2>
+        
+        
+        <div class="eval-section">
+          <div class="eval-section-title">⚡ Quick Checks</div>
+          
+    <div class="eval-item" data-eval-index="0" onclick="toggleEval(0)">
+      <div class="eval-checkbox"></div>
+      <div class="eval-content">
+        <div class="eval-name">Has Response</div>
+        <div class="eval-condition">response length > 50</div>
+      </div>
+      <span class="eval-type">MUST</span>
+    </div>
+  
+    <div class="eval-item" data-eval-index="1" onclick="toggleEval(1)">
+      <div class="eval-checkbox"></div>
+      <div class="eval-content">
+        <div class="eval-name">Professional Greeting</div>
+        <div class="eval-condition">matches pattern /hello|hi|thank you|glad to help/i</div>
+      </div>
+      <span class="eval-type">SHOULD</span>
+    </div>
+  
+    <div class="eval-item" data-eval-index="2" onclick="toggleEval(2)">
+      <div class="eval-checkbox"></div>
+      <div class="eval-content">
+        <div class="eval-name">Exposed Internal</div>
+        <div class="eval-condition">must not contain "internal-only"</div>
+      </div>
+      <span class="eval-type">MUST NOT</span>
+    </div>
+  
+    <div class="eval-item" data-eval-index="3" onclick="toggleEval(3)">
+      <div class="eval-checkbox"></div>
+      <div class="eval-content">
+        <div class="eval-name">Debug Output</div>
+        <div class="eval-condition">must not contain "DEBUG:"</div>
+      </div>
+      <span class="eval-type">MUST NOT</span>
+    </div>
+  
+    <div class="eval-item" data-eval-index="4" onclick="toggleEval(4)">
+      <div class="eval-checkbox"></div>
+      <div class="eval-content">
+        <div class="eval-name">Credentials Leaked</div>
+        <div class="eval-condition">must not contain "api_key"</div>
+      </div>
+      <span class="eval-type">MUST NOT</span>
+    </div>
+  
+    <div class="eval-item" data-eval-index="5" onclick="toggleEval(5)">
+      <div class="eval-checkbox"></div>
+      <div class="eval-content">
+        <div class="eval-name">Uses Knowledge Base</div>
+        <div class="eval-condition">uses context</div>
+      </div>
+      <span class="eval-type">MUST</span>
+    </div>
+  
+    <div class="eval-item" data-eval-index="6" onclick="toggleEval(6)">
+      <div class="eval-checkbox"></div>
+      <div class="eval-content">
+        <div class="eval-name">Cites Sources</div>
+        <div class="eval-condition">cites sources</div>
+      </div>
+      <span class="eval-type">SHOULD</span>
+    </div>
+  
+    <div class="eval-item" data-eval-index="7" onclick="toggleEval(7)">
+      <div class="eval-checkbox"></div>
+      <div class="eval-content">
+        <div class="eval-name">Fast Response</div>
+        <div class="eval-condition">code: metadata.latency < 3000</div>
+      </div>
+      <span class="eval-type">CHECK</span>
+    </div>
+  
+    <div class="eval-item" data-eval-index="8" onclick="toggleEval(8)">
+      <div class="eval-checkbox"></div>
+      <div class="eval-content">
+        <div class="eval-name">Not Too Verbose</div>
+        <div class="eval-condition">code: response.split(' ').length < 500</div>
+      </div>
+      <span class="eval-type">CHECK</span>
+    </div>
+  
+    <div class="eval-item" data-eval-index="9" onclick="toggleEval(9)">
+      <div class="eval-checkbox"></div>
+      <div class="eval-content">
+        <div class="eval-name">Escalation Protocol</div>
+        <div class="eval-condition">llm: If the issue is about legal matters, billing disputes over $1000, or safety concerns, does the response offer to connect with a human specialist?</div>
+      </div>
+      <span class="eval-type">MUST</span>
+    </div>
+  
+    <div class="eval-item" data-eval-index="10" onclick="toggleEval(10)">
+      <div class="eval-checkbox"></div>
+      <div class="eval-content">
+        <div class="eval-name">Upsell Appropriately</div>
+        <div class="eval-condition">llm: If mentioning premium features, is it relevant to the user's need and not pushy?</div>
+      </div>
+      <span class="eval-type">SHOULD</span>
+    </div>
+  
+        </div>
+        
+        
+        
+        <div class="eval-section">
+          <div class="eval-section-title">🔍 Deep Checks</div>
+          
+    <div class="eval-item" data-eval-index="11" onclick="toggleEval(11)">
+      <div class="eval-checkbox"></div>
+      <div class="eval-content">
+        <div class="eval-name">Actually Helpful</div>
+        <div class="eval-condition">llm: Does this response genuinely help solve the user's problem, not just acknowledge it?</div>
+      </div>
+      <span class="eval-type">MUST</span>
+    </div>
+  
+    <div class="eval-item" data-eval-index="12" onclick="toggleEval(12)">
+      <div class="eval-checkbox"></div>
+      <div class="eval-content">
+        <div class="eval-name">No Hallucination</div>
+        <div class="eval-condition">no hallucination</div>
+      </div>
+      <span class="eval-type">MUST</span>
+    </div>
+  
+    <div class="eval-item" data-eval-index="13" onclick="toggleEval(13)">
+      <div class="eval-checkbox"></div>
+      <div class="eval-content">
+        <div class="eval-name">Empathetic Tone</div>
+        <div class="eval-condition">llm: Is the response empathetic and understanding of the customer's situation?</div>
+      </div>
+      <span class="eval-type">CHECK</span>
+    </div>
+  
+        </div>
+        
+        
+        <div class="notes-section">
+          <div class="section-label">Notes (optional)</div>
+          <textarea class="notes-input" id="notesInput" placeholder="Add any observations..."></textarea>
+        </div>
+        
+        <div class="actions">
+          <button class="btn btn-pass" onclick="submitPass()">✓ Pass</button>
+          <button class="btn btn-fail" onclick="submitFail()">✗ Fail</button>
+          <button class="btn btn-skip" onclick="skipTrace()">Skip</button>
+        </div>
+        
+        
+        <div class="shortcuts">
+          <div class="shortcut"><span>Pass</span> <kbd>P</kbd></div>
+          <div class="shortcut"><span>Fail</span> <kbd>F</kbd></div>
+          <div class="shortcut"><span>Skip</span> <kbd>S</kbd></div>
+          <div class="shortcut"><span>Prev/Next</span> <kbd>←</kbd> <kbd>→</kbd></div>
+          <div class="shortcut"><span>Toggle eval 1-9</span> <kbd>1-9</kbd></div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  
+  <div class="toast" id="toast"></div>
+  
+  <script>
+    // Eval spec from DSL
+    const evalSpec = {"name":"Customer Support Evals","evals":[{"id":"has-response","name":"Has Response","type":"must","condition":"response length > 50","priority":"cheap","description":"Response should not be empty or too short"},{"id":"professional-greeting","name":"Professional Greeting","type":"should","condition":"matches pattern /hello|hi|thank you|glad to help/i","priority":"cheap","description":"Maintains friendly tone"},{"id":"exposed-internal","name":"Exposed Internal","type":"must-not","condition":"must not contain \"internal-only\"","priority":"cheap"},{"id":"debug-output","name":"Debug Output","type":"must-not","condition":"must not contain \"DEBUG:\"","priority":"cheap"},{"id":"credentials-leaked","name":"Credentials Leaked","type":"must-not","condition":"must not contain \"api_key\"","priority":"cheap"},{"id":"uses-knowledge-base","name":"Uses Knowledge Base","type":"must","condition":"uses context","priority":"cheap","description":"Should reference retrieved documentation"},{"id":"cites-sources","name":"Cites Sources","type":"should","condition":"cites sources","priority":"cheap","description":"Helps users find more information","when":"multiple documents retrieved"},{"id":"actually-helpful","name":"Actually Helpful","type":"must","condition":"llm: Does this response genuinely help solve the user's problem, not just acknowledge it?","priority":"expensive","description":"Goes beyond \"I understand your frustration\""},{"id":"no-hallucination","name":"No Hallucination","type":"must","condition":"no hallucination","priority":"expensive","description":"All facts must be verifiable from context"},{"id":"empathetic-tone","name":"Empathetic Tone","type":"check","condition":"llm: Is the response empathetic and understanding of the customer's situation?","priority":"expensive","when":"query contains \"frustrated\" or \"angry\" or \"upset\""},{"id":"fast-response","name":"Fast Response","type":"check","condition":"code: metadata.latency < 3000","priority":"cheap","description":"Should respond within 3 seconds"},{"id":"not-too-verbose","name":"Not Too Verbose","type":"check","condition":"code: response.split(' ').length < 500","priority":"cheap","description":"Avoid overwhelming the user"},{"id":"escalation-protocol","name":"Escalation Protocol","type":"must","condition":"llm: If the issue is about legal matters, billing disputes over $1000, or safety concerns, does the response offer to connect with a human specialist?","priority":"cheap","when":"query contains \"lawyer\" or \"legal\" or \"sue\" or \"safety\""},{"id":"upsell-appropriately","name":"Upsell Appropriately","type":"should","condition":"llm: If mentioning premium features, is it relevant to the user's need and not pushy?","priority":"cheap","when":"response contains \"premium\" or \"upgrade\" or \"enterprise\""}],"description":"Evaluations for our support chatbot","domain":"support","version":"1.0"};
+    
+    // State
+    let traces = [];
+    let annotations = [];
+    let currentIndex = 0;
+    let evalStates = {};  // Track which evals are checked/failed per trace
+    
+    // DOM elements
+    const fileUpload = document.getElementById('fileUpload');
+    const mainContent = document.getElementById('mainContent');
+    const tracesInput = document.getElementById('tracesInput');
+    
+    // File upload handler
+    tracesInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const text = await file.text();
+      traces = text.trim().split('\n').map(line => JSON.parse(line));
+      
+      // Load existing annotations if any
+      const existingAnnotations = localStorage.getItem('embedeval_annotations_' + evalSpec.name);
+      if (existingAnnotations) {
+        annotations = JSON.parse(existingAnnotations);
+        // Find first unannotated trace
+        const annotatedIds = new Set(annotations.map(a => a.traceId));
+        currentIndex = traces.findIndex(t => !annotatedIds.has(t.id));
+        if (currentIndex === -1) currentIndex = 0;
+      }
+      
+      fileUpload.style.display = 'none';
+      mainContent.style.display = 'grid';
+      updateDisplay();
+      updateStats();
+    });
+    
+    // Display functions
+    function updateDisplay() {
+      if (traces.length === 0) return;
+      
+      const trace = traces[currentIndex];
+      
+      document.getElementById('traceId').textContent = trace.id || `trace-${currentIndex + 1}`;
+      document.getElementById('queryBox').textContent = trace.query || '';
+      document.getElementById('responseBox').textContent = trace.response || '';
+      
+      // Context
+      
+      const contextBox = document.getElementById('contextBox');
+      if (trace.context?.retrievedDocs?.length) {
+        contextBox.innerHTML = trace.context.retrievedDocs.map(doc => `
+          <div class="context-doc">
+            <div>${doc.content}</div>
+            ${doc.score ? `<div class="context-score">Score: ${doc.score.toFixed(2)}</div>` : ''}
+          </div>
+        `).join('');
+        document.getElementById('contextSection').style.display = 'block';
+      } else {
+        document.getElementById('contextSection').style.display = 'none';
+      }
+      
+      
+      // Metadata
+      
+      const metadataBox = document.getElementById('metadataBox');
+      if (trace.metadata) {
+        metadataBox.innerHTML = Object.entries(trace.metadata).map(([k, v]) => `
+          <span class="metadata-item">
+            <span class="metadata-label">${k}:</span> ${v}
+          </span>
+        `).join('');
+      }
+      
+      
+      // Reset eval states
+      resetEvalStates();
+      
+      // Load notes if existing annotation
+      const existingAnnotation = annotations.find(a => a.traceId === trace.id);
+      document.getElementById('notesInput').value = existingAnnotation?.notes || '';
+      
+      // Update navigation
+      document.getElementById('prevBtn').disabled = currentIndex === 0;
+      document.getElementById('nextBtn').disabled = currentIndex >= traces.length - 1;
+      
+      // Update progress
+      updateProgress();
+    }
+    
+    function resetEvalStates() {
+      evalStates = {};
+      document.querySelectorAll('.eval-item').forEach(item => {
+        item.classList.remove('checked', 'failed');
+        item.querySelector('.eval-checkbox').textContent = '';
+      });
+    }
+    
+    function toggleEval(index) {
+      const item = document.querySelector(`[data-eval-index="${index}"]`);
+      if (!item) return;
+      
+      const checkbox = item.querySelector('.eval-checkbox');
+      
+      if (item.classList.contains('checked')) {
+        item.classList.remove('checked');
+        item.classList.add('failed');
+        checkbox.textContent = '✗';
+        evalStates[index] = 'fail';
+      } else if (item.classList.contains('failed')) {
+        item.classList.remove('failed');
+        checkbox.textContent = '';
+        delete evalStates[index];
+      } else {
+        item.classList.add('checked');
+        checkbox.textContent = '✓';
+        evalStates[index] = 'pass';
+      }
+    }
+    
+    function updateProgress() {
+      const annotatedCount = annotations.length;
+      const total = traces.length;
+      const percent = total > 0 ? (annotatedCount / total) * 100 : 0;
+      
+      document.getElementById('progressFill').style.width = percent + '%';
+      document.getElementById('progressText').textContent = `${annotatedCount} / ${total}`;
+    }
+    
+    function updateStats() {
+      const passCount = annotations.filter(a => a.label === 'pass').length;
+      const failCount = annotations.filter(a => a.label === 'fail').length;
+      
+      document.getElementById('statTotal').textContent = traces.length;
+      document.getElementById('statPass').textContent = passCount;
+      document.getElementById('statFail').textContent = failCount;
+      document.getElementById('statRemaining').textContent = traces.length - annotations.length;
+    }
+    
+    // Navigation
+    function prevTrace() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateDisplay();
+      }
+    }
+    
+    function nextTrace() {
+      if (currentIndex < traces.length - 1) {
+        currentIndex++;
+        updateDisplay();
+      }
+    }
+    
+    // Annotation actions
+    function submitPass() {
+      saveAnnotation('pass');
+    }
+    
+    function submitFail() {
+      saveAnnotation('fail');
+    }
+    
+    function skipTrace() {
+      nextTrace();
+    }
+    
+    function saveAnnotation(label) {
+      const trace = traces[currentIndex];
+      const notes = document.getElementById('notesInput').value;
+      
+      // Determine failure category from failed evals
+      const failedEvals = Object.entries(evalStates)
+        .filter(([_, state]) => state === 'fail')
+        .map(([idx, _]) => evalSpec.evals[parseInt(idx)]?.name)
+        .filter(Boolean);
+      
+      const annotation = {
+        id: `ann-${Date.now()}`,
+        traceId: trace.id,
+        annotator: 'human@annotation.ui',
+        timestamp: new Date().toISOString(),
+        label: label,
+        failureCategory: failedEvals.length > 0 ? failedEvals[0] : (label === 'fail' ? 'other' : null),
+        failedChecks: failedEvals,
+        notes: notes || null,
+        source: 'dsl-ui',
+        evalSpec: evalSpec.name,
+      };
+      
+      // Update or add annotation
+      const existingIndex = annotations.findIndex(a => a.traceId === trace.id);
+      if (existingIndex >= 0) {
+        annotations[existingIndex] = annotation;
+      } else {
+        annotations.push(annotation);
+      }
+      
+      // Save to localStorage
+      localStorage.setItem('embedeval_annotations_' + evalSpec.name, JSON.stringify(annotations));
+      
+      // Show toast
+      showToast(label === 'pass' ? '✓ Marked as Pass' : '✗ Marked as Fail', label === 'pass' ? 'success' : 'error');
+      
+      // Update stats
+      updateStats();
+      
+      // Move to next
+      if (currentIndex < traces.length - 1) {
+        currentIndex++;
+        updateDisplay();
+      }
+    }
+    
+    function showToast(message, type = '') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast show ' + type;
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2000);
+    }
+    
+    // Export function
+    function exportAnnotations() {
+      const jsonl = annotations.map(a => JSON.stringify(a)).join('\n');
+      const blob = new Blob([jsonl], { type: 'application/jsonl' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'annotations.jsonl';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Annotations exported!', 'success');
+    }
+    
+    // Keyboard shortcuts
+    
+    document.addEventListener('keydown', (e) => {
+      // Ignore if typing in input
+      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+      
+      switch (e.key.toLowerCase()) {
+        case 'p': submitPass(); break;
+        case 'f': submitFail(); break;
+        case 's': skipTrace(); break;
+        case 'arrowleft': prevTrace(); break;
+        case 'arrowright': nextTrace(); break;
+        case 'e': exportAnnotations(); break;
+        default:
+          // Number keys 1-9 toggle evals
+          const num = parseInt(e.key);
+          if (num >= 1 && num <= 9) {
+            toggleEval(num - 1);
+          }
+      }
+    });
+    
+    
+    // Add export button to header
+    document.querySelector('.header').innerHTML += `
+      <button onclick="exportAnnotations()" style="padding: 8px 16px; background: var(--accent); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.875rem;">
+        📥 Export Annotations
+      </button>
+    `;
+  </script>
+</body>
+</html>

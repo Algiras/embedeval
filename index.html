@@ -432,6 +432,122 @@
             font-size: 15px;
         }
 
+        /* DSL Demo Section */
+        .dsl-demo {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+        }
+
+        .dsl-showcase {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 32px;
+            margin-bottom: 32px;
+            align-items: start;
+        }
+
+        .dsl-code {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 24px;
+        }
+
+        .dsl-code h4 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        .dsl-code pre {
+            background: var(--bg-primary);
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+
+        .terminal-command {
+            display: inline-block;
+            background: var(--bg-primary);
+            padding: 8px 16px;
+            border-radius: 6px;
+            color: var(--accent-primary);
+            font-family: var(--font-mono);
+            font-size: 14px;
+        }
+
+        .dsl-screenshot {
+            position: relative;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .dsl-screenshot img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .dsl-screenshot a {
+            display: block;
+            position: relative;
+        }
+
+        .screenshot-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            padding: 40px 20px 20px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .dsl-screenshot a:hover .screenshot-overlay {
+            opacity: 1;
+        }
+
+        .screenshot-overlay span {
+            background: var(--accent-primary);
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .dsl-features {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+
+        .dsl-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        .dsl-icon {
+            font-size: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .dsl-showcase {
+                grid-template-columns: 1fr;
+            }
+            .dsl-features {
+                gap: 16px;
+            }
+        }
+
         /* Vercel Section */
         .vercel-section {
             padding: 80px 0;
@@ -674,7 +790,7 @@
     <section class="quickstart" id="quickstart">
         <div class="container">
             <div class="section-header">
-                <h2>3 Commands to Start</h2>
+                <h2>4 Commands to Start</h2>
                 <p>From zero to error analysis in under 5 minutes</p>
             </div>
 
@@ -682,8 +798,21 @@
                 <div class="step">
                     <div class="step-number">1</div>
                     <div class="step-content">
+                        <h3>Setup (30 seconds)</h3>
+                        <p>Verify environment and scaffold your first project</p>
+                        <div class="code-block">
+                            <span class="command">embedeval</span> doctor                    <span class="comment"># Check environment</span><br>
+                            <span class="command">embedeval</span> init my-project --yes   <span class="comment"># Scaffold project</span><br>
+                            <span class="command">cd</span> my-project
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
                         <h3>Collect Traces</h3>
-                        <p>Import your LLM interaction logs or generate synthetic data</p>
+                        <p>Import your LLM interaction logs or use sample data</p>
                         <div class="code-block">
                             <span class="command">embedeval</span> collect ./production-logs.jsonl --output traces.jsonl
                         </div>
@@ -691,7 +820,7 @@
                 </div>
 
                 <div class="step">
-                    <div class="step-number">2</div>
+                    <div class="step-number">3</div>
                     <div class="step-content">
                         <h3>Annotate Manually</h3>
                         <p>Spend 30 minutes reviewing 50-100 traces. This is where the magic happens.</p>
@@ -767,6 +896,120 @@
         </div>
     </section>
 
+    <section class="auth-demo">
+        <div class="container">
+            <div class="section-header">
+                <h2>🔐 Multi-Provider Authentication</h2>
+                <p>Securely manage and verify API keys for all supported LLM providers.</p>
+            </div>
+            <div class="terminal">
+                <div class="terminal-header">
+                    <div class="terminal-dot red"></div>
+                    <div class="terminal-dot yellow"></div>
+                    <div class="terminal-dot green"></div>
+                    <span class="terminal-title">terminal</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="command">embedeval</span> auth login openai</div>
+                    <div class="terminal-line terminal-output">🔐 Authenticating with OpenAI...</div>
+                    <div class="terminal-line terminal-output">API Key: <span class="terminal-highlight">sk-...here</span></div>
+                    <div class="terminal-line terminal-output">✅ Successfully authenticated with OpenAI</div>
+                    <div class="terminal-line">&nbsp;</div>
+                    <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="command">embedeval</span> auth status</div>
+                    <div class="terminal-line terminal-output">Google Gemini        ✓ Authenticated (env var)</div>
+                    <div class="terminal-line terminal-output">OpenAI               ✓ Authenticated (stored)</div>
+                    <div class="terminal-line terminal-output">OpenRouter           ○ Not configured</div>
+                    <div class="terminal-line terminal-output">Anthropic            ○ Not configured</div>
+                    <div class="terminal-line terminal-output">Ollama (Local)       ✓ Authenticated (env var)</div>
+                    <div class="terminal-line">&nbsp;</div>
+                    <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="command">embedeval</span> auth check</div>
+                    <div class="terminal-line terminal-output">Google Gemini        ✓ Healthy (289ms) · 46 models</div>
+                    <div class="terminal-line terminal-output">OpenAI               ✓ Healthy (312ms) · 12 models</div>
+                    <div class="terminal-line terminal-output">OpenRouter           ○ Not configured</div>
+                    <div class="terminal-line terminal-output">Anthropic            ○ Not configured</div>
+                    <div class="terminal-line terminal-output">Ollama (Local)       ✓ Healthy (14ms) · 1 models</div>
+                    <div class="terminal-line terminal-output">  ✅ All 3 configured provider(s) healthy</div>
+                </div>
+            </div>
+            <div class="feature-text" style="margin-top: 2em;">
+                <h4>Features</h4>
+                <ul>
+                    <li>🔑 <b>Secure storage</b> (system keychain or encrypted file)</li>
+                    <li>🧪 <b>Health check</b> verifies only if key is valid (not network or quota)</li>
+                    <li>🧩 <b>Works with all providers</b>: Gemini, OpenAI, OpenRouter, Anthropic, Ollama</li>
+                    <li>⚡ <b>CI/CD ready</b>: <code>--json</code> output and exit codes</li>
+                    <li>🔄 <b>Auto token refresh</b> OAuth tokens automatically refreshed before expiration</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="setup-commands" style="background: #f8fafc; padding: 4em 0;">
+        <div class="container">
+            <div class="section-header">
+                <h2>🚀 Easy Setup Commands</h2>
+                <p>Get started in seconds with built-in setup and diagnostic tools.</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2em; margin-bottom: 2em;">
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-dot red"></div>
+                        <div class="terminal-dot yellow"></div>
+                        <div class="terminal-dot green"></div>
+                        <span class="terminal-title">embedeval doctor</span>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="command">embedeval</span> doctor</div>
+                        <div class="terminal-line terminal-output">🔧 EmbedEval Doctor</div>
+                        <div class="terminal-line terminal-output">Checking your environment...</div>
+                        <div class="terminal-line">&nbsp;</div>
+                        <div class="terminal-line terminal-output">  ✓ Node.js Version    Node.js v20.11.0</div>
+                        <div class="terminal-line terminal-output">  ✓ Installation       embedeval v2.0.5</div>
+                        <div class="terminal-line terminal-output">  ✓ LLM Providers      4 provider(s) configured</div>
+                        <div class="terminal-line terminal-output">  ✓ Sample Data        Sample traces available</div>
+                        <div class="terminal-line terminal-output">  ✓ Operating System   darwin arm64</div>
+                        <div class="terminal-line">&nbsp;</div>
+                        <div class="terminal-line terminal-output">✅ All checks passed! Ready to go.</div>
+                    </div>
+                </div>
+                
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-dot red"></div>
+                        <div class="terminal-dot yellow"></div>
+                        <div class="terminal-dot green"></div>
+                        <span class="terminal-title">embedeval init</span>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="command">embedeval</span> init my-project</div>
+                        <div class="terminal-line terminal-output">🚀 Creating embedeval project: my-project</div>
+                        <div class="terminal-line">&nbsp;</div>
+                        <div class="terminal-line terminal-output">  ✓ Created directory structure</div>
+                        <div class="terminal-line terminal-output">  ✓ Copied sample traces</div>
+                        <div class="terminal-line terminal-output">  ✓ Created rag.eval template</div>
+                        <div class="terminal-line terminal-output">  ✓ Created .env file</div>
+                        <div class="terminal-line terminal-output">  ✓ Created README.md</div>
+                        <div class="terminal-line">&nbsp;</div>
+                        <div class="terminal-line terminal-output">✅ Project created successfully!</div>
+                        <div class="terminal-line">&nbsp;</div>
+                        <div class="terminal-line terminal-output">Next: cd my-project && embedeval doctor</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="feature-text">
+                <h4>New Setup Features</h4>
+                <ul>
+                    <li>🔧 <b>Doctor command</b> - Diagnose environment issues before starting</li>
+                    <li>🏗️ <b>Init command</b> - Scaffold new projects with templates in seconds</li>
+                    <li>📋 <b>6 built-in templates</b> - rag, chatbot, code-assistant, docs, agent, minimal</li>
+                    <li>⚙️ <b>Auto .env creation</b> - Interactive API key setup</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
     <section class="features">
         <div class="container">
             <div class="section-header">
@@ -821,6 +1064,65 @@
                         <h4>HTML Reports</h4>
                         <p>Generate shareable reports with metrics, charts, and trace browsers.</p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DSL & Annotation UI Demo -->
+    <section class="dsl-demo">
+        <div class="container">
+            <div class="section-header">
+                <h2>🎨 DSL-Generated Annotation UI</h2>
+                <p>Define evals in natural language, auto-generate annotation interfaces</p>
+            </div>
+
+            <div class="dsl-showcase">
+                <div class="dsl-code">
+                    <h4>Define evals in DSL</h4>
+                    <pre><code class="language-bash"># support.eval
+name: Customer Support Evals
+domain: support
+
+# Cheap evals (run first)
+must "Has Content": response length > 50
+must "Addresses Query": must contain query keyword
+should "Cites Sources": cites sources
+
+# Expensive evals (LLM judge)
+[expensive] must "Helpful": is helpful
+[expensive] must "No Hallucination": no hallucination</code></pre>
+                    <div style="margin-top: 16px;">
+                        <code class="terminal-command">$ embedeval dsl ui support.eval</code>
+                    </div>
+                </div>
+
+                <div class="dsl-screenshot">
+                    <a href="demo-annotation-ui.html" target="_blank" title="Try the live demo">
+                        <img src="screenshot-annotation-ui.png" alt="Generated Annotation UI" />
+                        <div class="screenshot-overlay">
+                            <span>🔗 Try Live Demo</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="dsl-features">
+                <div class="dsl-feature">
+                    <span class="dsl-icon">📝</span>
+                    <span>Natural language patterns</span>
+                </div>
+                <div class="dsl-feature">
+                    <span class="dsl-icon">⌨️</span>
+                    <span>Keyboard shortcuts (P/F/J/K)</span>
+                </div>
+                <div class="dsl-feature">
+                    <span class="dsl-icon">💾</span>
+                    <span>Auto-save to localStorage</span>
+                </div>
+                <div class="dsl-feature">
+                    <span class="dsl-icon">📤</span>
+                    <span>Export to JSONL</span>
                 </div>
             </div>
         </div>
@@ -960,6 +1262,62 @@ export OPENAI_BASE_URL="http://localhost:11434/v1"
     }
   }
 }</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="skills-index" style="background: #f8fafc; padding: 4em 0; border-top: 1px solid var(--border-color);">
+        <div class="container">
+            <div class="section-header">
+                <h2>🎯 Skills Index</h2>
+                <p>Navigate EmbedEval capabilities as actionable skills. Tell agents: "Use the [skill] skill"</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5em;">
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.5em;">
+                    <h4 style="margin-bottom: 0.75em; color: var(--accent-primary);">🔧 Setup Skills</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9em;">
+                        <li style="margin-bottom: 0.5em;"><code>embedeval doctor</code> - Environment check</li>
+                        <li style="margin-bottom: 0.5em;"><code>embedeval init</code> - Project scaffolding</li>
+                        <li><code>embedeval auth login</code> - Configure providers</li>
+                    </ul>
+                </div>
+                
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.5em;">
+                    <h4 style="margin-bottom: 0.75em; color: var(--accent-primary);">📊 Core Workflow</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9em;">
+                        <li style="margin-bottom: 0.5em;"><code>embedeval collect</code> - Import traces</li>
+                        <li style="margin-bottom: 0.5em;"><code>embedeval annotate</code> - Binary annotation</li>
+                        <li><code>embedeval taxonomy build</code> - Failure categories</li>
+                    </ul>
+                </div>
+                
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.5em;">
+                    <h4 style="margin-bottom: 0.75em; color: var(--accent-primary);">🎨 DSL Templates</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9em;">
+                        <li style="margin-bottom: 0.5em;"><code>dsl init rag</code> - RAG evaluation</li>
+                        <li style="margin-bottom: 0.5em;"><code>dsl init chatbot</code> - Support bots</li>
+                        <li><code>dsl init agent</code> - Autonomous agents</li>
+                    </ul>
+                </div>
+                
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.5em;">
+                    <h4 style="margin-bottom: 0.75em; color: var(--accent-primary);">⚡ Automation</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9em;">
+                        <li style="margin-bottom: 0.5em;"><code>embedeval dsl run</code> - Run evaluations</li>
+                        <li style="margin-bottom: 0.5em;"><code>embedeval watch</code> - Real-time eval</li>
+                        <li><code>embedeval eval add</code> - Add evaluators</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="margin-top: 2em; padding: 1em; background: var(--bg-card); border-radius: var(--radius); border-left: 3px solid var(--accent-primary);">
+                <p style="margin: 0; font-size: 0.9em;">
+                    <strong>📚 Full Documentation:</strong> 
+                    <a href="https://github.com/Algiras/embedeval/blob/main/AGENTS.md" target="_blank" style="color: var(--accent-primary);">AGENTS.md</a> • 
+                    <a href="https://github.com/Algiras/embedeval/blob/main/skills/SKILL_INDEX.md" target="_blank" style="color: var(--accent-primary);">Skills Index</a> • 
+                    <a href="https://github.com/Algiras/embedeval/blob/main/skills/skill-manifest.json" target="_blank" style="color: var(--accent-primary);">Skill Manifest (JSON)</a>
+                </p>
             </div>
         </div>
     </section>
